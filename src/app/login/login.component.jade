@@ -1,0 +1,23 @@
+//output: login.component.html
+
+#loginPage
+  #loginForm
+      h2#loginTitle Login
+      #userNameinput
+          label(for="userName") Vor- und Nachname:
+          br
+          input(type="text" class="textInput" id="userName" name="Benutzername")
+      #passwordInput
+          label(for="password") Passwort:
+          br
+          input(type="password" class="textInput passwordInput" id="password" name="Passwort")
+
+      p#errorOutput
+
+      button#login.button((click)="login($event)") Login
+
+      #registrieren
+          a(id='toRegisterButton', routerLink="registrierung") Registrieren
+
+
+      //button#toRegisterButton.button Registrieren

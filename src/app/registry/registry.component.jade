@@ -1,0 +1,31 @@
+//output:registry.component.html
+#registerPage
+  #registerForm
+      h2#registerTitle Registrierung
+      #userNameinput
+          label(for="userName") Vor- und Nachname:
+          br
+          input(type="text" placeholder="Max Mustermann/frau" class="textInput" id="registerUserName" name="Benutzername")
+      #emailInput
+          label(for="email") Email:
+          br
+          input(type="email" placeholder="max.muster@mustermail.ch" class="textInput" id="email" name="Email")
+      #aboInput
+          label(for="abo") Abo:
+          br
+          input(type="text" placeholder="ZVV / GA / Streckenabo?" class="textInput" id="abo" name="Abo")
+      #passwordInput
+          label(for="password") Passwort:
+          br
+          input(type="password" placeholder="Super sicheres Passwort" class="textInput passwordInput" id="registerPassword" name="Passwort")
+      #startEndDateInput
+          label(for="startDate") Im Grünwerk von:
+          input(type="date" class="dateInput" id="startDate" name="Anfangsdatum")
+          label(for="endDate") Im Grünwerk bis:
+          input(type="date" class="dateInput" id="endDate" name="Enddatum")
+          
+      p#errorOutput
+      button#register.button((click)="register()") Registrieren
+      
+      #backButton
+          a(id='registerBackButton', routerLink="") Zurück zum Login

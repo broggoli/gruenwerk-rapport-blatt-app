@@ -1,0 +1,57 @@
+
+@import "../sass/colors.sass"
+@import "../sass/components/button.sass"
+@import "../sass/inputs.sass"
+
+#registerPage
+    max-width: 24em
+    width: 90%
+
+    box-shadow: rgba(0, 0, 0, 0.3) 0 0.2em 1em
+    border-radius: 7px
+
+    margin-left: auto
+    margin-right: auto
+
+    padding-top: 0.5em
+    margin-top: 0.5em
+    padding-bottom: 2em
+
+
+    #registerForm
+        flex-direction: column
+        margin: auto
+        width: 80%
+
+        input
+            width: 96%
+            margin-bottom: 1em
+
+        #startEndDateInput
+            margin-top: 1em
+            display: grid
+            grid-template-columns:  1fr 1fr
+
+            .dateInput
+                width: 92%
+
+            label
+                align-self: center
+
+        #backButton
+            text-align: center
+            margin-top: 1em
+
+        #registerBackButton
+            color: lighten( $black, 60%)
+            cursor: pointer
+            width: 100%
+            padding: 0.2em
+
+        .button
+            width: 100%
+            margin-top: 1em
+
+        .registerButton
+            display: block
+            cursor: pointer

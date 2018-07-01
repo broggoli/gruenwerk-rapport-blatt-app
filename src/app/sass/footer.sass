@@ -1,0 +1,30 @@
+//main: main.sass
+
+$pseudoColor: #8a8c91
+
+#footer
+    display: flex
+    width: 100%
+    align-items: center
+    background: $backgroundColor
+    color: $blue
+    box-shadow: $grey 0 -0.2em 1em
+
+    #madeBy>p
+        margin-left: 1em
+
+    #madeBy>p>a
+        color: $blue
+        text-decoration: none
+
+    //Hover effect for link
+    #madeBy>p>a::after
+        content: ""
+        display: block
+        background: $pseudoColor
+        height: 0.1em
+        width: 0
+        transition: 200ms cubic-bezier(0.17, 0.44, 0, 1.04)
+
+    #madeBy>p>a:hover#madeBy>p>a::after
+        width: 100%

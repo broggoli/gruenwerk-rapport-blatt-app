@@ -1,0 +1,45 @@
+
+<div id="rapportBlattPage">
+  <div id="rapportBlatt">
+    <div id="rapportBlattHeader">
+      <h3>Rapportblatt</h3>
+      <div id="rapportBlattInfo">
+        <div id="DateInput">
+          <label for="rapportBlattMonth">Rapportblatt für:</label>
+          <input type="month" id="rapportBlattMonth" name="Monat und Jahr" class="dateInput"/>
+        </div>
+        <div id="unchangableInfo">
+          <p>Heute:<span id="today"></span></p>
+          <p id="ziviName"></p>
+        </div>
+      </div>
+    </div>
+    <div id="rapportBlattTable">
+      <div id="tableHeader">
+        <div id="dayTitle">Datum</div>
+        <div id="dayTypeTitle">Entschädigung</div>
+        <div id="arbeitsortTitle">Arbeitsort</div>
+        <div id="spesenTitle">Fahrspesen</div>
+      </div>
+      <div id="table"></div>
+    </div>
+    <div id="rapportBlattSummary">
+      <div id="daySummary">
+        <p>Total Arbeitstage:<span class="workDaySummary"></span><span>| Entschädigung:</span><span class="workDayPay"></span></p>
+        <p>Total Freitage:<span class="freeDaySummary"></span><span>| Entschädigung:</span><span class="freeDayPay"></span></p>
+        <p>Total Kranktage:<span class="sickDaySummary"></span><span>| Entschädigung:</span><span class="sickDayPay"></span></p>
+        <p>Total Ferientage:<span class="ferientageSummary"></span><span>| Entschädigung:</span><span class="holidayPay"></span></p>
+        <p>Total Urlaubstage:<span class="urlaubstageSummary"></span><span>| Entschädigung:</span><span class="urlaubPay"></span></p>
+      </div>
+      <div id="totalSummary">
+        <p id="totalDayCompensation">Total Entschädigung           :</p>
+        <p id="totalFahrspesenCompensation">Total Fahrspesen       :</p>
+        <p id="totalShoeCompensation">Total Entschädigung Schuhwerk:</p>
+      </div>
+      <div id="total">
+        <h3 id="totalPay">Total zur Auszahlung:</h3>
+      </div>
+      <button id="sendButton" class="button">Absenden</button>
+    </div>
+  </div>
+</div>

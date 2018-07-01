@@ -1,0 +1,22 @@
+//output:app.component.html
+#app
+  header
+    #rapportBlattTitel
+      h4 Verrein Grünwerk
+      h3 Zivildienst
+    button#logOutButton.button(routerLink="logout") Abmelden
+
+  //- #gruenWerkLogo
+  //-   img(src="../assets/logo_blau.jpg")
+
+  // This is the content area. The individual pages are loded in here
+  #page
+    #content
+      <router-outlet></router-outlet>
+      //object(type="text/html" data="pages/loginPage.html")
+          
+  #footer
+    div#info
+        div#madeBy
+          p
+            a(href="http://broggoli.ch") Webdesign & copyright by Nick Bachmann

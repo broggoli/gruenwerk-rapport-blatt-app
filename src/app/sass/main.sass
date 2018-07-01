@@ -1,0 +1,39 @@
+// compileCompressed: ../app.component.css
+
+//utilities
+@import "colors.sass"
+@import "inputs.sass"
+
+@import "header.sass"
+@import "footer.sass"
+
+//component styling
+@import "components/switch.sass"
+@import "components/button.sass"
+
+*
+    margin: 0
+    padding: 0
+    font-family: arial
+
+#app
+    background: $backgroundColor
+    display: grid
+    grid-template-rows: 12vh minmax(82vh, auto) 6vh
+    width: 100%
+
+    #gruenWerkLogo
+        position: fixed
+        top: 15%
+        right: 0
+        box-shadow: rgba(0, 0, 0, 0.3) 0 0.2em 1em
+    #page
+        #content
+            padding: 10px
+
+            margin-top: 0.5em
+            margin-bottom: 2em
+
+            color: $black
+
+            transition: 200ms cubic-bezier(0.35, 0.38, 0.2, 1)

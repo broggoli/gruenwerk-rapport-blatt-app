@@ -1,0 +1,18 @@
+
+<div id="loginPage">
+  <div id="loginForm">
+    <h2 id="loginTitle">Login</h2>
+    <div id="userNameinput">
+      <label for="userName">Vor- und Nachname:</label><br/>
+      <input type="text" id="userName" name="Benutzername" class="textInput"/>
+    </div>
+    <div id="passwordInput">
+      <label for="password">Passwort:</label><br/>
+      <input type="password" id="password" name="Passwort" class="textInput passwordInput"/>
+    </div>
+    <p id="errorOutput"></p>
+    <button id="login" (click)="login($event)" class="button">Login</button>
+    <div id="registrieren"><a id="toRegisterButton" routerLink="registrierung">Registrieren</a></div>
+    <!--button#toRegisterButton.button Registrieren-->
+  </div>
+</div>

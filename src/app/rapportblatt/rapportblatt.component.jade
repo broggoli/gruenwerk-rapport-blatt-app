@@ -1,0 +1,52 @@
+//output:./rapportblatt.component.html
+#rapportBlattPage
+  #rapportBlatt
+      #rapportBlattHeader
+          h3 Rapportblatt
+          #rapportBlattInfo
+              #DateInput
+                  label(for="rapportBlattMonth") Rapportblatt für:
+                  input(type="month" id="rapportBlattMonth" class="dateInput" name="Monat und Jahr")
+              #unchangableInfo
+                  p Heute:
+                      span#today
+                  p#ziviName
+
+
+      #rapportBlattTable
+          #tableHeader
+              #dayTitle Datum
+              #dayTypeTitle Entschädigung
+              #arbeitsortTitle Arbeitsort
+              #spesenTitle Fahrspesen
+          #table
+      #rapportBlattSummary
+          #daySummary
+              p Total Arbeitstage:
+                  span.workDaySummary
+                  span | Entschädigung:
+                  span.workDayPay
+              p Total Freitage:
+                  span.freeDaySummary
+                  span | Entschädigung:
+                  span.freeDayPay
+              p Total Kranktage:
+                  span.sickDaySummary
+                  span | Entschädigung:
+                  span.sickDayPay
+              p Total Ferientage:
+                  span.ferientageSummary
+                  span | Entschädigung:
+                  span.holidayPay
+              p Total Urlaubstage:
+                  span.urlaubstageSummary
+                  span | Entschädigung:
+                  span.urlaubPay
+          #totalSummary
+              p#totalDayCompensation Total Entschädigung           :
+              p#totalFahrspesenCompensation Total Fahrspesen       :
+              p#totalShoeCompensation Total Entschädigung Schuhwerk:
+          #total
+              h3#totalPay Total zur Auszahlung:
+
+          button#sendButton.button Absenden
