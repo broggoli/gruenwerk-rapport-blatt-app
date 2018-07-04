@@ -1,14 +1,18 @@
-@import ../sass/colors.sass
+//utilities
+@import "../sass/colors.sass"
+@import "../sass/components/button.sass"
+@import "../sass/inputs.sass"
+//component styling
+@import "../sass/components/switch.sass"
 
 #rapportBlattPage
     max-width: 95vw
     margin-top: 1em
     margin-bottom: 1em
+    margin-left: auto
+    margin-right: auto
 
     #rapportBlatt
-        display: grid
-        grid-template-rows: 6em auto auto
-        grid-gap: 0.2em
 
         max-width: 100%
 
@@ -18,93 +22,80 @@
             background-color: $backgroundColor
             padding: 0.5em
         #rapportBlattHeader
-            padding: 1em
-            display: flex
-            flex-direction: row
-            justify-content: space-between
             align-content: center
 
             #rapportBlattInfo
+              display: flex
+              flex-direction: row
+              justify-content: space-between
+
+              #rapportBlattMonth
+                width: 8em
+
+              #unchangableInfo
+                  text-align: right
+
+
+        #table
+            padding: 0
+            .rapportBlattRow
                 display: flex
-                flex-direction: row
+                justify-content: flex-start
 
-                #unchangableInfo
-                    text-align: right
+                align-items: center
+                border-bottom: solid $black
+                flex-wrap: wrap
 
+                *
+                    margin: 2px 5px
 
-        #rapportBlattTable
-            #tableHeader
-                display: flex
-                flex-direction: row
-                border-bottom: solid black 2px
-                text-align: center
-
-                #dayTitle
-                    width: 5.5em
-                #dayTypeTitle
+                .dayName
+                    width: 1em
+                .date
+                    width: 3em
+                .dayTypeChooser
                     width: 7em
-                #arbeitsortTitle
-                    width: 8em
-                #spesenTitle
-                    width: 8em
+                    height: 2em
 
-            #table
-                padding: 0
-                .rapportBlattRow
+                .workDayInputs
+                  display: flex
+                  padding: 0
+                .spesenInputs
+                  display: flex
+                  align-items: center
+                  padding: 0
+                .fahrspesenDiv
                     display: flex
-                    flex-direction: row
-                    align-items: center
-                    border-bottom: solid $black
-                    flex-wrap: wrap
 
-                    .spesenInputs
-                        display: flex
-                        align-items: center
-                    .fahrspesenDiv
-                        display: flex
-                        padding: 0
-
-                    *
-                        margin: 0 5px
-
-                    .dayName
-                        width: 1em
-                    .date
-                        width: 3em
-                    .dayTypeChooser
-                        width: 7em
-                        height: 2em
-
-                    .notVisible
+                .uploadTicketProof
+                    .imagePreview
+                        height: 1.5em
+                        right: 0.5em
+                        transition: 200ms
+                    .image-icon-svg
+                        fill: #1ebce3
+                    .imagePreview:hover
+                        transform: scale(1.1)
+                    .ticketProof
                         display: none
-
-                    .uploadTicketProof
-                        .imagePreview
-                            height: 1.5em
-                            right: 0.5em
-                            transition: 200ms
-                        .image-icon-svg
-                            fill: #1ebce3
-                        .imagePreview:hover
-                            transform: scale(1.1)
-                        .ticketProof
-                            display: none
-                        .uploadIcon
-                            height: 1em
-                            position: relative
-                            top: 2px
-                            margin-right: 0.5em
-                        .ticketProofLabel
-                            background: $darkblue
-                            box-sizing: border-box
-                            padding: 0.3em 1em
-                            cursor: pointer
-                            transition: 200ms
-                        .ticketProofLabel:hover
-                            background: $darkblue
+                    .uploadIcon
+                        height: 1em
+                        position: relative
+                        top: 2px
+                        margin-right: 0.5em
+                    .ticketProofLabel
+                        background: $darkblue
+                        box-sizing: border-box
+                        padding: 0.3em 1em
+                        cursor: pointer
+                        transition: 200ms
+                    .ticketProofLabel:hover
+                        background: $darkblue
 
         #rapportBlattSummary
             #daySummary
-                display: grid
-                grid-template-columns: auto auto
-                grid-template-rows: auto auto auto
+                // display: grid
+                // grid-template-columns: auto auto
+                // grid-template-rows: auto auto auto
+        #sendButton
+          width: 100%

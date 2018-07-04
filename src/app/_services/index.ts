@@ -5,4 +5,5 @@ export * from './alert.service';
 export * from './auth.service';
 export * from './user.service';
 export * from './registry.service';
-//export * from './crypto.service';
+export * from './table.service';
+export * from './crypto.service';

@@ -18,7 +18,7 @@ export class LogoutComponent implements OnInit {
         localStorage.removeItem("userData")
           console.log(data.success)
       }else{
-        window("some problem!")
+        alert("some problem!")
       }
     })
   }

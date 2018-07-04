@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http'
+import { FormsModule } from "@angular/forms"
 
 import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
@@ -21,6 +22,7 @@ import { RegistryComponent } from './registry/registry.component';
   imports: [
     BrowserModule,
     HttpClientModule,
+    FormsModule,
     RouterModule.forRoot([
       {
           path: "",

@@ -2,24 +2,46 @@
 #rapportBlattPage
   #rapportBlatt
       #rapportBlattHeader
-          h3 Rapportblatt
           #rapportBlattInfo
               #DateInput
-                  label(for="rapportBlattMonth") Rapportblatt für:
-                  input(type="month" id="rapportBlattMonth" class="dateInput" name="Monat und Jahr")
+                  label(for="rapportBlattMonth") Monat: 
+                  input([(ngModel)]="monthString" type="month"  id="rapportBlattMonth" class="dateInput" name="Monat" )
               #unchangableInfo
                   p Heute:
-                      span#today
-                  p#ziviName
+                      span#today {{today}}
+                      br
+                      span#ziviName {{ziviName}}
 
+                  
+        #table(*ngFor="let row of rows")
+          .rapportBlattRow
+            .dayName {{row.dayName}}
+            .date {{row.date}}
+            select([(ngModel)]="row.dayType" class='dayTypeChooser' class='dayType')
+              option(value='Arbeitstag') Arbeitstag
+              option(value='Frei') Frei
+              option(value='Krank') Krank
+              option(value='Ferien') Ferien
+              option(value='Urlaub') Urlaub
+              
+            div.workDayInputs(*ngIf="row.dayType == 'Arbeitstag'")
+              input([(ngModel)]="row.workPlace" type='text' placeholder='Arbeitsort' name='Arbeitsort' class='textInput workPlace')
+            div.spesenInputs(*ngIf="row.dayType == 'Arbeitstag'")
+              label.switch
+                  span([ngClass]="{'checked':row.spesenChecked}" class="knob round checked" )
+                  input( [(ngModel)]="row.spesenChecked" type='checkbox' class='spesenCheckbox')
+            .spesenText(*ngIf="!row.spesenChecked && row.dayType == 'Arbeitstag'") Sind Fahrspesen angefallen?
 
-      #rapportBlattTable
-          #tableHeader
-              #dayTitle Datum
-              #dayTypeTitle Entschädigung
-              #arbeitsortTitle Arbeitsort
-              #spesenTitle Fahrspesen
-          #table
+            //div.fahrspesenDiv
+            div(*ngIf="row.spesenChecked")
+              input([(ngModel)]="row.route" type='text' placeholder='Strecke' name='Strecke' class='textInput route')
+            div(*ngIf="row.spesenChecked")
+              input([(ngModel)]="row.price" type='number' min='0.00' max='100.00' step='0.05' placeholder='Preis' name='Preis' class='textInput price')
+            .uploadTicketProof(*ngIf="row.spesenChecked")
+              label(class="ticketProofLabel" for="ticketProof") 
+                  img(src="../../assets/svg/upload.svg" class="uploadIcon")
+                  span Billet Belege hochladen
+                input([(ngModel)]="row.tickets" class="ticketProof" id="ticketProof" type="file" accept="image/*" capture="camera" multiple="true")
       #rapportBlattSummary
           #daySummary
               p Total Arbeitstage:
@@ -49,4 +71,4 @@
           #total
               h3#totalPay Total zur Auszahlung:
 
-          button#sendButton.button Absenden
+      button#sendButton.button((click)="send()") Absenden

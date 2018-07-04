@@ -33,7 +33,7 @@ export class RegistryComponent implements OnInit {
                 // TODO: Output Message
                 alert("Error: "+data.message);
               }
-          }
+          })
     }else {
       // TODO: Output Message
       console.log("Validation failed!");
