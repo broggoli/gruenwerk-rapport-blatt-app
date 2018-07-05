@@ -30,13 +30,14 @@
           <label class="switch"><span [ngClass]="{'checked':row.spesenChecked}" class="knob round checked"></span>
             <input [(ngModel)]="row.spesenChecked" type="checkbox" class="spesenCheckbox"/>
           </label>
+          <div *ngIf="!row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="spesenText">Sind Fahrspesen angefallen?</div>
         </div>
-        <div *ngIf="!row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="spesenText">Sind Fahrspesen angefallen?</div>
         <!--div.fahrspesenDiv-->
-        <div *ngIf="row.spesenChecked">
-          <input [(ngModel)]="row.route" type="text" placeholder="Strecke" name="Strecke" class="textInput route"/>
+        <div *ngIf="row.spesenChecked" class="route">
+          <input [(ngModel)]="row.route.start" type="text" placeholder="Abfahrtsort" name="Abfahrtsort" class="textInput routeInput"/><span>-</span>
+          <input [(ngModel)]="row.route.destination" type="text" placeholder="Ziel" name="destination" class="textInput routeInput"/>
         </div>
-        <div *ngIf="row.spesenChecked">
+        <div *ngIf="row.spesenChecked" style="margin:0; padding: 0;">
           <input [(ngModel)]="row.price" type="number" min="0.00" max="100.00" step="0.05" placeholder="Preis" name="Preis" class="textInput price"/>
         </div>
         <div *ngIf="row.spesenChecked" class="uploadTicketProof">

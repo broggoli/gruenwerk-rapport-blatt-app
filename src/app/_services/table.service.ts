@@ -40,7 +40,10 @@ export class TableService {
                       workPlace : "",
                       spesenChecked: false,
                       ticketProof: "",
-                      route : "",
+                      route : {
+                                start: "",
+                                destination: ""
+                              },
                       price : ""
                   }
       }

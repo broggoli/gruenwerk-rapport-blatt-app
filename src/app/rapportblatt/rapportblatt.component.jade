@@ -30,12 +30,14 @@
               label.switch
                   span([ngClass]="{'checked':row.spesenChecked}" class="knob round checked" )
                   input( [(ngModel)]="row.spesenChecked" type='checkbox' class='spesenCheckbox')
-            .spesenText(*ngIf="!row.spesenChecked && row.dayType == 'Arbeitstag'") Sind Fahrspesen angefallen?
+              .spesenText(*ngIf="!row.spesenChecked && row.dayType == 'Arbeitstag'") Sind Fahrspesen angefallen?
 
             //div.fahrspesenDiv
-            div(*ngIf="row.spesenChecked")
-              input([(ngModel)]="row.route" type='text' placeholder='Strecke' name='Strecke' class='textInput route')
-            div(*ngIf="row.spesenChecked")
+            div.route(*ngIf="row.spesenChecked")
+              input([(ngModel)]="row.route.start" type='text' placeholder='Abfahrtsort' name='Abfahrtsort' class='textInput routeInput') 
+              span -
+              input([(ngModel)]="row.route.destination" type='text' placeholder='Ziel' name='destination' class='textInput routeInput')
+            div(*ngIf="row.spesenChecked" style="margin:0; padding: 0;")
               input([(ngModel)]="row.price" type='number' min='0.00' max='100.00' step='0.05' placeholder='Preis' name='Preis' class='textInput price')
             .uploadTicketProof(*ngIf="row.spesenChecked")
               label(class="ticketProofLabel" for="ticketProof") 
