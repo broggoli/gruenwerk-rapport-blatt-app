@@ -30,7 +30,7 @@
               justify-content: space-between
 
               #rapportBlattMonth
-                width: 8em
+                width: 9em
 
               #unchangableInfo
                   text-align: right
@@ -101,9 +101,51 @@
                         background: $darkblue
 
         #rapportBlattSummary
-            #daySummary
-                // display: grid
-                // grid-template-columns: auto auto
-                // grid-template-rows: auto auto auto
+          .barchart
+            @media (min-width:550px)
+              display: grid
+              grid-template: auto auto / auto auto
+
+            .chart
+              grid-area: 1 / 1 / auto / span 3
+              display: flex
+              width: 100%
+              padding: 0
+
+
+            .krankTageC
+              background: #546D6A
+            .freiTageC
+              background: #319CAF
+            .ferienTageC
+              background: #81A4EF
+            .urlaubstageC
+              background: #F2E67B
+            .arbeitsTageC
+              background: #ED5E5E
+
+            .dayType
+              margin: 0
+              padding: 0
+              justify-content: center
+              color: $backgroundColor
+              text-align: center
+              transition: width 10000ms ease-in-out
+
+          .legende
+            align-self: center
+            display: grid
+            grid-template-columns: 7em 1em auto
+            grid-gap: 0.1em
+            .colorBlock
+              display: inline-block
+              width: 0.5em
+              height: 0.5em
+          #daySummary
+              // display: grid
+              // grid-template-columns: auto auto
+              // grid-template-rows: auto auto auto
         #sendButton
           width: 100%
+          @media (min-width:550px)
+            width: auto

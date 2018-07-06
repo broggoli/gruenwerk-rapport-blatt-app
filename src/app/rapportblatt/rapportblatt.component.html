@@ -12,8 +12,8 @@
         </div>
       </div>
     </div>
-    <div id="table" *ngFor="let row of rows">
-      <div class="rapportBlattRow">
+    <div id="table">
+      <div *ngFor="let row of rows" class="rapportBlattRow">
         <div class="dayName">{{row.dayName}}</div>
         <div class="date">{{row.date}}</div>
         <select [(ngModel)]="row.dayType" class="dayTypeChooser dayType">
@@ -47,20 +47,36 @@
       </div>
     </div>
     <div id="rapportBlattSummary">
-      <div id="daySummary">
-        <p>Total Arbeitstage:<span class="workDaySummary"></span><span>| Entschädigung:</span><span class="workDayPay"></span></p>
-        <p>Total Freitage:<span class="freeDaySummary"></span><span>| Entschädigung:</span><span class="freeDayPay"></span></p>
-        <p>Total Kranktage:<span class="sickDaySummary"></span><span>| Entschädigung:</span><span class="sickDayPay"></span></p>
-        <p>Total Ferientage:<span class="ferientageSummary"></span><span>| Entschädigung:</span><span class="holidayPay"></span></p>
-        <p>Total Urlaubstage:<span class="urlaubstageSummary"></span><span>| Entschädigung:</span><span class="urlaubPay"></span></p>
-      </div>
-      <div id="totalSummary">
-        <p id="totalDayCompensation">Total Entschädigung           :</p>
-        <p id="totalFahrspesenCompensation">Total Fahrspesen       :</p>
-        <p id="totalShoeCompensation">Total Entschädigung Schuhwerk:</p>
+      <h3>Zusammenfassung</h3>
+      <div id="dayChart" class="barchart">
+        <div class="chart">
+          <ng-container *ngFor="let dayType of daySummary(rows, true)">
+            <ng-container *ngIf="dayType[1] != '0'">
+              <div [ngStyle]="{width: getPercentage(dayType[1], this.rows.length)}" class="dayType">
+                <div class="{{dayType[0]}}C"><span>{{dayType[1]}}</span></div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+        <div class="legendeDiv">
+          <h4>Legende</h4>
+          <ng-container *ngFor="let dayType of daySummary(rows)">
+            <div class="legende">
+              <label>{{dayType[0]}}</label>
+              <label>: </label>
+              <div class="colorBlock {{dayType[0]}}C"></div>
+            </div>
+          </ng-container>
+        </div>
+        <div id="totalSummary">
+          <h4>Entschädigung</h4>
+          <p id="totalDayCompensation">Total Entschädigung           : {{ summary.total }}</p>
+          <p id="totalFahrspesenCompensation">Total Fahrspesen       : {{ summary.spesenPreis }}</p>
+          <p id="totalShoeCompensation">Total Entschädigung Schuhwerk: {{ summary.shoes }}</p>
+        </div>
       </div>
       <div id="total">
-        <h3 id="totalPay">Total zur Auszahlung:</h3>
+        <h3 id="totalPay">Total zur Auszahlung: {{ summary.shoes + summary.spesenPreis + summary.total}}</h3>
       </div>
     </div>
     <button id="sendButton" (click)="send()" class="button">Absenden</button>

@@ -13,8 +13,8 @@
                       span#ziviName {{ziviName}}
 
                   
-        #table(*ngFor="let row of rows")
-          .rapportBlattRow
+        #table
+          .rapportBlattRow(*ngFor="let row of rows")
             .dayName {{row.dayName}}
             .date {{row.date}}
             select([(ngModel)]="row.dayType" class='dayTypeChooser' class='dayType')
@@ -45,32 +45,30 @@
                   span Billet Belege hochladen
                 input([(ngModel)]="row.tickets" class="ticketProof" id="ticketProof" type="file" accept="image/*" capture="camera" multiple="true")
       #rapportBlattSummary
-          #daySummary
-              p Total Arbeitstage:
-                  span.workDaySummary
-                  span | Entschädigung:
-                  span.workDayPay
-              p Total Freitage:
-                  span.freeDaySummary
-                  span | Entschädigung:
-                  span.freeDayPay
-              p Total Kranktage:
-                  span.sickDaySummary
-                  span | Entschädigung:
-                  span.sickDayPay
-              p Total Ferientage:
-                  span.ferientageSummary
-                  span | Entschädigung:
-                  span.holidayPay
-              p Total Urlaubstage:
-                  span.urlaubstageSummary
-                  span | Entschädigung:
-                  span.urlaubPay
+        h3 Zusammenfassung
+        #dayChart.barchart
+          .chart
+            ng-container(*ngFor="let dayType of daySummary(rows, true)")
+              ng-container(*ngIf="dayType[1] != '0'")
+                .dayType([ngStyle]="{width: getPercentage(dayType[1], this.rows.length)}")
+                  div(class="{{dayType[0]}}C" )
+                    span {{dayType[1]}}
+                
+                    
+          .legendeDiv
+            h4 Legende
+            ng-container(*ngFor="let dayType of daySummary(rows)")
+              .legende
+                label {{dayType[0]}}
+                label : 
+                .colorBlock(class="{{dayType[0]}}C" )
+        
           #totalSummary
-              p#totalDayCompensation Total Entschädigung           :
-              p#totalFahrspesenCompensation Total Fahrspesen       :
-              p#totalShoeCompensation Total Entschädigung Schuhwerk:
-          #total
-              h3#totalPay Total zur Auszahlung:
+            h4 Entschädigung
+            p#totalDayCompensation Total Entschädigung           : {{ summary.total }}
+            p#totalFahrspesenCompensation Total Fahrspesen       : {{ summary.spesenPreis }}
+            p#totalShoeCompensation Total Entschädigung Schuhwerk: {{ summary.shoes }}
+        #total
+            h3#totalPay Total zur Auszahlung: {{ summary.shoes + summary.spesenPreis + summary.total}}
 
       button#sendButton.button((click)="send()") Absenden
