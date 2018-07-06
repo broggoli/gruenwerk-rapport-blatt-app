@@ -8,9 +8,9 @@
                   input([(ngModel)]="monthString" type="month"  id="rapportBlattMonth" class="dateInput" name="Monat" )
               #unchangableInfo
                   p Heute:
-                      span#today {{today}}
-                      br
-                      span#ziviName {{ziviName}}
+                      span#today  {{today}}
+                  p
+                      span#ziviName {{ziviData.name.prename}} {{ziviData.name.surname}}
 
                   
         #table
