@@ -13,16 +13,27 @@ export class RegistryComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit() {
-  }
+      this.formData = {
+              name : {
+                  prename: "",
+                  surname: ""
+              },
+              dates: {
+                  start : "",
+                  end : ""
+              },
+              email : "",
+              abo: ""
+          }
+        this.password = ""
+     }
 
   register(){
-    const data = this.getFormData()
 
-    if(this.validateRegister(data)){
-      const password = this.getRegisterPassword();
+    if(this.validateRegister(this.formData)){
       // TODO: validate password
 
-      this.registry.saveNewUser(data, password)
+      this.registry.saveNewUser(this.formData, this.password)
           .subscribe( data => {
               console.log(data);
               if(data.success === true){
@@ -39,28 +50,8 @@ export class RegistryComponent implements OnInit {
       console.log("Validation failed!");
     }
   }
-  getFormData() {
-        return {
-            ziviName : this.getRegisterUserName(),
-            dates: {
-                start : this.getSDate(),
-                end : this.getEDate()
-            },
-            email : this.getEmail(),
-            abo: this.getAbo()
-        }
-    }
-
     // TODO: Validtion of fields
     validateRegister(data){
         return true;
     }
-
-    //Functions for getting the values of the input Fields
-    getRegisterUserName() { return document.querySelector("#registerUserName").value };
-    getRegisterPassword() { return document.querySelector("#registerPassword").value };
-    getSDate() { return document.querySelector("#startDate").value };
-    getEDate(){ return document.querySelector("#endDate").value };
-    getEmail(){ return document.querySelector("#email").value };
-    getAbo(){ return document.querySelector("#abo").value };
 }

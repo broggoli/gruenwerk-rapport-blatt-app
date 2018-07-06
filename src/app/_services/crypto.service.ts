@@ -10,17 +10,18 @@ export class CryptoService {
 
   encryptForDB(data, password){
     return  {
-                ziviDataHeader: this.getZiviDataHeader(data["ziviName"], password),
+                ziviDataHeader: this.getZiviDataHeader(data.email, password),
                 encryptedZiviData: this.encryptData(data, password)
             }
     }
     //returns the name concatonated with the password as a sha256 hash
-    getZiviDataHeader(ziviName, password){
-                                return crypto.SHA256(ziviName + password)
+    getZiviDataHeader(email, password){
+                                return crypto.SHA256(email + password)
                                 .toString()}
 
     // Gets an encrypted String that is returned as a parsed Object
     decryptData(encryptedData, password){
+                                console.log(encryptedData, password)
                                 return crypto.AES.decrypt(encryptedData, password)
                                     .toString(crypto.enc.Utf8)};
 

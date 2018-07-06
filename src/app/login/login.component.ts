@@ -19,18 +19,23 @@ export class LoginComponent implements OnInit {
     }else{
       document.querySelector("#logOutButton").classList.add("loggedOut")
     }
+
+    this.formData = {
+        email: "",
+        password: ""
+    }
   }
 
   login(event){
     event.preventDefault()
     const target = event.target
-    const userName = this.getUserName()
-    const password = this.getPassword()
 
     /* Tryes to get the user's data from the backend */
-    this.Auth.getEncryptedData(userName, password).subscribe(data => {
+    this.Auth.getEncryptedData(this.formData.email, this.formData.password).subscribe(data => {
         if(data.success){
-            this.Auth.saveData(data.data, password)
+            this.Auth.saveData(data.data, this.formData.password)
+            console.log(data)
+            console.log(localStorage.getItem("ziviData"))
             document.querySelector("#logOutButton").classList.remove("loggedOut")
 
             //if the backend says everything is ok -> redirect to user's page
@@ -40,7 +45,4 @@ export class LoginComponent implements OnInit {
         }
     })
   }
-
-  getUserName() {return document.querySelector("#userName").value};
-  getPassword() {return document.querySelector("#password").value};
 }

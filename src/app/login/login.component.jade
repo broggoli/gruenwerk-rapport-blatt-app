@@ -4,13 +4,9 @@
   #loginForm
       h2#loginTitle Login
       #userNameinput
-          label(for="userName") Vor- und Nachname:
-          br
-          input(type="text" class="textInput" id="userName" name="Benutzername")
+          input([(ngModel)]="formData.email" type="text" placeholder="Email" class="textInput" id="userName" name="Benutzername")
       #passwordInput
-          label(for="password") Passwort:
-          br
-          input(type="password" class="textInput passwordInput" id="password" name="Passwort")
+          input([(ngModel)]="formData.password" type="password" placeholder="Passwort" class="textInput passwordInput" id="password" name="Passwort")
 
       p#errorOutput
 

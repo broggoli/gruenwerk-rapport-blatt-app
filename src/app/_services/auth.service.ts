@@ -20,6 +20,7 @@ export class AuthService {
 
   saveData(data: string, password: string){
       const decryptedData = this.crypto.decryptData(data, password)
+      console.log(decryptedData)
       this.userData = decryptedData
       localStorage.setItem("userData", decryptedData)
   }
