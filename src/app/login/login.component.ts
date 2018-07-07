@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
         if(data.success){
             this.Auth.saveData(data.data, this.formData.password)
             console.log(data)
-            console.log(localStorage.getItem("ziviData"))
+            //Display the logout bnutton
             document.querySelector("#logOutButton").classList.remove("loggedOut")
 
             //if the backend says everything is ok -> redirect to user's page

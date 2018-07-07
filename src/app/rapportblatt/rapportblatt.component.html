@@ -51,7 +51,7 @@
       <h3>Zusammenfassung</h3>
       <div id="dayChart" class="barchart">
         <div class="chart">
-          <ng-container *ngFor="let dayType of daySummary(rows, true)">
+          <ng-container *ngFor="let dayType of daySummary(true)">
             <ng-container *ngIf="dayType[1] != '0'">
               <div [ngStyle]="{width: getPercentage(dayType[1], this.rows.length)}" class="dayType">
                 <div class="{{dayType[0]}}C"><span>{{dayType[1]}}</span></div>
@@ -61,7 +61,7 @@
         </div>
         <div class="legendeDiv">
           <h4>Legende</h4>
-          <ng-container *ngFor="let dayType of daySummary(rows)">
+          <ng-container *ngFor="let dayType of daySummary()">
             <div class="legende">
               <label>{{dayType[0]}}</label>
               <label>: </label>
