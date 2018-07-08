@@ -48,7 +48,7 @@
         h3 Zusammenfassung
         #dayChart.barchart
           .chart
-            ng-container(*ngFor="let dayType of daySummary(rows, true)")
+            ng-container(*ngFor="let dayType of daySummary(true)")
               ng-container(*ngIf="dayType[1] != '0'")
                 .dayType([ngStyle]="{width: getPercentage(dayType[1], this.rows.length)}")
                   div(class="{{dayType[0]}}C" )
@@ -57,7 +57,7 @@
                     
           .legendeDiv
             h4 Legende
-            ng-container(*ngFor="let dayType of daySummary(rows)")
+            ng-container(*ngFor="let dayType of daySummary()")
               .legende
                 label {{dayType[0]}}
                 label : 

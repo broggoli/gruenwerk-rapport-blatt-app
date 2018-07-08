@@ -13,15 +13,13 @@ interface myData {
 })
 export class AuthService {
 
-  private userData = JSON.parse(localStorage.getItem("userData"))
-
   constructor(private crypto: CryptoService,
               private http : HttpClient) { }
 
   saveData(data: string, password: string){
       const decryptedData = this.crypto.decryptData(data, password)
       console.log(decryptedData)
-      this.userData = decryptedData
+      console.log(this.crypto.decryptData(data, password), data, password)
       localStorage.setItem("userData", decryptedData)
   }
   // get acts like a property name even thiugh it's a function
