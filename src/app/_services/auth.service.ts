@@ -18,8 +18,6 @@ export class AuthService {
 
   saveData(data: string, password: string){
       const decryptedData = this.crypto.decryptData(data, password)
-      console.log(decryptedData)
-      console.log(this.crypto.decryptData(data, password), data, password)
       localStorage.setItem("userData", decryptedData)
   }
   // get acts like a property name even thiugh it's a function
@@ -27,7 +25,7 @@ export class AuthService {
     return localStorage.getItem("userData") ? true : false
   }
 
-  getEncryptedData(userName, password) {
+  getEncryptedData(userName: string, password: string) {
     const dataHeader= JSON.stringify(
                       {
                         'ziviDataHeader': this.crypto.

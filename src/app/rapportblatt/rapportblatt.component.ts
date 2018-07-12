@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../_services'
-import { TableService } from '../_services'
-import { ExcelService } from '../_services'
+import { UserService,
+        TableService,
+        ExcelService,
+        ImageHandlerService } from '../_services'
+
 
 @Component({
   selector: 'app-rapportblatt',
@@ -12,7 +14,8 @@ export class RapportblattComponent implements OnInit {
 
   constructor(private user: UserService,
               private table: TableService,
-              private excel: ExcelService) { }
+              private excel: ExcelService,
+              private imageHandler: ImageHandlerService) { }
 
   ngOnInit() {
     // this.fillInDefaultData(ziviData, this.updateSummary.bind(this));
@@ -20,7 +23,6 @@ export class RapportblattComponent implements OnInit {
 
   }
   ziviData = this.user.getZiviData();
-  console.log(this.ziviData)
   todayDate = new Date()
   monthString = this.table.getMonthString(this.todayDate)
   today = this.table.getDateString(this.todayDate)
@@ -30,21 +32,45 @@ export class RapportblattComponent implements OnInit {
     const rapportblattData =  {
                                 ziviName: this.ziviName,
                                 table: this.rows,
-                                summary: this.getSummary(this.rows)
+                                summary: this.getSummary(this.rows),
+                                month: this.monthString
                               }
     console.log(rapportblattData)
-
-    if(this.validateRapportBlatt(rapportblattData) === true){
+    if(this.validateRapportblatt(rapportblattData) === true){
         const sheetTitle = "Rapportblatt_" +
                             rapportblattData.ziviName.replace(" ","_");
-        const excel = this.excel.getExcelFile(rapportblattData)
+        const excel = this.excel.excelForUpload(
+                        this.excel.getExcelFile(rapportblattData),
+                        rapportblattData.ziviName,
+                        rapportblattData.month)
 
-        this.sendRapportBlatt(excel,
-                    rapportBlattData["ziviName"],
-                    ziviData["abo"],
-                    rapportBlattData["month"]);
+        this.excel.sendRapportblatt({   excel:      excel,
+                                        excelName:  sheetTitle,
+                                        images:     this.imageHandler.getImages,
+                                        ziviName:   rapportblattData.ziviName,
+                                        abo:        this.ziviData.abo,
+                                        month:      rapportblattData.month})
+            .subscribe(data => {
+                console.log(JSON.stringify(data))
+            })
     }
   }
+
+  save(){
+    /** Saves the rows Object on the server **/
+    this.user.getSavedRapportblatt().subscribe( data => {
+      console.log(data)
+    })
+  }
+
+  onFileSelected(event, date) {
+      const target = event.target;
+      const filesOnTarget = target.files
+      for(const file of filesOnTarget){
+          this.imageHandler.addImage(file, date, target)
+      }
+  }
+
   daySummary(sort=false) {
     const dayTypes = this.getSummary(this.rows).dayTypes
     const dayTypesArray  = Object.keys(dayTypes)
@@ -54,6 +80,11 @@ export class RapportblattComponent implements OnInit {
     return sort ? dayTypesArray.sort((a, b) => a[1] < b[1]) :
                   dayTypesArray
   }
+
+  openSlideshow(){
+      console.log("openSlideshow!")
+  }
+
   getSummary(){
     // Normalentschädigung ist 25Fr./Tag
     const normalPay = 25;
@@ -102,7 +133,7 @@ export class RapportblattComponent implements OnInit {
     return this.summary
   }
 
-  validateRapportBlatt(rapportblatt) {
+  validateRapportblatt(rapportblatt) {
     return true // TODO: Validierung
   }
 

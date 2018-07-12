@@ -1,6 +1,6 @@
 <?php
-  $ziviDBPath = "../db/zivi_db.json";
-  $logDB = "../db/log_db.json";
+
+  require_once('db.php');
 
   $request_body = json_decode(file_get_contents('php://input'));
   session_start();
@@ -11,19 +11,15 @@
 
     $ziviDataHeader =  filter_var($request_body->ziviDataHeader, FILTER_SANITIZE_STRING);
 
-    $ziviDBStr = file_get_contents($ziviDBPath);
-    $ziviDBObject =  (object) json_decode($ziviDBStr, true);
+    $userData = getUserData($ziviDataHeader);
 
     //Check whether the data header exists
-    if(property_exists($ziviDBObject, $ziviDataHeader)){
-      $response->message = "Data header exists!";
-      //returning the encryptedZiviData
-      $response->data = $ziviDBObject->{$ziviDataHeader};
-      $response->success = true;
-      $_SESSION['user'] = $ziviDataHeader;
-    }else{
-      $response->message = "No users with this credentials found!";
+    if( $userData->success ){
+      $_SESSION['user'] = $userData->data;
+      $response = $userData;
     }
+
+    $response->message = $userData->message;
   } else {
     $response->message = "No Data recieved!";
   }

@@ -3,44 +3,57 @@ require_once('mail.php');
 start();
 
 function start(){
-
     $crDir = createDir("../uploads/");
-    if($crDir[0]){
-        if(prepareForUpload("excelFile", $crDir[1])){
-            if(prepareForUpload("ticketProofFiles", $crDir[1])){
+    $response = new stdClass();
+    $response->success = false;
+    if($crDir->success){
+        $prepareUploadExcel = prepareForUpload("excelFile", $crDir->path);
+        $prepareUploadTicketProof = prepareForUpload("ticketProofFiles", $crDir->path);
 
-                $reciever = json_decode($_POST["receiver"]);
-                $ziviName = filter_var($_POST["ziviName"], FILTER_SANITIZE_STRING);
-                $aboInfo = filter_var($_POST["aboInfo"], FILTER_SANITIZE_STRING);
-                $month = filter_var($_POST["month"], FILTER_SANITIZE_STRING);
+        if( $prepareUploadExcel->success || $prepareUploadTicketProof->success){
+            $reciever = json_decode($_POST["receiver"]);
+            $ziviName = filter_var($_POST["ziviName"], FILTER_SANITIZE_STRING);
+            $aboInfo = filter_var($_POST["aboInfo"], FILTER_SANITIZE_STRING);
+            $month = filter_var($_POST["month"], FILTER_SANITIZE_STRING);
 
-                $zipFileName = "RB_".str_replace(" ", "_",$ziviName)."_".$month;
+            $zipFileName = "RB_".str_replace(" ", "_",$ziviName)."_".$month;
 
-                //creating the path to the new zip file one folder up
-                $k = explode("/", $crDir[1]);
-                array_pop($k);
-                $pathToZip = join('/', $k)."/".$zipFileName;
+            //creating the path to the new zip file one folder up
+            $k = explode("/", $crDir->path);
+            array_pop($k);
+            $pathToZip = join('/', $k)."/".$zipFileName;
+            zipFile($crDir->path, $pathToZip);
 
-                zipFile($crDir[1], $pathToZip);
 
+            $mailInfo = array(  "receiver" => $reciever,
+                                "ziviName" => $ziviName,
+                                "attachmentFilePath" => $pathToZip.".zip",
+                                "aboInfo" => $aboInfo);
+            $sendMail = sendMail($mailInfo);
+            if($sendMail->success == true){
+                $response = $sendMail;
+                //delete zip file
+                //unlink($pathToZip.".zip");
+            }else{
 
-                $mailInfo = array(  "receiver" => $reciever,
-                                    "ziviName" => $ziviName,
-                                    "attachmentFilePath" => $pathToZip.".zip",
-                                    "aboInfo" => $aboInfo);
-
-                if(sendMail($mailInfo)){
-                    echo "Success!!";
-                    //delete zip file
-                    unlink($pathToZip.".zip");
-                }else{
-                    throw new RuntimeException('Unable to send mail.');
-                }
+                $exceptionString = 'Unable to send new.';
+                $response->message = $exceptionString;
+                throw new RuntimeException($exceptionString);
+            }
+        }else{
+            if(!$prepareUploadExcel->success){
+                $response = $prepareUploadExcel;
+            }else{
+                $response = $prepareUploadTicketProof;
             }
         }
+
     }else{
-        throw new RuntimeException('Unable to create a new folder.');
+        $exceptionString = 'Unable to create a new folder.';
+        $response->message = $exceptionString;
+        throw new RuntimeException($exceptionString);
     }
+    echo json_encode($response);
 }
 
 function zipFile($dirPath, $pathToZip) {
@@ -72,7 +85,6 @@ function zipFile($dirPath, $pathToZip) {
 
             // Add current file to archive
             $zip->addFile($filePath, $relativePath);
-
             // Add current file to "delete list"
             // delete it later cause ZipArchive create archive only after calling close function and ZipArchive lock files until archive created)
             $filesToDelete[] = $filePath;
@@ -93,47 +105,95 @@ function zipFile($dirPath, $pathToZip) {
 
 function createDir($uploadsFilePath) {
     $uploaDirPath = $uploadsFilePath.uniqid();
+    $response = new stdClass();
     if(mkdir($uploaDirPath)){
-        return [true, $uploaDirPath];
+        $response->success = true;
+        $response->path = $uploaDirPath;
     }else{
-        return [false];
+        $response->success = false;
     }
+    return $response;
 }
 function prepareForUpload($submitName, $uploaDirPath){
+    $response = new stdClass();
+    // Ugly hack.. but works
     if(array_key_exists($submitName, $_FILES)){
 
-        $files = $_FILES[$submitName];
+        if($submitName == "excelFile"){
 
-        if(!empty( $files["name"][0])){
+            $files = $_FILES[$submitName];
+            if( !empty( $files ) ){
 
-            foreach ($files["name"] as $position => $file_name) {
-                $file_tmp = $files["tmp_name"][$position];
-                $file_size = $files["size"][$position];
-                $file_error = $files["error"][$position];
-                $unparsedSaveFileName = $files["name"][$position];
+                foreach ($files["name"] as $position => $file_name) {
+                    $file_tmp = $files["tmp_name"][$position];
+                    $file_size = $files["size"][$position];
+                    $file_error = $files["error"][$position];
+                    $unparsedSaveFileName = $files["name"][$position];
 
-                //parse the file name
-                if (preg_match('/[A-Za-z0-9_-]/', $unparsedSaveFileName)) {
-                    $saveFileName = $unparsedSaveFileName;
-                }else{
-                    throw new RuntimeException('File name not valid.');
+                    //parse the file name
+                    if (preg_match('/[A-Za-z0-9_-]/', $unparsedSaveFileName)) {
+                        $saveFileName = $unparsedSaveFileName;
+                    }else{
+                        throw new RuntimeException('File name not valid.');
+                    }
+
+                    //upload the file to the server
+                    $uploadFile = uploadFile($file_tmp, $file_size, $file_error, $saveFileName, $uploaDirPath);
+                    if( $uploadFile == true){
+                        $response->success = true;
+                    }else{
+                        $response->message = "Failed to upload the files!";
+                        $response->success = false;
+                    }
                 }
 
-                //upload the file to the server
-                if(!uploadFile($file_tmp, $file_size, $file_error, $saveFileName, $uploaDirPath)){
-                    return false;
-                }
+            }else{
+                $response->message = "No ".$submitName." submitted!";
+                $response->success = false;
             }
-            return true;
         }else{
-            echo "No ".$submitName." proofs uploaded!";
+            $files = $_FILES[$submitName];
+
+            if(!empty( $files["name"][0]) ){
+
+                foreach ($files["name"] as $position => $file_name) {
+                    $file_tmp = $files["tmp_name"][$position];
+                    $file_size = $files["size"][$position];
+                    $file_error = $files["error"][$position];
+                    $unparsedSaveFileName = $files["name"][$position];
+
+                    //parse the file name
+                    if (preg_match('/[A-Za-z0-9_-]/', $unparsedSaveFileName)) {
+                        $saveFileName = $unparsedSaveFileName;
+                    }else{
+                        throw new RuntimeException('File name not valid.');
+                    }
+
+                    //upload the file to the server
+                    $uploadFileSuccess = uploadFile($file_tmp, $file_size, $file_error, $saveFileName, $uploaDirPath);
+                    if( !$uploadFileSuccess ){
+                        $response->success = true;
+                    }else{
+                        $response->message = "Upload of images failed!";
+                        $response->success = false;
+                    }
+                }
+            }else{
+                $response->message = "No ".$submitName." proofs uploaded!";
+                $response->success = false;
+            }
         }
     }else{
-        echo "No ".$submitName." submitted!";
-        return true;
+        $response->message = "No files uploaded!";
+        $response->success = false;
     }
+    return $response;
 }
-function uploadFile($file_tmp, $file_size, $file_error, $saveFileName, $uploaDirPath) {
+function uploadFile($file_tmp,
+                    $file_size,
+                    $file_error,
+                    $saveFileName,
+                    $uploaDirPath) {
     //Undefined | Multiple Files | $_FILES Corruption Attack
     // If this request falls under any of them, treat it invalid.
     if (
@@ -141,7 +201,7 @@ function uploadFile($file_tmp, $file_size, $file_error, $saveFileName, $uploaDir
         is_array($file_error)
     ) {
         throw new RuntimeException('Invalid parameters.');
-        return false;
+
     }
     switch ($file_error) {
             case UPLOAD_ERR_OK:
@@ -189,7 +249,6 @@ function uploadFile($file_tmp, $file_size, $file_error, $saveFileName, $uploaDir
         throw new RuntimeException('Failed to move uploaded file. -> '.$saveFileName);
         return false;
     }
-
     return true;
 }
  ?>

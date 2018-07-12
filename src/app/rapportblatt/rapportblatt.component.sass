@@ -77,15 +77,17 @@
                   flex-wrap: wrap
                   align-items: center
 
+                .imagePreview
+                    height: 1.5em
+                    right: 0.5em
+                    transition: 200ms
+                .imagePreview:hover
+                    transform: scale(1.1)
+
                 .uploadTicketProof
-                    .imagePreview
-                        height: 1.5em
-                        right: 0.5em
-                        transition: 200ms
+
                     .image-icon-svg
                         fill: #1ebce3
-                    .imagePreview:hover
-                        transform: scale(1.1)
                     .ticketProof
                         display: none
                     .uploadIcon
@@ -118,15 +120,15 @@
 
 
             .krankTageC
-              background: #546D6A
+              background: #D29ED8
             .freiTageC
-              background: #81A4EF
+              background: #77C8FF
             .ferienTageC
-              background: #319CAF
+              background: #3EC193
             .urlaubstageC
-              background: #F2E67B
+              background: #FFE882
             .arbeitsTageC
-              background: #ED5E5E
+              background: #F97116
 
             .dayType
               margin: 0
@@ -150,7 +152,19 @@
               // display: grid
               // grid-template-columns: auto auto
               // grid-template-rows: auto auto auto
-        #sendButton
+        .rb-button
           width: 100%
+          display: block
+          margin: 0.5em auto
           @media (min-width:550px)
+            margin: auto 0.5em
             width: auto
+            display: inline-block
+          .icon
+            height: 1.4em
+            position: relative
+            top: 4px
+            margin-right: 0.5em
+            transition: 200ms
+        .rb-button:hover .icon
+          transform: scale(1.1)

@@ -43,7 +43,7 @@
         </div>
         <div *ngIf="row.spesenChecked" class="uploadTicketProof">
           <label for="ticketProof" class="ticketProofLabel"> <img src="../../assets/svg/upload.svg" class="uploadIcon"/><span>Billet Belege hochladen</span></label>
-          <input [(ngModel)]="row.tickets" id="ticketProof" type="file" accept="image/*" capture="camera" multiple="true" class="ticketProof"/>
+          <input (change)="onFileSelected($event, row.date)" id="ticketProof" type="file" accept="image/*" capture="camera" multiple="true" class="ticketProof"/>
         </div>
       </div>
     </div>
@@ -80,6 +80,7 @@
         <h3 id="totalPay">Total zur Auszahlung: {{ summary.shoes + summary.spesenPreis + summary.total}}</h3>
       </div>
     </div>
-    <button id="sendButton" (click)="send()" class="button">Absenden</button>
+    <button id="saveutton" (click)="save()" class="button rb-button"><img src="../../assets/svg/save.svg" class="icon"/><span>Speichern</span></button>
+    <button id="sendButton" (click)="send()" class="button rb-button"> <img src="../../assets/svg/send.svg" class="icon"/><span>Absenden</span></button>
   </div>
 </div>

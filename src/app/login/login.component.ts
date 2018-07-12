@@ -33,7 +33,8 @@ export class LoginComponent implements OnInit {
     /* Tryes to get the user's data from the backend */
     this.Auth.getEncryptedData(this.formData.email, this.formData.password).subscribe(data => {
         if(data.success){
-            this.Auth.saveData(data.data, this.formData.password)
+            const userData = data.data.encryptedZiviData
+            this.Auth.saveData(userData, this.formData.password)
             console.log(data)
             //Display the logout bnutton
             document.querySelector("#logOutButton").classList.remove("loggedOut")

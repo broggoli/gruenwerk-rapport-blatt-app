@@ -8,4 +8,4 @@ export * from './registry.service';
 export * from './table.service';
 export * from './crypto.service';
 export * from './excel.service';
-export * from './send-data.service';
+export * from './image-handler.service';

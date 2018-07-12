@@ -2,9 +2,9 @@
     use PHPMailer\PHPMailer\PHPMailer;
     use PHPMailer\PHPMailer\Exception;
 
-    require 'lib/phpmailer/src/Exception.php';
-    require 'lib/phpmailer/src/PHPMailer.php';
-    require 'lib/phpmailer/src/SMTP.php';
+    require 'PHPMailer-6.0.5/src/Exception.php';
+    require 'PHPMailer-6.0.5/src/PHPMailer.php';
+    require 'PHPMailer-6.0.5/src/SMTP.php';
 
     function generateMailText($ziviName, $aboInfo){
         $mailText = "<p style='font-size:1.5em'>Dies ist eine automatisch generierte E-Mail.</p><br/>
@@ -18,6 +18,7 @@
     }
 
     function sendMail($mailInfo) {
+        $response = new stdClass();
         try {
             $ziviName = $mailInfo["ziviName"];
             $aboInfo = $mailInfo["aboInfo"];
@@ -35,12 +36,14 @@
             $mail->IsHTML(true);
 
             $mail->send(true);
-            echo 'Message has been sent';
-            return true;
+            $response->message = 'Message has been sent';
+            $response->success = true;
         } catch (Exception $e) {
-            echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
-            return false;
+            $response->message = 'Message could not be sent. Mailer Error: '.$mail->ErrorInfo;;
+            $response->success = false;
         }
+
+        return $response;
     }
 
 

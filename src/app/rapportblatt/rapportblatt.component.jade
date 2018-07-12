@@ -43,7 +43,7 @@
               label(class="ticketProofLabel" for="ticketProof") 
                   img(src="../../assets/svg/upload.svg" class="uploadIcon")
                   span Billet Belege hochladen
-                input([(ngModel)]="row.tickets" class="ticketProof" id="ticketProof" type="file" accept="image/*" capture="camera" multiple="true")
+                input((change)="onFileSelected($event, row.date)" class="ticketProof" id="ticketProof" type="file" accept="image/*" capture="camera" multiple="true")
       #rapportBlattSummary
         h3 Zusammenfassung
         #dayChart.barchart
@@ -70,5 +70,10 @@
             p#totalShoeCompensation Total Entschädigung Schuhwerk: {{ summary.shoes }}
         #total
             h3#totalPay Total zur Auszahlung: {{ summary.shoes + summary.spesenPreis + summary.total}}
-
-      button#sendButton.button((click)="send()") Absenden
+            
+      button#saveutton.button.rb-button((click)="save()")
+            img(src="../../assets/svg/save.svg" class="icon")
+            span Speichern
+      button#sendButton.button.rb-button((click)="send()") 
+            img(src="../../assets/svg/send.svg" class="icon")
+            span Absenden

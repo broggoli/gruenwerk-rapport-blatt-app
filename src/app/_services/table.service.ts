@@ -46,8 +46,8 @@ export class TableService {
                               },
                       price : ""
                   }
+        tableData.push(row)
       }
-      tableData.push(row)
     }
     return tableData
   }

@@ -21,7 +21,6 @@ export class CryptoService {
 
     // Gets an encrypted String that is returned as a parsed Object
     decryptData(encryptedData, password){
-                                console.log(encryptedData, password)
                                 return crypto.AES.decrypt(encryptedData, password)
                                     .toString(crypto.enc.Utf8)};
 
