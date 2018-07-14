@@ -2,25 +2,26 @@
 #registerPage
   #registerForm
       h2#registerTitle Registrierung
-      #userNameinput
-          input([(ngModel)]="formData.name.prename" type="text" placeholder="Vorname" class="textInput" id="registerPrename" name="prename")
-          br
-          input([(ngModel)]="formData.name.surname" type="text" placeholder="Nachname" class="textInput" id="registerSurname" name="surname")
-      #emailInput
-          input([(ngModel)]="formData.email" type="email" placeholder="Mail" class="textInput" id="email" name="Email")
-      #aboInput
-          input([(ngModel)]="formData.abo" type="text" placeholder="ÖV-Abonement" class="textInput" id="abo" name="Abo")
-      #passwordInput
-          input([(ngModel)]="password" type="password" placeholder="Passwort" class="textInput passwordInput" id="registerPassword1" name="Passwort")
-          input(type="password" placeholder="Passwort wiederholen" class="textInput passwordInput" id="registerPassword2" name="Passwort")
-      #startEndDateInput
-          label(for="startDate") Im Grünwerk von:
-          input([(ngModel)]="formData.dates.start" type="date" class="dateInput" id="startDate" name="Anfangsdatum")
-          label(for="endDate") Im Grünwerk bis:
-          input([(ngModel)]="formData.dates.end" type="date" class="dateInput" id="endDate" name="Enddatum")
+      form
+        #userNameinput
+            input([(ngModel)]="formData.name.prename" type="text" placeholder="Vorname" class="textInput" id="registerPrename" name="prename")
+            br
+            input([(ngModel)]="formData.name.surname" type="text" placeholder="Nachname" class="textInput" id="registerSurname" name="surname")
+        #emailInput
+            input([(ngModel)]="formData.email" type="email" placeholder="Mail" class="textInput" id="email" name="Email")
+        #aboInput
+            input([(ngModel)]="formData.abo" type="text" placeholder="ÖV-Abonement" class="textInput" id="abo" name="Abo")
+        #passwordInput
+            input([(ngModel)]="password" type="password" placeholder="Passwort" class="textInput passwordInput" id="registerPassword1" name="Passwort")
+            input(type="password" placeholder="Passwort wiederholen" class="textInput passwordInput" id="registerPassword2" name="Passwort")
+        #startEndDateInput
+            label(for="startDate") Im Grünwerk von:
+            input([(ngModel)]="formData.dates.start" type="date" class="dateInput" id="startDate" name="Anfangsdatum")
+            label(for="endDate") Im Grünwerk bis:
+            input([(ngModel)]="formData.dates.end" type="date" class="dateInput" id="endDate" name="Enddatum")
           
-      p#errorOutput
-      button#register.button((click)="register()") Registrieren
+        p#errorOutput
+        button#register.button((click)="register()") Registrieren
       
       #backButton
           a(id='registerBackButton', routerLink="") Zurück zum Login

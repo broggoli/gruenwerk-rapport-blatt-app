@@ -15,6 +15,7 @@
 
     //Check whether the data header exists
     if( $userData->success ){
+      $userData->data["ziviDataHeader"] = $ziviDataHeader;
       $_SESSION['user'] = $userData->data;
       $response = $userData;
     }

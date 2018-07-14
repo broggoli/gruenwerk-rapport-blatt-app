@@ -18,9 +18,7 @@ export class RapportblattComponent implements OnInit {
               private imageHandler: ImageHandlerService) { }
 
   ngOnInit() {
-    // this.fillInDefaultData(ziviData, this.updateSummary.bind(this));
-    this.rows = this.table.getTableData(this.ziviData, this.monthString)
-
+    this.getTable()
   }
   ziviData = this.user.getZiviData();
   todayDate = new Date()
@@ -28,12 +26,43 @@ export class RapportblattComponent implements OnInit {
   today = this.table.getDateString(this.todayDate)
   ziviName = this.ziviData.name.prename+" "+this.ziviData.name.surname
 
+  monthChanged(event) {
+    const target = event.target
+    this.monthString = target.value
+    this.getTable()
+  }
+  getTable(){
+    const locallyStoredRB = localStorage.getItem("savedRapportblatt")
+    console.log(JSON.parse(locallyStoredRB))
+
+    //default rows config
+    this.rows = this.table.getTableData(this.ziviData, this.monthString)
+    //If there is no RB saved Locally
+    if( locallyStoredRB === null ) {
+      this.user.getSavedRapportblatt().subscribe( savedRapportblatt => {
+        if( savedRapportblatt.success ){
+          localStorage.setItem("savedRapportblatt", JSON.stringify(savedRapportblatt.data))
+          if( savedRapportblatt.data.month  === this.monthString ){
+            this.rows = savedRapportblatt.data.rapportblatt
+          }
+        }
+      })
+    }else{
+      const savedRB = JSON.parse(locallyStoredRB)
+      if( savedRB.month  === this.monthString ){
+        this.rows = savedRB.rapportblatt
+      }
+      console.log("RB loaded locally!")
+    }
+
+  }
   send(){
     const rapportblattData =  {
                                 ziviName: this.ziviName,
                                 table: this.rows,
                                 summary: this.getSummary(this.rows),
-                                month: this.monthString
+                                month: this.monthString,
+                                shoeMoney: 0 // TODO: Clculate shoemoney
                               }
     console.log(rapportblattData)
     if(this.validateRapportblatt(rapportblattData) === true){
@@ -57,8 +86,8 @@ export class RapportblattComponent implements OnInit {
   }
 
   save(){
-    /** Saves the rows Object on the server **/
-    this.user.getSavedRapportblatt().subscribe( data => {
+    /** Saves the rows Object on the server and in localStorage**/
+    this.user.saveRapportblatt(this.rows, this.monthString).subscribe( data => {
       console.log(data)
     })
   }
@@ -123,6 +152,9 @@ export class RapportblattComponent implements OnInit {
                                                           ? previous+1
                                                           : previous, 0)
       },
+
+      //total daily compensation
+      compensation: pay,
       //Add all the 'Fahrspesen' up
       spesenPreis: spesenPreis,
 

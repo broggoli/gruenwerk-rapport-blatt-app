@@ -8,7 +8,7 @@ export class CryptoService {
 
   constructor() { }
 
-  encryptForDB(data, password){
+  encryptForDB(data: {}, password: string){
     return  {
                 ziviDataHeader: this.getZiviDataHeader(data.email, password),
                 encryptedZiviData: this.encryptData(data, password)

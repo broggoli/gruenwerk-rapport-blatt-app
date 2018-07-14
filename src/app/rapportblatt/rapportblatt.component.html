@@ -3,9 +3,9 @@
   <div id="rapportBlatt">
     <div id="rapportBlattHeader">
       <div id="rapportBlattInfo">
-        <div id="DateInput">
+        <div id="dateInput">
           <label for="rapportBlattMonth">Monat: </label>
-          <input [(ngModel)]="monthString" type="month" id="rapportBlattMonth" name="Monat" class="dateInput"/>
+          <input (change)="monthChanged($event)" value="{{monthString}}" type="month" id="rapportBlattMonth" name="Monat" class="dateInput"/>
         </div>
         <div id="unchangableInfo">
           <p>Heute:<span id="today"> {{today}}</span></p>
@@ -34,20 +34,23 @@
           <div *ngIf="!row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="spesenText">Sind Fahrspesen angefallen?</div>
         </div>
         <!--div.fahrspesenDiv-->
-        <div *ngIf="row.spesenChecked" class="route">
+        <div *ngIf="row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="route">
           <input [(ngModel)]="row.route.start" type="text" placeholder="Abfahrtsort" name="Abfahrtsort" class="textInput routeInput"/><span>-</span>
           <input [(ngModel)]="row.route.destination" type="text" placeholder="Ziel" name="destination" class="textInput routeInput"/>
         </div>
-        <div *ngIf="row.spesenChecked" style="margin:0; padding: 0;">
+        <div *ngIf="row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" style="margin:0; padding: 0;">
           <input [(ngModel)]="row.price" type="number" min="0.00" max="100.00" step="0.05" placeholder="Preis" name="Preis" class="textInput price"/>
         </div>
-        <div *ngIf="row.spesenChecked" class="uploadTicketProof">
+        <div *ngIf="row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="uploadTicketProof">
           <label for="ticketProof" class="ticketProofLabel"> <img src="../../assets/svg/upload.svg" class="uploadIcon"/><span>Billet Belege hochladen</span></label>
           <input (change)="onFileSelected($event, row.date)" id="ticketProof" type="file" accept="image/*" capture="camera" multiple="true" class="ticketProof"/>
         </div>
       </div>
     </div>
-    <div id="rapportBlattSummary">
+    <div id="NoDays" *ngIf="rows.length == 0">
+      <p>Du hast in diesem Monat nicht gearbeitet</p>
+    </div>
+    <div id="rapportBlattSummary" *ngIf="rows.length &gt; 0">
       <h3>Zusammenfassung</h3>
       <div id="dayChart" class="barchart">
         <div class="chart">
@@ -71,16 +74,18 @@
         </div>
         <div id="totalSummary">
           <h4>Entschädigung</h4>
-          <p id="totalDayCompensation">Total Entschädigung           : {{ summary.total }}</p>
+          <p id="totalDayCompensation">Total Entschädigung           : {{ summary.compensation }}</p>
           <p id="totalFahrspesenCompensation">Total Fahrspesen       : {{ summary.spesenPreis }}</p>
           <p id="totalShoeCompensation">Total Entschädigung Schuhwerk: {{ summary.shoes }}</p>
         </div>
       </div>
       <div id="total">
-        <h3 id="totalPay">Total zur Auszahlung: {{ summary.shoes + summary.spesenPreis + summary.total}}</h3>
+        <h3 id="totalPay">Total zur Auszahlung: {{ summary.total}}</h3>
       </div>
     </div>
-    <button id="saveutton" (click)="save()" class="button rb-button"><img src="../../assets/svg/save.svg" class="icon"/><span>Speichern</span></button>
-    <button id="sendButton" (click)="send()" class="button rb-button"> <img src="../../assets/svg/send.svg" class="icon"/><span>Absenden</span></button>
+    <div id="actionButtons" *ngIf="rows.length &gt; 0">    
+      <button id="saveutton" (click)="save()" class="button rb-button"><img src="../../assets/svg/save.svg" class="icon"/><span>Speichern</span></button>
+      <button id="sendButton" (click)="send()" class="button rb-button"> <img src="../../assets/svg/send.svg" class="icon"/><span>Absenden</span></button>
+    </div>
   </div>
 </div>

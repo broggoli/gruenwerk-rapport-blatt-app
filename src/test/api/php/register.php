@@ -7,7 +7,7 @@
   if(isset($request_body) && !empty($request_body)) {
     $registerData = (object) $request_body->dbData;
 
-    $saveNewUser = saveNewUser($registerData);
-    echo json_encode($saveNewUser);
+    $saveUser = saveUser($registerData);
+    echo json_encode($saveUser);
   }
 ?>

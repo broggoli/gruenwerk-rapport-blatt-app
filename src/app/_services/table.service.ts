@@ -95,7 +95,7 @@ export class TableService {
               n = n + '';
               return n.length >= width ? n : new Array(width - n.length + 1).join("0") + n;
           }
-    const month = date.getMonth()
+    const month = date.getMonth()+1
     const year = date.getFullYear()
     //get the last moth as a string to input into the month chooser
     const dateInputValue = [year, padZeros(month, 2)].join("-")

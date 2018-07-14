@@ -3,9 +3,9 @@
   #rapportBlatt
       #rapportBlattHeader
           #rapportBlattInfo
-              #DateInput
+              #dateInput
                   label(for="rapportBlattMonth") Monat: 
-                  input([(ngModel)]="monthString" type="month"  id="rapportBlattMonth" class="dateInput" name="Monat" )
+                  input((change)="monthChanged($event)" value="{{monthString}}" type="month"  id="rapportBlattMonth" class="dateInput" name="Monat" )
               #unchangableInfo
                   p Heute:
                       span#today  {{today}}
@@ -33,18 +33,20 @@
               .spesenText(*ngIf="!row.spesenChecked && row.dayType == 'Arbeitstag'") Sind Fahrspesen angefallen?
 
             //div.fahrspesenDiv
-            div.route(*ngIf="row.spesenChecked")
+            div.route(*ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'")
               input([(ngModel)]="row.route.start" type='text' placeholder='Abfahrtsort' name='Abfahrtsort' class='textInput routeInput') 
               span -
               input([(ngModel)]="row.route.destination" type='text' placeholder='Ziel' name='destination' class='textInput routeInput')
-            div(*ngIf="row.spesenChecked" style="margin:0; padding: 0;")
+            div(*ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'" style="margin:0; padding: 0;")
               input([(ngModel)]="row.price" type='number' min='0.00' max='100.00' step='0.05' placeholder='Preis' name='Preis' class='textInput price')
-            .uploadTicketProof(*ngIf="row.spesenChecked")
+            .uploadTicketProof(*ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'")
               label(class="ticketProofLabel" for="ticketProof") 
                   img(src="../../assets/svg/upload.svg" class="uploadIcon")
                   span Billet Belege hochladen
                 input((change)="onFileSelected($event, row.date)" class="ticketProof" id="ticketProof" type="file" accept="image/*" capture="camera" multiple="true")
-      #rapportBlattSummary
+      #NoDays(*ngIf="rows.length == 0")
+        p Du hast in diesem Monat nicht gearbeitet
+      #rapportBlattSummary(*ngIf="rows.length > 0")
         h3 Zusammenfassung
         #dayChart.barchart
           .chart
@@ -65,15 +67,16 @@
         
           #totalSummary
             h4 Entschädigung
-            p#totalDayCompensation Total Entschädigung           : {{ summary.total }}
+            p#totalDayCompensation Total Entschädigung           : {{ summary.compensation }}
             p#totalFahrspesenCompensation Total Fahrspesen       : {{ summary.spesenPreis }}
             p#totalShoeCompensation Total Entschädigung Schuhwerk: {{ summary.shoes }}
         #total
-            h3#totalPay Total zur Auszahlung: {{ summary.shoes + summary.spesenPreis + summary.total}}
-            
-      button#saveutton.button.rb-button((click)="save()")
+            h3#totalPay Total zur Auszahlung: {{ summary.total}}
+      
+      #actionButtons(*ngIf="rows.length > 0")     
+        button#saveutton.button.rb-button((click)="save()")
             img(src="../../assets/svg/save.svg" class="icon")
             span Speichern
-      button#sendButton.button.rb-button((click)="send()") 
+        button#sendButton.button.rb-button((click)="send()") 
             img(src="../../assets/svg/send.svg" class="icon")
             span Absenden

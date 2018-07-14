@@ -3,14 +3,15 @@
 #loginPage
   #loginForm
       h2#loginTitle Login
-      #userNameinput
-          input([(ngModel)]="formData.email" type="text" placeholder="Email" class="textInput" id="userName" name="Benutzername")
-      #passwordInput
-          input([(ngModel)]="formData.password" type="password" placeholder="Passwort" class="textInput passwordInput" id="password" name="Passwort")
+      form
+        #userNameinput
+            input([(ngModel)]="formData.email" type="text" placeholder="Email" class="textInput" id="userName" name="Benutzername")
+        #passwordInput
+            input([(ngModel)]="formData.password" type="password" placeholder="Passwort" class="textInput passwordInput" id="password" name="Passwort")
 
-      p#errorOutput
+        p#errorOutput
 
-      button#login.button((click)="login($event)") Login
+        button#login.button((click)="login($event)") Login
 
       #registrieren
           a(id='toRegisterButton', routerLink="registrierung") Registrieren

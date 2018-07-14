@@ -6,7 +6,9 @@
 @import "../sass/components/switch.sass"
 
 #rapportBlattPage
-    max-width: 95vw
+
+    @media (min-width:400px)
+      max-width: 95vw
     margin-top: 1em
     margin-bottom: 1em
     margin-left: auto
@@ -15,7 +17,6 @@
     #rapportBlatt
 
         max-width: 100%
-
         white-space: nowrap
 
         div
@@ -25,15 +26,27 @@
             align-content: center
 
             #rapportBlattInfo
+              background: inherit
               display: flex
-              flex-direction: row
-              justify-content: space-between
+              flex-direction: column-reverse
+              justify-content: center
+              @media (min-width:400px)
+                flex-direction: row
+                justify-content: space-between
 
               #rapportBlattMonth
-                width: 9em
+                background: inherit
+                width: 12em
 
               #unchangableInfo
+                background: inherit
+                text-align: center
+                @media (min-width:400px)
                   text-align: right
+
+              #dateInput
+                background: inherit
+                align-self: center
 
 
         #table
@@ -152,19 +165,21 @@
               // display: grid
               // grid-template-columns: auto auto
               // grid-template-rows: auto auto auto
-        .rb-button
-          width: 100%
-          display: block
-          margin: 0.5em auto
-          @media (min-width:550px)
-            margin: auto 0.5em
-            width: auto
-            display: inline-block
-          .icon
-            height: 1.4em
-            position: relative
-            top: 4px
-            margin-right: 0.5em
-            transition: 200ms
-        .rb-button:hover .icon
-          transform: scale(1.1)
+        #actionButtons
+          padding: 0.6em
+          .rb-button
+            width: 100%
+            display: block
+            margin: 0.5em auto
+            @media (min-width:550px)
+              margin: auto 0.5em
+              width: auto
+              display: inline-block
+            .icon
+              height: 1.4em
+              position: relative
+              top: 4px
+              margin-right: 0.5em
+              transition: 200ms
+          .rb-button:hover .icon
+            transform: scale(1.1)
