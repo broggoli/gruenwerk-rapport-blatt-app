@@ -21,8 +21,9 @@ export class AuthService {
       localStorage.setItem("userData", decryptedData)
   }
   // get acts like a property name even thiugh it's a function
-  get isLoggedIn(){
-    return localStorage.getItem("userData") ? true : false
+  get isLoggedIn(): boolean{
+    console.log(localStorage.getItem("userData"))
+    return localStorage.getItem("userData") === null ? false : true
   }
 
   getEncryptedData(userName: string, password: string) {

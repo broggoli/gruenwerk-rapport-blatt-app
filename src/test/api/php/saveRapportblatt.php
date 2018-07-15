@@ -7,6 +7,7 @@
   $response->success = false;
   $request_body = json_decode(file_get_contents('php://input'));
   if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    echo json_encode($_SESSION);
     $savedRapportblatt = getSavedRapportblatt($_SESSION["user"]["ziviDataHeader"]);
     $response = $savedRapportblatt;
     $response->message = "Successfully retrieved the rapportblatt!";

@@ -26,9 +26,10 @@ export class RegistryComponent implements OnInit {
       //         abo: ""
       //     }
       //   this.password = ""
+        document.querySelector("#logOutButton").classList.add("loggedOut")
      }
-  register(){
-console.log(registryForm)
+  register(form: NgForm){
+    console.log(form.value)
 
     if(this.validateRegister(this.formData)){
       // TODO: validate password

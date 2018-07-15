@@ -2,7 +2,7 @@
 #registerPage
   #registerForm
       h2#registerTitle Registrierung
-      form((ngSubmit)="register()" #registryForm="ngForm" )
+      form((ngSubmit)="register(registryForm)" #registryForm="ngForm" )
         #userNameinput
             input( type="text" placeholder="Vorname" class="textInput" id="registerPrename" name="prename" required)
             br

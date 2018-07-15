@@ -2,7 +2,7 @@
 <div id="registerPage">
   <div id="registerForm">
     <h2 id="registerTitle">Registrierung</h2>
-    <form (ngSubmit)="register()" #registryForm="ngForm">
+    <form (ngSubmit)="register(registryForm)" #registryForm="ngForm">
       <div id="userNameinput">
         <input type="text" placeholder="Vorname" id="registerPrename" name="prename" required="required" class="textInput"/><br/>
         <input type="text" placeholder="Nachname" id="registerSurname" name="surname" required="required" class="textInput"/>
