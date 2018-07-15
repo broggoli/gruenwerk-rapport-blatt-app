@@ -2,29 +2,29 @@
 <div id="registerPage">
   <div id="registerForm">
     <h2 id="registerTitle">Registrierung</h2>
-    <form>
+    <form (ngSubmit)="register()" #registryForm="ngForm">
       <div id="userNameinput">
-        <input [(ngModel)]="formData.name.prename" type="text" placeholder="Vorname" id="registerPrename" name="prename" class="textInput"/><br/>
-        <input [(ngModel)]="formData.name.surname" type="text" placeholder="Nachname" id="registerSurname" name="surname" class="textInput"/>
+        <input type="text" placeholder="Vorname" id="registerPrename" name="prename" required="required" class="textInput"/><br/>
+        <input type="text" placeholder="Nachname" id="registerSurname" name="surname" required="required" class="textInput"/>
       </div>
       <div id="emailInput">
-        <input [(ngModel)]="formData.email" type="email" placeholder="Mail" id="email" name="Email" class="textInput"/>
+        <input type="email" placeholder="Mail" id="email" name="Email" required="required" class="textInput"/>
       </div>
       <div id="aboInput">
-        <input [(ngModel)]="formData.abo" type="text" placeholder="ÖV-Abonement" id="abo" name="Abo" class="textInput"/>
+        <input type="text" placeholder="ÖV-Abonement" id="abo" name="Abo" required="required" class="textInput"/>
       </div>
       <div id="passwordInput">
-        <input [(ngModel)]="password" type="password" placeholder="Passwort" id="registerPassword1" name="Passwort" class="textInput passwordInput"/>
-        <input type="password" placeholder="Passwort wiederholen" id="registerPassword2" name="Passwort" class="textInput passwordInput"/>
+        <input type="password" placeholder="Passwort" id="registerPassword1" name="Passwort" required="required" class="textInput passwordInput"/>
+        <input type="password" placeholder="Passwort wiederholen" id="registerPassword2" name="Passwort" required="required" class="textInput passwordInput"/>
       </div>
       <div id="startEndDateInput">
         <label for="startDate">Im Grünwerk von:</label>
-        <input [(ngModel)]="formData.dates.start" type="date" id="startDate" name="Anfangsdatum" class="dateInput"/>
+        <input type="date" id="startDate" name="Anfangsdatum" required="required" class="dateInput"/>
         <label for="endDate">Im Grünwerk bis:</label>
-        <input [(ngModel)]="formData.dates.end" type="date" id="endDate" name="Enddatum" class="dateInput"/>
+        <input type="date" id="endDate" name="Enddatum" required="required" class="dateInput"/>
       </div>
-      <p id="errorOutput"></p>
-      <button id="register" (click)="register()" class="button">Registrieren</button>
+      <!--p#errorOutput(*ngIf="error.present") {error.message}-->
+      <button id="register" class="button">Registrieren</button>
     </form>
     <div id="backButton"><a id="registerBackButton" routerLink="">Zurück zum Login</a></div>
   </div>

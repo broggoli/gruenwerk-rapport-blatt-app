@@ -13,22 +13,22 @@ export class RegistryComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit() {
-      this.formData = {
-              name : {
-                  prename: "",
-                  surname: ""
-              },
-              dates: {
-                  start : "",
-                  end : ""
-              },
-              email : "",
-              abo: ""
-          }
-        this.password = ""
+      // this.formData = {
+      //         name : {
+      //             prename: "",
+      //             surname: ""
+      //         },
+      //         dates: {
+      //             start : "",
+      //             end : ""
+      //         },
+      //         email : "",
+      //         abo: ""
+      //     }
+      //   this.password = ""
      }
-
   register(){
+console.log(registryForm)
 
     if(this.validateRegister(this.formData)){
       // TODO: validate password
