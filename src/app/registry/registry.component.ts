@@ -30,6 +30,7 @@ export class RegistryComponent implements OnInit {
      }
   register(form: NgForm){
     console.log(form.value)
+    https://codecraft.tv/courses/angular/forms/template-driven/
 
     if(this.validateRegister(this.formData)){
       // TODO: validate password
