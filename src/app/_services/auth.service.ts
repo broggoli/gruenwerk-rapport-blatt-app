@@ -22,7 +22,6 @@ export class AuthService {
   }
   // get acts like a property name even thiugh it's a function
   get isLoggedIn(): boolean{
-    console.log(localStorage.getItem("userData"))
     return localStorage.getItem("userData") === null ? false : true
   }
 

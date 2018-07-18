@@ -2,26 +2,128 @@
 #registerPage
   #registerForm
       h2#registerTitle Registrierung
-      form((ngSubmit)="register(registryForm)" #registryForm="ngForm" )
-        #userNameinput
-            input( type="text" placeholder="Vorname" class="textInput" id="registerPrename" name="prename" required)
+      form((ngSubmit)="register()" #registryForm="ngForm" )
+        #userNameinput( ngModelGroup="name")
+          .container([ngClass] != "{'has-danger': firstName.invalid && (firstName.dirty || firstName.touched), 'has-success': firstName.valid && (firstName.dirty || firstName.touched) }")
+            input(
+            [(ngModel)]="model.firstName"
+            type="text" 
+            placeholder="Vorname" 
+            class="textInput" 
+            id="registerFirstName" 
+            name="firstName" 
+            #firstName="ngModel"
+            pattern="^[-'a-zA-ZÀ-ÖØ-öø-ſ]+$"
+            required)
+            .form-control-feedback(*ngIf!="firstName.errors && (firstName.dirty || firstName.touched) ")
+              div(*ngIf!="firstName.errors.required") Geben Sie bitte ihren Vornamen ein.
+              div(*ngIf!="firstName.errors.pattern") Geben Sie bitte nur ihren Vornamen ohne Abstand oder Sonderzeichen ein.
+            
             br
-            input(type="text" placeholder="Nachname" class="textInput" id="registerSurname" name="surname" required)
-        #emailInput
-            input(type="email" placeholder="Mail" class="textInput" id="email" name="Email" required)
-        #aboInput
-            input(type="text" placeholder="ÖV-Abonement" class="textInput" id="abo" name="Abo" required)
-        #passwordInput
-            input( type="password" placeholder="Passwort" class="textInput passwordInput" id="registerPassword1" name="Passwort" required)
-            input(type="password" placeholder="Passwort wiederholen" class="textInput passwordInput" id="registerPassword2" name="Passwort" required)
-        #startEndDateInput
+            .container([ngClass] != "{'has-danger': secondName.invalid && (secondName.dirty || secondName.touched), 'has-success': secondName.valid && (secondName.dirty || secondName.touched) }")
+              input(
+              [(ngModel)]="model.secondName"
+              type="text"
+              placeholder="Nachname"
+              class="textInput"
+              id="registerLastName"
+              #secondName="ngModel"
+              name="secondName"
+              pattern="^[-'a-zA-ZÀ-ÖØ-öø-ſ]+$"
+              required)
+              .form-control-feedback(*ngIf!="secondName.errors && (secondName.dirty || secondName.touched) ")
+                div(*ngIf!="secondName.errors.required") Geben Sie bitte ihren Nachnamen ein.
+                div(*ngIf!="secondName.errors.pattern") Geben Sie bitte ihren Nachnamen ohne Abstand oder Sonderzeichen ein.
+        #emailInput([ngClass] != "{'has-danger': email.invalid && (email.dirty || email.touched), 'has-success': email.valid && (email.dirty || email.touched) }")
+            input(
+            [(ngModel)] = "model.email"
+            type="email" placeholder="Mail"
+            class="textInput"
+            id="email"
+            name="email"
+            #email="ngModel"
+            required
+            pattern!="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$")
+            
+            .form-control-feedback(*ngIf!="email.errors && (email.dirty || email.touched) ")
+              div(*ngIf!="email.errors.required") Geben Sie bitte ihre Email-Adresse ein.
+              div(*ngIf!="email.errors.pattern") Geben Sie bitte eine gültige Email-Adresse ein.
+              
+        #aboInput([ngClass] != "{'has-danger': abo.invalid && (abo.dirty || abo.touched), 'has-success': abo.valid && (abo.dirty || abo.touched) }")
+            input(
+            [(ngModel)]="model.abo"
+            #abo="ngModel"
+            type="text"
+            placeholder="ÖV-Abonement"
+            class="textInput"
+            id="abo"
+            name="abo")
+        
+        #passwordInput( ngModelGroup="userPassword" equalValidator #userPassword="ngModelGroup")
+          .container([ngClass] != "{'has-danger': password.invalid && (password.dirty || password.touched), 'has-success': password.valid && (password.dirty || password.touched) }")
+            input(
+            [(ngModel)]="model.password" 
+            #password="ngModel"
+            type="password"
+            placeholder="Passwort"
+            class="textInput passwordInput"
+            id="registerpassword"
+            name="registerpassword"
+            required 
+            minlength="6")
+            
+            .form-control-feedback(*ngIf!="password.errors && (password.dirty || password.touched) ")
+              div(*ngIf!="password.errors.required") Geben Sie bitte ein Passwort ein.
+              div(*ngIf!="password.errors.minlength") Geben Sie bitte ein Passwort ein, das mindestens 6 Zeichen lang ist.
+      
+          .container([ngClass] != "{'has-danger': repeatPassword.invalid && (repeatPassword.dirty || repeatPassword.touched), 'has-success': repeatPassword.valid && (repeatPassword.dirty || repeatPassword.touched) }")
+            input( 
+            [(ngModel)]="model.repeatPassword"  
+            #repeatPassword="ngModel"
+            type="password"
+            placeholder="Passwort wiederholen" 
+            class="textInput passwordInput" 
+            id="repeatPassword" 
+            name="repeatPassword" 
+            minlength="6"
+            required)
+            
+            p {{repeatPassword.errors | json}}
+            
+            .form-control-feedback(*ngIf!="repeatPassword.errors && (repeatPassword.dirty || repeatPassword.touched) ")
+              div(*ngIf!="repeatPassword.errors.required") Geben Sie bitte ein Passwort ein.
+              div(*ngIf!="repeatPassword.errors.minlength") Geben Sie bitte ein Passwort ein, das mindestens 6 Zeichen lang ist.
+              
+        //.form-control-feedback(*ngIf!="userPassword.errors && (userPassword.dirty || userPassword.touched) ")
+        pre "{{ userPassword.errors | json }} sdsd"
+        #startEndDateInput( ngModelGroup="date")
+          .container([ngClass] != "{'has-danger': startDate.invalid && (startDate.dirty || startDate.touched), 'has-success': startDate.valid && (startDate.dirty || startDate.touched) }")
             label(for="startDate") Im Grünwerk von:
-            input(type="date" class="dateInput" id="startDate" name="Anfangsdatum" required)
-            label(for="endDate") Im Grünwerk bis:
-            input( type="date" class="dateInput" id="endDate" name="Enddatum" required)
+            input( 
+            [(ngModel)]="model.startDate" 
+            #startDate="ngModel"
+            type="date" 
+            class="dateInput" 
+            id="startDate" 
+            name="start" 
+            required)
           
+          .container([ngClass] != "{'has-danger': endDate.invalid && (endDate.dirty || endDate.touched), 'has-success': endDate.valid && (endDate.dirty || endDate.touched) }")
+            label(for="endDate") Im Grünwerk bis:
+            input(
+            [(ngModel)]="model.endDate" 
+            #endDate="ngModel"
+            type="date" 
+            class="dateInput" 
+            id="endDate" 
+            name="end" 
+            required)
+        
+        pre {{ registryForm.value | json }}
+        pre {{registryForm.valid}}
         //p#errorOutput(*ngIf="error.present") {error.message}
-        button#register.button Registrieren
+        p(*ngIf="registryForm.invalid && registryForm.submitted") Sie müssen das Formular korrekt ausfüllen, bevor sie es abschicken können.
+        button#register.button([ngClass]="{'disabled': registryForm.invalid}" type="submit") Registrieren
       
       #backButton
           a(id='registerBackButton', routerLink="") Zurück zum Login

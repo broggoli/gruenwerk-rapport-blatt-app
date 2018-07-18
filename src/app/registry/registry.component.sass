@@ -4,8 +4,9 @@
 @import "../sass/inputs.sass"
 
 #registerPage
-    max-width: 24em
     width: 90%
+    @media (min-width:400px)
+      max-width: 24em
 
     box-shadow: rgba(0, 0, 0, 0.3) 0 0.2em 1em
     border-radius: 7px
@@ -26,6 +27,10 @@
         input
             width: 96%
             margin-bottom: 1em
+        .has-danger > input
+          border: solid red
+        .has-success > input
+          border: solid green
 
         #startEndDateInput
             margin-top: 1em

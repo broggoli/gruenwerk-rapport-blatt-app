@@ -11,9 +11,8 @@ export class TableService {
 
     const year = parseInt(monthString.split("-")[0]);
     const month = parseInt(monthString.split("-")[1])-1; // January is 0
-
-    const startDate = new Date(ziviData.dates.start);
-    const endDate = new Date(ziviData.dates.end);
+    const startDate = new Date(ziviData.date.start);
+    const endDate = new Date(ziviData.date.end);
 
     const dates = this.getDatesOfMonth(month, year);
 
