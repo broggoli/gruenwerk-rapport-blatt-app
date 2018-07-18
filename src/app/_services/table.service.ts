@@ -11,8 +11,8 @@ export class TableService {
 
     const year = parseInt(monthString.split("-")[0]);
     const month = parseInt(monthString.split("-")[1])-1; // January is 0
-    const startDate = new Date(ziviData.date.start);
-    const endDate = new Date(ziviData.date.end);
+    const startDate = new Date(Date.parse(ziviData.date.startDate))
+    const endDate = new Date(Date.parse(ziviData.date.endDate))
 
     const dates = this.getDatesOfMonth(month, year);
 
@@ -22,7 +22,6 @@ export class TableService {
       //Only display dates where the zivi was working at Grünwerk
       if(date[1].setHours(0,0,0,0) >= startDate.setHours(0,0,0,0) &&
           date[1].setHours(0,0,0,0) <= endDate.setHours(0,0,0,0)){
-
         //Change weekends per default to "Frei"
         //true if workday, false if weekend
         const isDefaultDay =  (date[1].getDay() == 6 || date[1].getDay() == 0)
@@ -48,6 +47,7 @@ export class TableService {
         tableData.push(row)
       }
     }
+    console.log(tableData)
     return tableData
   }
   getDateString(date, separator="."){

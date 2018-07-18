@@ -2,15 +2,14 @@
 <div id="loginPage">
   <div id="loginForm">
     <h2 id="loginTitle">Login</h2>
-    <form>
-      <div id="userNameinput">
-        <input [(ngModel)]="formData.email" type="text" placeholder="Email" id="userName" name="Benutzername" class="textInput"/>
+    <form [formGroup]="loginForm" novalidate="novalidate" (ngSubmit)="login()">
+      <div id="email" [ngClass]="{'has-danger': email.invalid && (email.dirty || email.touched), 'has-success': email.valid && (email.dirty || email.touched) }">
+        <input formControlName="email" type="text" placeholder="Email" id="userName" name="Benutzername" pattern="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$" class="textInput"/>
       </div>
-      <div id="passwordInput">
-        <input [(ngModel)]="formData.password" type="password" placeholder="Passwort" id="password" name="Passwort" class="textInput passwordInput"/>
+      <div id="passwordInput" [ngClass]="{'has-danger': password.invalid && (password.dirty || password.touched), 'has-success': password.valid && (password.dirty || password.touched) }">
+        <input formControlName="password" type="password" placeholder="Passwort" id="password" name="Passwort" class="textInput passwordInput"/>
       </div>
-      <p id="errorOutput"></p>
-      <button id="login" (click)="login($event)" class="button">Login</button>
+      <button id="login" [ngClass]="{'disabled': loginForm.invalid}" type="submit" class="button">Login</button>
     </form>
     <div id="registrieren"><a id="toRegisterButton" routerLink="registrierung">Registrieren</a></div>
     <!--button#toRegisterButton.button Registrieren-->

@@ -129,13 +129,12 @@ export class ExcelService {
 
     function add_cell_to_sheet(worksheet, address, value, currency = false) {
       /* cell object */
-      let cell: {t: string, v: string, z: any} = {t: '?', v: value, z: false};
-      currency ? cell.z = "##0.00" : false;
+      let cell: {t: string, v: string, z: any} = {t: "?", v: value, z: false};
+      currency ? cell.z = "##0.00": cell.z="0";
 
       /* assign type */
       if(typeof value == "string") cell.t = 's'; // string
       else if(typeof value == "number") cell.t = 'n'; // number
-      else if(value === true || value === false) cell.t = 'b'; // boolean
       else if(value instanceof Date) cell.t = 'd';
       else throw new Error("cannot store value");
 
@@ -145,7 +144,7 @@ export class ExcelService {
     }
 
       /* write workbook (use type 'binary') */
-      const w_opt =
+      const w_opts =
                   {
                     bookType: 'xlsx',
                     type: 'binary',
@@ -209,44 +208,4 @@ export class ExcelService {
       return this.http.post('/api/php/uploadTicket.php', formData)
       //return this.http.post<myData>('/api/php/uploadTicket.php', formData)
   }
-
-  // getExcelFile(rapportblattData){
-  //   const sheetTitle = ["RB", tiviData.prename+"_"+tiviData.surname, rapportblattData["month"]].join("_");
-  //   let wb = XLSX.utils.book_new();
-  //   wb.Props = {
-  //       "Title" : sheetTitle,
-  //       "Subject" : "Rapportblatt",
-  //       "Author": "Nick Bachmanns Rapportblatt-Programm",
-  //       "CreatedDate": new Date()
-  //   };
-  //   wb.SheetNames.push(sheetTitle);
-  //
-  //   //making an array of arrays out of the table data from the rapportblattData
-  //   let wsData = rapportblattData["tableData"].map( e => Object.values(e));
-  //
-  //   let ws = XLSX.utils.aoa_to_sheet(wsData);
-  //   wb.Sheets[sheetTitle] = ws;
-  //
-  //   /* write workbook (use type 'binary') */
-  //   var wbout = XLSX.write(wb, {bookType:'xlsx', type:'binary'});
-  //
-  //   return wbout;
-  //   }
-  //
-  // excelForUpload(wbout, ziviName, month){
-  //     const now = new Date();
-  //     //Sheet title in the Form: Rapportblatt_Max_Mustermann_12-4-18
-  //     const fileName = ["RB", ziviName.replace(" ","_"), month].join("_");
-  //
-  //     function s2ab(s) {
-  //         var buf = new ArrayBuffer(s.length);
-  //         var view = new Uint8Array(buf);
-  //         for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-  //         return buf;
-  //     }
-  //     return  {
-  //                 "file": new Blob([s2ab(wbout)], {type:"application/octet-stream"}),
-  //                 "name": fileName
-  //             };
-  // }
 }

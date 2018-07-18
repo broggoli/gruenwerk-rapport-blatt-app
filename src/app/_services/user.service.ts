@@ -26,18 +26,27 @@ export class UserService {
       }
     }
 
-  getSavedRapportblatt(){
-    return this.http.get<rapportblattRequest>("/api/php/saveRapportblatt.php")
+  getSavedRapportblatt(month: string){
+    return this.http.post<rapportblattRequest>("/api/php/saveRapportblatt.php",
+                                            {
+                                              month       : month,
+                                              task        : "getRb"
+                                            })
   }
 
-  saveRapportblatt(rapportblatt: {string}[], month: string){
+  saveRapportblatt(rapportblatt, month: string){
 
     const savedRapportblatt = {
-                                "rapportblatt": rapportblatt,
-                                "month"       : month
+                                rbData      : rapportblatt,
+                                month       : month,
+                                task        : "setRb"
                               }
     console.log( JSON.stringify(savedRapportblatt))
-    localStorage.setItem("savedRapportblatt", JSON.stringify(savedRapportblatt))
+    localStorage.setItem("savedRapportblatt",
+                JSON.stringify({
+                                rbData      : rapportblatt,
+                                month       : month}
+                              ))
 
     return this.http.post<rapportblattRequest>("/api/php/saveRapportblatt.php",
         JSON.stringify(savedRapportblatt))

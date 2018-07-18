@@ -12,6 +12,9 @@ import { UserService,
 })
 export class RapportblattComponent implements OnInit {
 
+  rows: any
+
+
   constructor(private user: UserService,
               private table: TableService,
               private excel: ExcelService,
@@ -19,12 +22,14 @@ export class RapportblattComponent implements OnInit {
 
   ngOnInit() {
     this.getTable()
+    this.ziviData = this.user.getZiviData();
+    console.log(this.user.getZiviData())
   }
   ziviData = this.user.getZiviData();
   todayDate = new Date()
   monthString = this.table.getMonthString(this.todayDate)
   today = this.table.getDateString(this.todayDate)
-  ziviName = this.ziviData.name.prename+" "+this.ziviData.name.surname
+  ziviName = this.ziviData.name.firstName+" "+this.ziviData.name.lastName
 
   monthChanged(event) {
     const target = event.target
@@ -33,24 +38,26 @@ export class RapportblattComponent implements OnInit {
   }
   getTable(){
     const locallyStoredRB = localStorage.getItem("savedRapportblatt")
-    console.log(JSON.parse(locallyStoredRB))
 
     //default rows config
     this.rows = this.table.getTableData(this.ziviData, this.monthString)
     //If there is no RB saved Locally
     if( locallyStoredRB === null ) {
-      this.user.getSavedRapportblatt().subscribe( savedRapportblatt => {
+    // TODO: Multi rapportblatt save
+      this.user.getSavedRapportblatt(this.monthString).subscribe( savedRapportblatt => {
         if( savedRapportblatt.success ){
+          console.log(JSON.stringify(savedRapportblatt.data))
           localStorage.setItem("savedRapportblatt", JSON.stringify(savedRapportblatt.data))
-          if( savedRapportblatt.data.month  === this.monthString ){
-            this.rows = savedRapportblatt.data.rapportblatt
+          if( savedRapportblatt.date  === this.monthString ){
+            console.log("asdas", savedRapportblatt.rbData)
+            this.rows = savedRapportblatt.rbData
           }
         }
       })
     }else{
-      const savedRB = JSON.parse(locallyStoredRB)
-      if( savedRB.month  === this.monthString ){
-        this.rows = savedRB.rapportblatt
+      const savedRb = JSON.parse(locallyStoredRB)
+      if( savedRb.month  === this.monthString ){
+        this.rows = savedRb.rbData
       }
       console.log("RB loaded locally!")
     }

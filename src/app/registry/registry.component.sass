@@ -35,10 +35,16 @@
         #startEndDateInput
             margin-top: 1em
             display: grid
-            grid-template-columns:  1fr 1fr
+            grid-columns:  auto auto
 
             .dateInput
                 width: 92%
+
+            .datesNotValidError
+              grid-area: 5 / span 2
+
+            .endBeforeStartError
+              grid-area: 7 / span 2
 
             label
                 align-self: center

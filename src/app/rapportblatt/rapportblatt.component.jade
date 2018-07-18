@@ -10,9 +10,7 @@
                   p Heute:
                       span#today  {{today}}
                   p
-                      span#ziviName {{ziviData.name.prename}} {{ziviData.name.surname}}
-
-                  
+                      span#ziviName {{ziviData.name.firstName}} {{ziviData.name.lastName}}
         #table
           .rapportBlattRow(*ngFor="let row of rows")
             .dayName {{row.dayName}}

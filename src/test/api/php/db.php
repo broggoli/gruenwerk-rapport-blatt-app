@@ -119,10 +119,11 @@
   }
 
   /* returns the Data saved in the jsn data base with the $ziviDataHeader as key*/
-  function getSavedRapportblatt($ziviDataHeader) {
+  function getSavedRapportblatt($ziviDataHeader, $month) {
 
     $response = new StdClass();
     $response->success = false;
+    $rbForMonth = new stdClass();
     //Getting the DB as an object
     $savedRapportblattObj = getSavedRapportblattDB();
 
@@ -130,15 +131,19 @@
     if(property_exists($savedRapportblattObj, $ziviDataHeader)){
       $response->message = "Data header exists!";
       //returning the encryptedZiviData
-      $response->data = $savedRapportblattObj->{$ziviDataHeader};
-      $response->success = true;
+      $response->data = $savedRapportblattObj->{$ziviDataHeader}[$month];
+      if($response->data){
+        $response->success = true;
+      }else{
+        $response->success = false;
+      }
     }else{
       $response->message = "No rapportblatt with this credentials found!";
     }
     return $response;
   }
 
-  function saveRapportblatt($ziviDataHeader, $newRapportblatt){
+  function saveRapportblatt($ziviDataHeader, $rbData, $month){
 
     $userData = new stdClass();
     $response = new StdClass();
@@ -147,12 +152,13 @@
 
     //Check whether the data header already exists
     if( property_exists($savedRapportblattObj, $ziviDataHeader) ){
-      $response->message = "Rapportblatt overwritten!";
+      $response->message = "new rapportblatt saved!";
     }else{
       $response->message = "Successfully saved the rapportblatt!";
     }
-
-    $savedRapportblattObj->{$ziviDataHeader} = $newRapportblatt;
+    $rbForMonth = $savedRapportblattObj->{$ziviDataHeader};
+    $rbForMonth[$month] = $rbData;
+    $savedRapportblattObj->{$ziviDataHeader} = $rbForMonth;
 
     // encode array to json and save to file
     file_put_contents($GLOBALS["savedRapportblattDBPath"], json_encode($savedRapportblattObj));

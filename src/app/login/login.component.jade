@@ -3,15 +3,35 @@
 #loginPage
   #loginForm
       h2#loginTitle Login
-      form
-        #userNameinput
-            input([(ngModel)]="formData.email" type="text" placeholder="Email" class="textInput" id="userName" name="Benutzername")
-        #passwordInput
-            input([(ngModel)]="formData.password" type="password" placeholder="Passwort" class="textInput passwordInput" id="password" name="Passwort")
+      form([formGroup]="loginForm" novalidate (ngSubmit)="login()")
+        #email([ngClass] != "{'has-danger': email.invalid && (email.dirty || email.touched), 'has-success': email.valid && (email.dirty || email.touched) }")
+            input(
+            formControlName = "email"
+            type="text"
+            placeholder="Email"
+            class="textInput"
+            id="userName"
+            name="Benutzername"
+            pattern!="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$")
+            
+            //- .form-control-feedback(*ngIf!="email.errors && (email.dirty || email.touched) ")
+            //-   span(*ngIf!="password.errors.required") Geben Sie bitte ihre Email-Adresse ein.
+            //-   span(*ngIf!="password.errors.pattern") Bitte geben sie eine korrekte Email-Adresse an.
+            
+        #passwordInput([ngClass] != "{'has-danger': password.invalid && (password.dirty || password.touched), 'has-success': password.valid && (password.dirty || password.touched) }")
+            input(
+            formControlName = "password"
+            type="password"
+            placeholder="Passwort"
+            class="textInput passwordInput"
+            id="password"
+            name="Passwort")
+            //- 
+            //- .form-control-feedback(*ngIf!="password.errors && (password.dirty || password.touched) ")
+            //-   span(*ngIf!="password.errors.required") Bitte geben Sie ein Passwort ein.
+            //-   span(*ngIf!="password.errors.minlength") Ihr passwort muss mindestes 6 Zeichen lang sein.
 
-        p#errorOutput
-
-        button#login.button((click)="login($event)") Login
+        button#login.button([ngClass]="{'disabled': loginForm.invalid}" type="submit") Login
 
       #registrieren
           a(id='toRegisterButton', routerLink="registrierung") Registrieren

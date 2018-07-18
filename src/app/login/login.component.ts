@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import {  Validators,
+          FormGroup,
+          FormControl } from '@angular/forms'
 import { AuthService } from '../_services'
 import { Router } from "@angular/router"
 
@@ -9,6 +12,10 @@ import { Router } from "@angular/router"
 })
 export class LoginComponent implements OnInit {
 
+  loginForm: FormGroup
+  email: FormControl
+  password: FormControl
+
   constructor(private Auth: AuthService,
               private router: Router) { }
 
@@ -18,32 +25,46 @@ export class LoginComponent implements OnInit {
       this.router.navigate(["rapportblatt"])
     }else{
       document.querySelector("#logOutButton").classList.add("loggedOut")
-    }
-
-    this.formData = {
-        email: "",
-        password: ""
+      this.createFormControls()
+      this.createForm()
     }
   }
-
-  login(event){
-    event.preventDefault()
-    const target = event.target
-
-    /* Tryes to get the user's data from the backend */
-    this.Auth.getEncryptedData(this.formData.email, this.formData.password).subscribe(data => {
-        if(data.success){
-            const userData = data.data.encryptedZiviData
-            this.Auth.saveData(userData, this.formData.password)
-            console.log(data)
-            //Display the logout bnutton
-            document.querySelector("#logOutButton").classList.remove("loggedOut")
-
-            //if the backend says everything is ok -> redirect to user's page
-            this.router.navigate(["rapportblatt"])
-        }else{
-            console.log(data)
-        }
+  createFormControls(){
+    this.email = new FormControl("",
+            [ Validators.required
+            ])
+    this.password = new FormControl("",
+                [ Validators.required,
+                  Validators.minLength(6)
+                ])
+  }
+  createForm(){
+    this.loginForm = new FormGroup({
+      email: this.email,
+      password: this.password
     })
+  }
+  login(){
+
+    if( this.loginForm.valid )
+    {
+      const email = this.email.value.trim(),
+            password = this.password.value.trim()
+      /* Tryes to get the user's data from the backend */
+      this.Auth.getEncryptedData(email, password).subscribe(data => {
+          if(data.success){
+              const userData = data.data.encryptedZiviData
+              this.Auth.saveData(userData, password)
+              console.log(data)
+              //Display the logout bnutton
+              document.querySelector("#logOutButton").classList.remove("loggedOut")
+
+              //if the backend says everything is ok -> redirect to user's page
+              this.router.navigate(["rapportblatt"])
+          }else{
+              console.log(data)
+          }
+      })
+    }
   }
 }
