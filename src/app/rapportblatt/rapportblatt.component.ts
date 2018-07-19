@@ -102,6 +102,7 @@ export class RapportblattComponent implements OnInit {
   onFileSelected(event, date) {
       const target = event.target;
       const filesOnTarget = target.files
+      console.log(filesOnTarget)
       for(const file of filesOnTarget){
           this.imageHandler.addImage(file, date, target)
       }

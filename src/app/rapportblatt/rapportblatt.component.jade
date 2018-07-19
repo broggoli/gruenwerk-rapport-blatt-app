@@ -44,11 +44,11 @@
                 label(class="ticketProofLabel" for="ticketProofFileUpload") 
                     img(src="../../assets/svg/upload.svg" class="uploadIcon")
                     //span Billet Belege hochladen
-                  input((change)="onFileSelected($event, row.date)" class="ticketProof" id="ticketProofFileUpload" type="file" accept="image/*" multiple="true")
-                label(class="ticketProofLabel" for="ticketProofCamera") 
-                    img(src="../../assets/svg/camera.svg" class="uploadIcon")
-                    //span Billet Belege hochladen
-                  input((change)="onFileSelected($event, row.date)" class="ticketProof" id="ticketProofCamera" type="file" accept="image/*" capture="camera" multiple="true")
+                  input((change)="onFileSelected($event, row.date)" class="ticketProof" id="ticketProofFileUpload" type="file" multiple="true")
+                //- label(class="ticketProofLabel" for="ticketProofCamera") 
+                //-     img(src="../../assets/svg/camera.svg" class="uploadIcon")
+                //-     //span Billet Belege hochladen
+                //-   input((change)="onFileSelected($event, row.date)" class="ticketProof" id="ticketProofCamera" type="file" accept="image/*" capture="camera" multiple="true")
                   
             .uploadArztZeugnis(*ngIf="row.dayType == 'Krank'")
               div
@@ -57,11 +57,11 @@
                 label(class="artztZeugnisLabel" for="artztZeugnidsFileUpload") 
                     img(src="../../assets/svg/upload.svg" class="uploadIcon")
                     //span Billet Belege hochladen
-                  input((change)="onFileSelected($event, row.date)" class="arztZeugnisProof" id="artztZeugnidsFileUpload" type="file" accept="image/*" multiple="true")
-                label(class="artztZeugnisLabel" for="artztZeugnidsCamera") 
-                    img(src="../../assets/svg/camera.svg" class="uploadIcon")
-                    //span Billet Belege hochladen
-                  input((change)="onFileSelected($event, row.date)" class="arztZeugnisProof" id="artztZeugnidsCamera" type="file" accept="image/*" capture="camera" multiple="true")
+                  input((change)="onFileSelected($event, row.date)" class="arztZeugnisProof" id="artztZeugnidsFileUpload" type="file" multiple="true")
+                //- label(class="artztZeugnisLabel" for="artztZeugnidsCamera") 
+                //-     img(src="../../assets/svg/camera.svg" class="uploadIcon")
+                //-     //span Billet Belege hochladen
+                //-   input((change)="onFileSelected($event, row.date)" class="arztZeugnisProof" id="artztZeugnidsCamera" type="file" accept="image/*" capture="camera" multiple="true")
                   
       #NoDays(*ngIf="rows.length == 0")
         p Du hast in diesem Monat nicht gearbeitet

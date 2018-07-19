@@ -47,11 +47,7 @@
             <label for="ticketProofFileUpload" class="ticketProofLabel"> <img src="../../assets/svg/upload.svg" class="uploadIcon"/>
               <!--span Billet Belege hochladen-->
             </label>
-            <input (change)="onFileSelected($event, row.date)" id="ticketProofFileUpload" type="file" accept="image/*" multiple="true" class="ticketProof"/>
-            <label for="ticketProofCamera" class="ticketProofLabel"> <img src="../../assets/svg/camera.svg" class="uploadIcon"/>
-              <!--span Billet Belege hochladen-->
-            </label>
-            <input (change)="onFileSelected($event, row.date)" id="ticketProofCamera" type="file" accept="image/*" capture="camera" multiple="true" class="ticketProof"/>
+            <input (change)="onFileSelected($event, row.date)" id="ticketProofFileUpload" type="file" multiple="true" class="ticketProof"/>
           </div>
         </div>
         <div *ngIf="row.dayType == 'Krank'" class="uploadArztZeugnis">
@@ -60,11 +56,7 @@
             <label for="artztZeugnidsFileUpload" class="artztZeugnisLabel"> <img src="../../assets/svg/upload.svg" class="uploadIcon"/>
               <!--span Billet Belege hochladen-->
             </label>
-            <input (change)="onFileSelected($event, row.date)" id="artztZeugnidsFileUpload" type="file" accept="image/*" multiple="true" class="arztZeugnisProof"/>
-            <label for="artztZeugnidsCamera" class="artztZeugnisLabel"> <img src="../../assets/svg/camera.svg" class="uploadIcon"/>
-              <!--span Billet Belege hochladen-->
-            </label>
-            <input (change)="onFileSelected($event, row.date)" id="artztZeugnidsCamera" type="file" accept="image/*" capture="camera" multiple="true" class="arztZeugnisProof"/>
+            <input (change)="onFileSelected($event, row.date)" id="artztZeugnidsFileUpload" type="file" multiple="true" class="arztZeugnisProof"/>
           </div>
         </div>
       </div>
