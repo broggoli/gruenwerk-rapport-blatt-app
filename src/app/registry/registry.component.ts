@@ -17,12 +17,13 @@ export class RegistryComponent implements OnInit {
   firstName: FormControl
   lastName: FormControl
   abo: FormControl
-  startDate: FormControl
   email: FormControl
   password: FormControl
-  passwordRepeat: FormControl
+  passwordInput: FormGroup
+  repeatPassword: FormControl
   startDate: FormControl
   endDate: FormControl
+  dateInput: FormGroup
   registerError: string = ""
 
   constructor(private registry: RegistryService,
@@ -142,12 +143,14 @@ export class RegistryComponent implements OnInit {
   }
 
   showLoader(show:boolean) {
-    show ?  document.querySelector(".loadingAnim").style = "display: block" :
-            document.querySelector(".loadingAnim").style = "display: none"
+    let loadingAnim: HTMLElement = document.querySelector(".loadingAnim")
+    show ?  loadingAnim.style.display = "block" :
+            loadingAnim.style.display = "none"
   }
   showInputsChecked( show:boolean ) {
-    show ?  document.querySelector(".inputsChecked").style = "display: block" :
-            document.querySelector(".inputsChecked").style = "display: none"
+    let inputsChecked: HTMLElement = document.querySelector(".inputsChecked")
+    show ?  inputsChecked.style.display = "block" :
+            inputsChecked.style.display = "none"
   }
 }
 

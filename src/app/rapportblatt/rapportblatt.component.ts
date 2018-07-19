@@ -4,7 +4,11 @@ import { UserService,
         ExcelService,
         ImageHandlerService } from '../_services'
 
-
+interface IfcObject {
+    [key: string]: string | {
+        number: number
+    }
+}
 @Component({
   selector: 'app-rapportblatt',
   templateUrl: './rapportblatt.component.html',
@@ -30,6 +34,7 @@ export class RapportblattComponent implements OnInit {
   monthString = this.table.getMonthString(this.todayDate)
   today = this.table.getDateString(this.todayDate)
   ziviName = this.ziviData.name.firstName+" "+this.ziviData.name.lastName
+  summary: any
 
   monthChanged(event) {
     const target = event.target
@@ -67,7 +72,7 @@ export class RapportblattComponent implements OnInit {
     const rapportblattData =  {
                                 ziviName: this.ziviName,
                                 table: this.rows,
-                                summary: this.getSummary(this.rows),
+                                summary: this.getSummary(),
                                 month: this.monthString,
                                 shoeMoney: 0 // TODO: Clculate shoemoney
                               }
@@ -109,7 +114,7 @@ export class RapportblattComponent implements OnInit {
   }
 
   daySummary(sort=false) {
-    const dayTypes = this.getSummary(this.rows).dayTypes
+    const dayTypes = this.getSummary().dayTypes
     const dayTypesArray  = Object.keys(dayTypes)
             .map((key, index) => {
               return [key, dayTypes[key]]
