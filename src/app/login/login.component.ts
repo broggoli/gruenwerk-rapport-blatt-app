@@ -15,6 +15,7 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup
   email: FormControl
   password: FormControl
+  loginError: string = ""
 
   constructor(private Auth: AuthService,
               private router: Router) { }
@@ -48,11 +49,15 @@ export class LoginComponent implements OnInit {
 
     if( this.loginForm.valid )
     {
+      this.showLoader(true)
       const email = this.email.value.trim(),
             password = this.password.value.trim()
       /* Tryes to get the user's data from the backend */
       this.Auth.getEncryptedData(email, password).subscribe(data => {
+
+          this.showLoader(false)
           if(data.success){
+              this.loginError = ""
               const userData = data.data.encryptedZiviData
               this.Auth.saveData(userData, password)
               console.log(data)
@@ -60,11 +65,23 @@ export class LoginComponent implements OnInit {
               document.querySelector("#logOutButton").classList.remove("loggedOut")
 
               //if the backend says everything is ok -> redirect to user's page
-              this.router.navigate(["rapportblatt"])
+              this.showInputsChecked(true)
+              setTimeout(() => this.router.navigate(["rapportblatt"]), 500)
+
           }else{
-              console.log(data)
+            this.showInputsChecked(false)
+            this.loginError = data.message
+            console.log(data)
           }
       })
     }
+  }
+  showLoader( show:boolean ) {
+    show ?  document.querySelector(".loadingAnim").style = "display: block" :
+            document.querySelector(".loadingAnim").style = "display: none"
+  }
+  showInputsChecked( show:boolean ) {
+    show ?  document.querySelector(".inputsChecked").style = "display: block" :
+            document.querySelector(".inputsChecked").style = "display: none"
   }
 }

@@ -14,9 +14,9 @@
             name="Benutzername"
             pattern!="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$")
             
-            //- .form-control-feedback(*ngIf!="email.errors && (email.dirty || email.touched) ")
-            //-   span(*ngIf!="password.errors.required") Geben Sie bitte ihre Email-Adresse ein.
-            //-   span(*ngIf!="password.errors.pattern") Bitte geben sie eine korrekte Email-Adresse an.
+            .form-control-feedback(*ngIf!="email.errors && (email.dirty || email.touched) ")
+              span(*ngIf!="password.errors.required") Geben Sie bitte ihre Email-Adresse ein.
+              span(*ngIf!="password.errors.pattern") Bitte geben sie eine korrekte Email-Adresse an.
             
         #passwordInput([ngClass] != "{'has-danger': password.invalid && (password.dirty || password.touched), 'has-success': password.valid && (password.dirty || password.touched) }")
             input(
@@ -26,11 +26,22 @@
             class="textInput passwordInput"
             id="password"
             name="Passwort")
-            //- 
-            //- .form-control-feedback(*ngIf!="password.errors && (password.dirty || password.touched) ")
-            //-   span(*ngIf!="password.errors.required") Bitte geben Sie ein Passwort ein.
-            //-   span(*ngIf!="password.errors.minlength") Ihr passwort muss mindestes 6 Zeichen lang sein.
-
+            
+            .form-control-feedback(*ngIf!="password.errors && (password.dirty || password.touched) ")
+              span(*ngIf!="password.errors.required") Bitte geben Sie ein Passwort ein.
+              span(*ngIf!="password.errors.minlength") Ihr passwort muss mindestes 6 Zeichen lang sein.
+        
+            
+        .form-control-feedback(*ngIf="loginForm.valid && loginError != '' ")
+          span Das Login ist fehlgeschlagen.
+          br
+          span Error: {{ loginError }}
+          
+        .loadingAnim.svgAnim( style="display: none" )
+          img( src="../../assets/svg/loader.svg" )
+        .inputsChecked.svgAnim( style="display: none" )
+          img( src="../../assets/svg/check.svg" )
+          
         button#login.button([ngClass]="{'disabled': loginForm.invalid}" type="submit") Login
 
       #registrieren

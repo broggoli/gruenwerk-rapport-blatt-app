@@ -5,7 +5,7 @@
     <form [formGroup]="registerForm" novalidate="novalidate" (ngSubmit)="register()">
       <div id="userNameinput" formGroupName="name">
         <div [ngClass]="{'has-danger': firstName.invalid && (firstName.dirty || firstName.touched), 'has-success': firstName.valid && (firstName.dirty || firstName.touched) }" class="container">
-          <input formControlName="firstName" type="text" placeholder="Vorname" id="registerFirstName" name="firstName" pattern="^[-'a-zA-ZÀ-ÖØ-öø-ſ]+$" class="textInput"/>
+          <input formControlName="firstName" type="text" placeholder="Vorname" id="registerFirstName" name="firstName" class="textInput"/>
           <div *ngIf="firstName.errors && (firstName.dirty || firstName.touched) " class="form-control-feedback"><span *ngIf="firstName.errors.required">Geben Sie bitte ihren Vornamen ein.</span><span *ngIf="firstName.errors.pattern">Geben Sie bitte nur ihren Vornamen ohne Abstand oder Sonderzeichen ein.</span></div><br/>
           <div [ngClass]="{'has-danger': lastName.invalid && (lastName.dirty || lastName.touched), 'has-success': lastName.valid && (lastName.dirty || lastName.touched) }" class="container">
             <input formControlName="lastName" type="text" placeholder="Nachname" id="registerLastName" name="lastName" pattern="^[-'a-zA-ZÀ-ÖØ-öø-ſ]+$" class="textInput"/>
@@ -49,6 +49,9 @@
         </div>
       </div>
       <div *ngIf="registerForm.invalid &amp;&amp; registerForm.submitted" class="form-control-feedback"> <span>Sie müssen das Formular korrekt ausfüllen, bevor sie es abschicken können.</span></div>
+      <div *ngIf="registerForm.valid &amp;&amp; registerError != '' " class="form-control-feedback"><span>Die Registrierung ist fehlgeschlagen.</span><br/><span>Error: {{ registerError }}</span></div>
+      <div style="display: none" class="loadingAnim svgAnim"><img src="../../assets/svg/loader.svg"/></div>
+      <div style="display: none" class="inputsChecked svgAnim"><img src="../../assets/svg/check.svg"/></div>
       <button id="register" [ngClass]="{'disabled': registerForm.invalid}" type="submit" class="button">Registrieren</button>
     </form>
     <div id="backButton"><a id="registerBackButton" routerLink="">Zurück zum Login</a></div>

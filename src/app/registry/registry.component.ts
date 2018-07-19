@@ -23,6 +23,7 @@ export class RegistryComponent implements OnInit {
   passwordRepeat: FormControl
   startDate: FormControl
   endDate: FormControl
+  registerError: string = ""
 
   constructor(private registry: RegistryService,
               private router: Router) { }
@@ -92,25 +93,35 @@ export class RegistryComponent implements OnInit {
     if( this.registerForm.valid )
     {
       console.log("registring!")
+      // this.registerForm.disable()
+      this.showLoader(true)
       const password = this.password.value.trim()
       const userData = this.getUserDataObj
       console.log(userData)
         this.registry.saveNewUser(userData, password)
             .subscribe( data => {
+
+                this.showLoader(false)
                 console.log(data);
                 if(data.success === true){
                   // TODO: Output Message
                   this.registerForm.reset()
+                  this.registerError = ""
                   alert("Erfolgreich Registriert!");
-                  this.router.navigate([""])
+                  // this.registerForm.enable()
+                  this.showInputsChecked(true)
+                  setTimeout(() => this.router.navigate([""]), 500)
                 }else{
-                  alert("Error: "+data.message);
+                  this.registerError = data.message
+                  this.showInputsChecked(false)
+                  // alert("Error: "+data.message);
                 }
             })
 
     }else {
       // TODO: Output Message
       validateAllFormFields(this.registerForm)
+      // this.registerForm.enable()
       console.log("Validation failed!");
     }
   }
@@ -130,6 +141,14 @@ export class RegistryComponent implements OnInit {
     }
   }
 
+  showLoader(show:boolean) {
+    show ?  document.querySelector(".loadingAnim").style = "display: block" :
+            document.querySelector(".loadingAnim").style = "display: none"
+  }
+  showInputsChecked( show:boolean ) {
+    show ?  document.querySelector(".inputsChecked").style = "display: block" :
+            document.querySelector(".inputsChecked").style = "display: none"
+  }
 }
 
 function validateAllFormFields(formGroup: FormGroup) {         //{1}

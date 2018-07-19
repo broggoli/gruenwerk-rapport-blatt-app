@@ -14,8 +14,8 @@
             placeholder="Vorname" 
             class="textInput" 
             id="registerFirstName" 
-            name="firstName"
-            pattern="^[-'a-zA-ZÀ-ÖØ-öø-ſ]+$")
+            name="firstName")
+            
             .form-control-feedback(*ngIf!="firstName.errors && (firstName.dirty || firstName.touched) ")
               span(*ngIf!="firstName.errors.required") Geben Sie bitte ihren Vornamen ein.
               span(*ngIf!="firstName.errors.pattern") Geben Sie bitte nur ihren Vornamen ohne Abstand oder Sonderzeichen ein.
@@ -114,6 +114,17 @@
         
         .form-control-feedback(*ngIf="registerForm.invalid && registerForm.submitted") 
           span Sie müssen das Formular korrekt ausfüllen, bevor sie es abschicken können.
+          
+        .form-control-feedback(*ngIf="registerForm.valid && registerError != '' ")
+          span Die Registrierung ist fehlgeschlagen.
+          br
+          span Error: {{ registerError }}
+          
+        .loadingAnim.svgAnim( style="display: none" )
+          img( src="../../assets/svg/loader.svg" )
+        .inputsChecked.svgAnim( style="display: none" )
+          img( src="../../assets/svg/check.svg" )
+          
         button#register.button([ngClass]="{'disabled': registerForm.invalid}" type="submit") Registrieren
       
       #backButton
