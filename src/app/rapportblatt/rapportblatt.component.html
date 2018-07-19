@@ -42,8 +42,30 @@
           <input [(ngModel)]="row.price" type="number" min="0.00" max="100.00" step="0.05" placeholder="Preis" name="Preis" class="textInput price"/>
         </div>
         <div *ngIf="row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="uploadTicketProof">
-          <label for="ticketProof" class="ticketProofLabel"> <img src="../../assets/svg/upload.svg" class="uploadIcon"/><span>Billet Belege hochladen</span></label>
-          <input (change)="onFileSelected($event, row.date)" id="ticketProof" type="file" accept="image/*" capture="camera" multiple="true" class="ticketProof"/>
+          <div><span>Billet Belege hochladen: </span></div>
+          <div>
+            <label for="ticketProofFileUpload" class="ticketProofLabel"> <img src="../../assets/svg/upload.svg" class="uploadIcon"/>
+              <!--span Billet Belege hochladen-->
+            </label>
+            <input (change)="onFileSelected($event, row.date)" id="ticketProofFileUpload" type="file" accept="image/*" multiple="true" class="ticketProof"/>
+            <label for="ticketProofCamera" class="ticketProofLabel"> <img src="../../assets/svg/camera.svg" class="uploadIcon"/>
+              <!--span Billet Belege hochladen-->
+            </label>
+            <input (change)="onFileSelected($event, row.date)" id="ticketProofCamera" type="file" accept="image/*" capture="camera" multiple="true" class="ticketProof"/>
+          </div>
+        </div>
+        <div *ngIf="row.dayType == 'Krank'" class="uploadArztZeugnis">
+          <div><span>Arztzeugnis hochladen: </span></div>
+          <div>
+            <label for="artztZeugnidsFileUpload" class="artztZeugnisLabel"> <img src="../../assets/svg/upload.svg" class="uploadIcon"/>
+              <!--span Billet Belege hochladen-->
+            </label>
+            <input (change)="onFileSelected($event, row.date)" id="artztZeugnidsFileUpload" type="file" accept="image/*" multiple="true" class="arztZeugnisProof"/>
+            <label for="artztZeugnidsCamera" class="artztZeugnisLabel"> <img src="../../assets/svg/camera.svg" class="uploadIcon"/>
+              <!--span Billet Belege hochladen-->
+            </label>
+            <input (change)="onFileSelected($event, row.date)" id="artztZeugnidsCamera" type="file" accept="image/*" capture="camera" multiple="true" class="arztZeugnisProof"/>
+          </div>
         </div>
       </div>
     </div>

@@ -38,10 +38,31 @@
             div(*ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'" style="margin:0; padding: 0;")
               input([(ngModel)]="row.price" type='number' min='0.00' max='100.00' step='0.05' placeholder='Preis' name='Preis' class='textInput price')
             .uploadTicketProof(*ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'")
-              label(class="ticketProofLabel" for="ticketProof") 
-                  img(src="../../assets/svg/upload.svg" class="uploadIcon")
-                  span Billet Belege hochladen
-                input((change)="onFileSelected($event, row.date)" class="ticketProof" id="ticketProof" type="file" accept="image/*" capture="camera" multiple="true")
+              div
+                span Billet Belege hochladen: 
+              div
+                label(class="ticketProofLabel" for="ticketProofFileUpload") 
+                    img(src="../../assets/svg/upload.svg" class="uploadIcon")
+                    //span Billet Belege hochladen
+                  input((change)="onFileSelected($event, row.date)" class="ticketProof" id="ticketProofFileUpload" type="file" accept="image/*" multiple="true")
+                label(class="ticketProofLabel" for="ticketProofCamera") 
+                    img(src="../../assets/svg/camera.svg" class="uploadIcon")
+                    //span Billet Belege hochladen
+                  input((change)="onFileSelected($event, row.date)" class="ticketProof" id="ticketProofCamera" type="file" accept="image/*" capture="camera" multiple="true")
+                  
+            .uploadArztZeugnis(*ngIf="row.dayType == 'Krank'")
+              div
+                span Arztzeugnis hochladen: 
+              div
+                label(class="artztZeugnisLabel" for="artztZeugnidsFileUpload") 
+                    img(src="../../assets/svg/upload.svg" class="uploadIcon")
+                    //span Billet Belege hochladen
+                  input((change)="onFileSelected($event, row.date)" class="arztZeugnisProof" id="artztZeugnidsFileUpload" type="file" accept="image/*" multiple="true")
+                label(class="artztZeugnisLabel" for="artztZeugnidsCamera") 
+                    img(src="../../assets/svg/camera.svg" class="uploadIcon")
+                    //span Billet Belege hochladen
+                  input((change)="onFileSelected($event, row.date)" class="arztZeugnisProof" id="artztZeugnidsCamera" type="file" accept="image/*" capture="camera" multiple="true")
+                  
       #NoDays(*ngIf="rows.length == 0")
         p Du hast in diesem Monat nicht gearbeitet
       #rapportBlattSummary(*ngIf="rows.length > 0")

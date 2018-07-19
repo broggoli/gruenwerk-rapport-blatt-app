@@ -98,24 +98,59 @@
                     transform: scale(1.1)
 
                 .uploadTicketProof
+                  display: flex
+                  flex-direction: row
+                  justify-content: center
+                  align-items: center
+                  flex-wrap: wrap
 
-                    .image-icon-svg
-                        fill: #1ebce3
-                    .ticketProof
-                        display: none
+                  .ticketProof
+                    display: none
+                .uploadTicketProof>div
+                  display: flex
+                  flex-direction: row
+                  .ticketProofLabel
+                    background: $darkblue
+                    box-sizing: border-box
+                    display: flex
+                    flex-direction: row
+                    padding: 0.3em 1em
+                    cursor: pointer
+                    transition: 200ms
                     .uploadIcon
-                        height: 1em
-                        position: relative
-                        top: 2px
-                        margin-right: 0.5em
-                    .ticketProofLabel
-                        background: $darkblue
-                        box-sizing: border-box
-                        padding: 0.3em 1em
-                        cursor: pointer
-                        transition: 200ms
-                    .ticketProofLabel:hover
-                        background: $darkblue
+                      align-self: center
+                      height: 15px
+                      width: 15px
+                  .ticketProofLabel:hover
+                    background: #1ebce3
+
+                .uploadArztZeugnis
+                  display: flex
+                  flex-direction: row
+                  justify-content: center
+                  align-items: center
+                  flex-wrap: wrap
+
+                .uploadArztZeugnis>div
+                  display: flex
+                  flex-direction: row
+
+                  .arztZeugnisProof
+                    display: none
+                  .artztZeugnisLabel
+                    background: $darkblue
+                    box-sizing: border-box
+                    display: flex
+                    flex-direction: row
+                    padding: 0.3em 1em
+                    cursor: pointer
+                    transition: 200ms
+                    .uploadIcon
+                      align-self: center
+                      height: 15px
+                      width: 15px
+                  .artztZeugnisLabel:hover
+                    background: #1ebce3
 
         #rapportBlattSummary
           .barchart
