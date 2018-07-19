@@ -5,7 +5,7 @@ import {  Validators,
           FormControl } from '@angular/forms'
 import { RegistryService } from "../_services"
 import { Router } from "@angular/router"
-}
+
 @Component({
   selector: 'registry',
   templateUrl: './registry.component.html',
@@ -22,7 +22,7 @@ export class RegistryComponent implements OnInit {
   password: FormControl
   passwordRepeat: FormControl
   startDate: FormControl
-  endDat: FormControl
+  endDate: FormControl
 
   constructor(private registry: RegistryService,
               private router: Router) { }
