@@ -112,7 +112,7 @@
             .form-control-feedback(*ngIf!="dateInput.errors && (dateInput.dirty || dateInput.touched) && startDate.valid && endDate.valid")
               span(*ngIf!="dateInput.errors?.endBeforeStart") Geben Sie bitte ein End-Datum ein, das nach dem Anfangsatum ist.
         
-        .form-control-feedback(*ngIf="registerForm.invalid && registerForm.submitted") 
+        .form-control-feedback(*ngIf="registerForm.invalid") 
           span Sie müssen das Formular korrekt ausfüllen, bevor sie es abschicken können.
           
         .form-control-feedback(*ngIf="registerForm.valid && registerError != '' ")

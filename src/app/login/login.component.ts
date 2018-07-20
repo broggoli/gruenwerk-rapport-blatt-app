@@ -5,6 +5,17 @@ import {  Validators,
 import { AuthService } from '../_services'
 import { Router } from "@angular/router"
 
+interface ZiviDBObj {
+  ziviDataHeader: string,
+  encryptedZiviData: string,
+  expirationDate: number
+}
+interface loginData{
+  success: boolean,
+  data: ZiviDBObj,
+  message: string
+}
+
 @Component({
   selector: 'login',
   templateUrl: './login.component.html',
@@ -50,7 +61,7 @@ export class LoginComponent implements OnInit {
     if( this.loginForm.valid )
     {
       this.showLoader(true)
-      const email = this.email.value.trim(),
+      const email = this.email.value.toLowerCase().trim(),
             password = this.password.value.trim()
       /* Tryes to get the user's data from the backend */
       this.Auth.getEncryptedData(email, password).subscribe(data => {
@@ -58,9 +69,11 @@ export class LoginComponent implements OnInit {
           this.showLoader(false)
           if(data.success){
               this.loginError = ""
-              const userData = data.data.encryptedZiviData
+              //let ziviDBObj: ZiviDBObj = data.data
+              const userData:string = data.data["encryptedZiviData"]
+              console.log("asd", data, typeof data.data)
               this.Auth.saveData(userData, password)
-              console.log(data)
+              console.log("data", data)
               //Display the logout bnutton
               document.querySelector("#logOutButton").classList.remove("loggedOut")
 
@@ -77,11 +90,13 @@ export class LoginComponent implements OnInit {
     }
   }
   showLoader( show:boolean ) {
-    show ?  document.querySelector(".loadingAnim").style = "display: block" :
-            document.querySelector(".loadingAnim").style = "display: none"
+    let loadingAnim: HTMLElement = document.querySelector(".loadingAnim")
+    show ?  loadingAnim.style.display = "block" :
+            loadingAnim.style.display = "none"
   }
   showInputsChecked( show:boolean ) {
-    show ?  document.querySelector(".inputsChecked").style = "display: block" :
-            document.querySelector(".inputsChecked").style = "display: none"
+    let loadingAnim: HTMLElement = document.querySelector(".inputsChecked")
+    show ?  loadingAnim.style.display = "block" :
+          loadingAnim.style.display = "none"
   }
 }

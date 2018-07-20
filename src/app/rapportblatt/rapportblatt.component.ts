@@ -4,11 +4,6 @@ import { UserService,
         ExcelService,
         ImageHandlerService } from '../_services'
 
-interface IfcObject {
-    [key: string]: string | {
-        number: number
-    }
-}
 @Component({
   selector: 'app-rapportblatt',
   templateUrl: './rapportblatt.component.html',
@@ -50,19 +45,21 @@ export class RapportblattComponent implements OnInit {
     if( locallyStoredRB === null ) {
     // TODO: Multi rapportblatt save
       this.user.getSavedRapportblatt(this.monthString).subscribe( savedRapportblatt => {
+      console.log(savedRapportblatt)
         if( savedRapportblatt.success ){
-          console.log(JSON.stringify(savedRapportblatt.data))
           localStorage.setItem("savedRapportblatt", JSON.stringify(savedRapportblatt.data))
-          if( savedRapportblatt.date  === this.monthString ){
-            console.log("asdas", savedRapportblatt.rbData)
-            this.rows = savedRapportblatt.rbData
+          if( savedRapportblatt.data.month  === this.monthString ){
+            this.rows = savedRapportblatt.data.rbData
+            console.log(this.rows)
           }
         }
       })
     }else{
       const savedRb = JSON.parse(locallyStoredRB)
+      console.log("savedRb", savedRb)
       if( savedRb.month  === this.monthString ){
         this.rows = savedRb.rbData
+        console.log(this.rows)
       }
       console.log("RB loaded locally!")
     }
@@ -119,8 +116,18 @@ export class RapportblattComponent implements OnInit {
             .map((key, index) => {
               return [key, dayTypes[key]]
             })
-    return sort ? dayTypesArray.sort((a, b) => a[1] < b[1]) :
-                  dayTypesArray
+    function sortedArray(dayTypesArray) {
+      return dayTypesArray.sort((a, b) => {
+                      if(a[1] < b[1]) {
+                          return 1;
+                      }
+                      if (a[1] < b[1]) {
+                          return -1;
+                      }
+                      return 0;
+                    })
+    }
+    return sort ? sortedArray(dayTypesArray) : dayTypesArray
   }
 
   openSlideshow(){

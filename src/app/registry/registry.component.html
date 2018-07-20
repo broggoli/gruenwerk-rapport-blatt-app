@@ -48,7 +48,7 @@
           <div *ngIf="dateInput.errors && (dateInput.dirty || dateInput.touched) && startDate.valid && endDate.valid" class="form-control-feedback"><span *ngIf="dateInput.errors?.endBeforeStart">Geben Sie bitte ein End-Datum ein, das nach dem Anfangsatum ist.</span></div>
         </div>
       </div>
-      <div *ngIf="registerForm.invalid &amp;&amp; registerForm.submitted" class="form-control-feedback"> <span>Sie müssen das Formular korrekt ausfüllen, bevor sie es abschicken können.</span></div>
+      <div *ngIf="registerForm.invalid" class="form-control-feedback"> <span>Sie müssen das Formular korrekt ausfüllen, bevor sie es abschicken können.</span></div>
       <div *ngIf="registerForm.valid &amp;&amp; registerError != '' " class="form-control-feedback"><span>Die Registrierung ist fehlgeschlagen.</span><br/><span>Error: {{ registerError }}</span></div>
       <div style="display: none" class="loadingAnim svgAnim"><img src="../../assets/svg/loader.svg"/></div>
       <div style="display: none" class="inputsChecked svgAnim"><img src="../../assets/svg/check.svg"/></div>

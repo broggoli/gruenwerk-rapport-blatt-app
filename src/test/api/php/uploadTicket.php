@@ -33,7 +33,7 @@ function start(){
             if($sendMail->success == true){
                 $response = $sendMail;
                 //delete zip file
-                //unlink($pathToZip.".zip");
+                unlink($pathToZip.".zip");
             }else{
 
                 $exceptionString = 'Unable to send new.';

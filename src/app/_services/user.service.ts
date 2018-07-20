@@ -1,9 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http"
 
+// interface row{
+//
+// }
+interface savedRb{
+  month: string,
+  rbData: any[]
+}
 interface rapportblattRequest{
     message: string,
-    success: boolean
+    success: boolean,
+    data: savedRb
 }
 interface logoutStatus{
     success: boolean

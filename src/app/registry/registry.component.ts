@@ -133,7 +133,7 @@ export class RegistryComponent implements OnInit {
                 firstName: this.firstName.value.trim(),
                 lastName: this.lastName.value.trim()
               },
-      email: this.email.value.trim(),
+      email: this.email.value.toLowerCase().trim(),
       abo: this.abo.value.trim(),
       date: {
         startDate: this.startDate.value.trim(),

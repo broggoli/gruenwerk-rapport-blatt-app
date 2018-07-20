@@ -130,8 +130,13 @@
     //Check whether the data header exists
     if(property_exists($savedRapportblattObj, $ziviDataHeader)){
       $response->message = "Data header exists!";
+
+      $responseData = new stdClass();
+      $responseData->rbData = $savedRapportblattObj->{$ziviDataHeader}[$month];
+      $responseData->month = $month;
+
       //returning the encryptedZiviData
-      $response->data = $savedRapportblattObj->{$ziviDataHeader}[$month];
+      $response->data = $responseData;
       if($response->data){
         $response->success = true;
       }else{

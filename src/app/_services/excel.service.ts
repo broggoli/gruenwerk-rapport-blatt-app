@@ -144,7 +144,7 @@ export class ExcelService {
     }
 
       /* write workbook (use type 'binary') */
-      const w_opts =
+      const w_opts: any =
                   {
                     bookType: 'xlsx',
                     type: 'binary',

@@ -5,6 +5,8 @@ import { Injectable } from '@angular/core';
 })
 export class ImageHandlerService {
 
+  images:any
+
   constructor() {
       //Files is an object which saves the resized image-files:
       // Exmpl: {"4.4.18": [File_Object, File_Object],
@@ -49,8 +51,8 @@ export class ImageHandlerService {
       const fileReader = new FileReader();
       const max_size = 720;
 
-      fileReader.onload = (event) => {
-          let image = new Image();
+      fileReader.onload = (event: any) => {
+          let image: any = new Image();
           let imageReturned = false;
 
           image.onload= () => {
@@ -128,7 +130,7 @@ export class ImageHandlerService {
 
       const uploadTicketProof = thisElement.parentElement.parentElement
       //display imageFile
-      let imageElement = document.createElement("img");
+      let imageElement: any = document.createElement("img");
       imageElement.src = dataUrl;
       imageElement.classList.add('imagePreview')
       imageElement.style = "height: 1.8em; right: 0.5em;"
