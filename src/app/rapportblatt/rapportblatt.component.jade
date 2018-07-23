@@ -4,7 +4,7 @@
       #rapportBlattHeader
           #rapportBlattInfo
               #dateInput
-                  label(for="rapportBlattMonth") Monat: 
+                  label(for="rapportBlattMonth") Monat:
                   input((change)="monthChanged($event)" value="{{monthString}}" type="month"  id="rapportBlattMonth" class="dateInput" name="Monat" )
               #unchangableInfo
                   p Heute:
@@ -21,7 +21,7 @@
               option(value='Krank') Krank
               option(value='Ferien') Ferien
               option(value='Urlaub') Urlaub
-              
+
             div.workDayInputs(*ngIf="row.dayType == 'Arbeitstag'")
               input([(ngModel)]="row.workPlace" type='text' placeholder='Arbeitsort' name='Arbeitsort' class='textInput workPlace')
             div.spesenInputs(*ngIf="row.dayType == 'Arbeitstag'")
@@ -32,37 +32,37 @@
 
             //div.fahrspesenDiv
             div.route(*ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'")
-              input([(ngModel)]="row.route.start" type='text' placeholder='Abfahrtsort' name='Abfahrtsort' class='textInput routeInput') 
+              input([(ngModel)]="row.route.start" type='text' placeholder='Abfahrtsort' name='Abfahrtsort' class='textInput routeInput')
               span -
               input([(ngModel)]="row.route.destination" type='text' placeholder='Ziel' name='destination' class='textInput routeInput')
             div(*ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'" style="margin:0; padding: 0;")
               input([(ngModel)]="row.price" type='number' min='0.00' max='100.00' step='0.05' placeholder='Preis' name='Preis' class='textInput price')
             .uploadTicketProof(*ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'")
               div
-                span Billet Belege hochladen: 
+                span Billet Belege hochladen:
               div
-                label(class="ticketProofLabel" for="ticketProofFileUpload") 
+                label(class="ticketProofLabel" for="ticketProofFileUpload")
                     img(src="../../assets/svg/upload.svg" class="uploadIcon")
                     //span Billet Belege hochladen
                   input((change)="onFileSelected($event, row.date)" class="ticketProof" id="ticketProofFileUpload" type="file" multiple="true")
-                //- label(class="ticketProofLabel" for="ticketProofCamera") 
+                //- label(class="ticketProofLabel" for="ticketProofCamera")
                 //-     img(src="../../assets/svg/camera.svg" class="uploadIcon")
                 //-     //span Billet Belege hochladen
                 //-   input((change)="onFileSelected($event, row.date)" class="ticketProof" id="ticketProofCamera" type="file" accept="image/*" capture="camera" multiple="true")
-                  
+
             .uploadArztZeugnis(*ngIf="row.dayType == 'Krank'")
               div
-                span Arztzeugnis hochladen: 
+                span Arztzeugnis hochladen:
               div
-                label(class="artztZeugnisLabel" for="artztZeugnidsFileUpload") 
+                label(class="artztZeugnisLabel" for="artztZeugnidsFileUpload")
                     img(src="../../assets/svg/upload.svg" class="uploadIcon")
                     //span Billet Belege hochladen
                   input((change)="onFileSelected($event, row.date)" class="arztZeugnisProof" id="artztZeugnidsFileUpload" type="file" multiple="true")
-                //- label(class="artztZeugnisLabel" for="artztZeugnidsCamera") 
+                //- label(class="artztZeugnisLabel" for="artztZeugnidsCamera")
                 //-     img(src="../../assets/svg/camera.svg" class="uploadIcon")
                 //-     //span Billet Belege hochladen
                 //-   input((change)="onFileSelected($event, row.date)" class="arztZeugnisProof" id="artztZeugnidsCamera" type="file" accept="image/*" capture="camera" multiple="true")
-                  
+
       #NoDays(*ngIf="rows.length == 0")
         p Du hast in diesem Monat nicht gearbeitet
       #rapportBlattSummary(*ngIf="rows.length > 0")
@@ -74,16 +74,16 @@
                 .dayType([ngStyle]="{width: getPercentage(dayType[1], this.rows.length)}")
                   div(class="{{dayType[0]}}C" )
                     span {{dayType[1]}}
-                
-                    
+
+
           .legendeDiv
             h4 Legende
             ng-container(*ngFor="let dayType of daySummary()")
               .legende
                 label {{dayType[0]}}
-                label : 
+                label :
                 .colorBlock(class="{{dayType[0]}}C" )
-        
+
           #totalSummary
             h4 Entschädigung
             p#totalDayCompensation Total Entschädigung           : {{ summary.compensation }}
@@ -91,16 +91,16 @@
             p#totalShoeCompensation Total Entschädigung Schuhwerk: {{ summary.shoes }}
         #total
             h3#totalPay Total zur Auszahlung: {{ summary.total}}
-      
+
       .loadingAnim.svgAnim( style="display: none" )
           img( src="../../assets/svg/loader.svg" )
       .inputsChecked.svgAnim( style="display: none" )
         img( src="../../assets/svg/check.svg" )
-        
-      #actionButtons(*ngIf="rows.length > 0")     
+
+      #actionButtons(*ngIf="rows.length > 0")
         button#saveutton.button.rb-button((click)="save()")
             img(src="../../assets/svg/save.svg" class="icon")
             span Speichern
-        button#sendButton.button.rb-button((click)="send()") 
+        button#sendButton.button.rb-button((click)="send()")
             img(src="../../assets/svg/send.svg" class="icon")
             span Absenden
