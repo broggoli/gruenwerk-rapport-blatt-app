@@ -4,6 +4,12 @@ import { UserService,
         ExcelService,
         ImageHandlerService } from '../_services'
 
+interface sendRbResponse{
+  data: any,
+  message: string,
+  success: boolean
+}
+
 @Component({
   selector: 'app-rapportblatt',
   templateUrl: './rapportblatt.component.html',
@@ -12,7 +18,7 @@ import { UserService,
 export class RapportblattComponent implements OnInit {
 
   rows: any
-
+  sendError: string
 
   constructor(private user: UserService,
               private table: TableService,
@@ -77,7 +83,8 @@ export class RapportblattComponent implements OnInit {
                                 shoeMoney: 0 // TODO: Clculate shoemoney
                               }
     console.log(rapportblattData)
-    if(this.validateRapportblatt(rapportblattData) === true){
+    //Validate ToDo
+    if(true){
       this.showLoader(true)
       this.showInputsChecked(false)
         const sheetTitle = "Rapportblatt_" +
@@ -93,16 +100,16 @@ export class RapportblattComponent implements OnInit {
                                         ziviName:   rapportblattData.ziviName,
                                         abo:        this.ziviData.abo,
                                         month:      rapportblattData.month})
-            .subscribe(data => {
+            .subscribe((data: sendRbResponse) => {
               
               this.showLoader(false)
               if(data.success){
                 this.showInputsChecked(true)
-                this.loginError = ""
+                this.sendError = ""
               }
 
               this.showInputsChecked(false)
-              this.loginError = data.message
+              this.sendError = data.message
               console.log(JSON.stringify(data))
             })
     }
