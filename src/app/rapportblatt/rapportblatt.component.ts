@@ -31,8 +31,10 @@ export class RapportblattComponent implements OnInit {
   ziviName = this.ziviData.name.firstName+" "+this.ziviData.name.lastName
   summary: any
 
-  monthChanged(event) {
-    const target = event.target
+  monthChanged(event: Event): void {
+
+    const target = <HTMLInputElement>event.target
+    console.log(target.value)
     this.monthString = target.value
     this.getTable()
   }
@@ -66,6 +68,7 @@ export class RapportblattComponent implements OnInit {
 
   }
   send(){
+    
     const rapportblattData =  {
                                 ziviName: this.ziviName,
                                 table: this.rows,
@@ -75,6 +78,8 @@ export class RapportblattComponent implements OnInit {
                               }
     console.log(rapportblattData)
     if(this.validateRapportblatt(rapportblattData) === true){
+      this.showLoader(true)
+      this.showInputsChecked(false)
         const sheetTitle = "Rapportblatt_" +
                             rapportblattData.ziviName.replace(" ","_");
         const excel = this.excel.excelForUpload(
@@ -89,7 +94,16 @@ export class RapportblattComponent implements OnInit {
                                         abo:        this.ziviData.abo,
                                         month:      rapportblattData.month})
             .subscribe(data => {
-                console.log(JSON.stringify(data))
+              
+              this.showLoader(false)
+              if(data.success){
+                this.showInputsChecked(true)
+                this.loginError = ""
+              }
+
+              this.showInputsChecked(false)
+              this.loginError = data.message
+              console.log(JSON.stringify(data))
             })
     }
   }
@@ -185,8 +199,15 @@ export class RapportblattComponent implements OnInit {
     return this.summary
   }
 
-  validateRapportblatt(rapportblatt) {
-    return true // TODO: Validierung
+  showLoader( show:boolean ) {
+    let loadingAnim: HTMLElement = document.querySelector(".loadingAnim")
+    show ?  loadingAnim.style.display = "block" :
+            loadingAnim.style.display = "none"
+  }
+  showInputsChecked( show:boolean ) {
+    let loadingAnim: HTMLElement = document.querySelector(".inputsChecked")
+    show ?  loadingAnim.style.display = "block" :
+          loadingAnim.style.display = "none"
   }
 
   getPercentage(a, b){ return b > 0 ?  Math.floor(a/b*100).toString()+"%" : "0%" }

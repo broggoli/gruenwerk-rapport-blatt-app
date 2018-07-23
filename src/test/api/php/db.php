@@ -161,6 +161,7 @@
     }else{
       $response->message = "Successfully saved the rapportblatt!";
     }
+    
     $rbForMonth = $savedRapportblattObj->{$ziviDataHeader};
     $rbForMonth[$month] = $rbData;
     $savedRapportblattObj->{$ziviDataHeader} = $rbForMonth;

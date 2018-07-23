@@ -92,6 +92,11 @@
         #total
             h3#totalPay Total zur Auszahlung: {{ summary.total}}
       
+      .loadingAnim.svgAnim( style="display: none" )
+          img( src="../../assets/svg/loader.svg" )
+      .inputsChecked.svgAnim( style="display: none" )
+        img( src="../../assets/svg/check.svg" )
+        
       #actionButtons(*ngIf="rows.length > 0")     
         button#saveutton.button.rb-button((click)="save()")
             img(src="../../assets/svg/save.svg" class="icon")
