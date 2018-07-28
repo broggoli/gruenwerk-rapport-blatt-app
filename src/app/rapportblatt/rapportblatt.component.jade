@@ -41,10 +41,10 @@
               div
                 span Billet Belege hochladen:
               div
-                label(class="ticketProofLabel" for="ticketProofFileUpload")
+                label(class="ticketProofLabel" for="{{ row.date }}_upload")
                     img(src="../../assets/svg/upload.svg" class="uploadIcon")
                     //span Billet Belege hochladen
-                  input((change)="onFileSelected($event, row.date)" class="ticketProof" id="ticketProofFileUpload" type="file" multiple="true")
+                  input((change)="onFileSelected($event, row.date)" class="ticketProof" class="ticketProofFileUpload" id="{{ row.date }}_upload" type="file" multiple="true")
                 //- label(class="ticketProofLabel" for="ticketProofCamera")
                 //-     img(src="../../assets/svg/camera.svg" class="uploadIcon")
                 //-     //span Billet Belege hochladen
@@ -91,12 +91,12 @@
             p#totalShoeCompensation Total Entschädigung Schuhwerk: {{ summary.shoes }}
         #total
             h3#totalPay Total zur Auszahlung: {{ summary.total}}
-
+            
       .loadingAnim.svgAnim( style="display: none" )
           img( src="../../assets/svg/loader.svg" )
       .inputsChecked.svgAnim( style="display: none" )
         img( src="../../assets/svg/check.svg" )
-
+      
       #actionButtons(*ngIf="rows.length > 0")
         button#saveutton.button.rb-button((click)="save()")
             img(src="../../assets/svg/save.svg" class="icon")
@@ -104,3 +104,9 @@
         button#sendButton.button.rb-button((click)="send()")
             img(src="../../assets/svg/send.svg" class="icon")
             span Absenden
+            
+      //- #sendMeToo
+      //-   span Sende das Rapportblatt bitte auch an mich.
+      //-   label.switch
+      //-     span(class="knob round checked")
+      //-     input(type='checkbox' class='sendMeTooCheck')

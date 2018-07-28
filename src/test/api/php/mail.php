@@ -24,10 +24,11 @@
             $aboInfo = $mailInfo["aboInfo"];
             $mail = new PHPMailer();
 
-            //Recipients
-            $mail->setFrom('nick@broggoli.ch', 'Nick');
-            $mail->addAddress($mailInfo["receiver"]->mail, $mailInfo["receiver"]->name);     // Add a recipient
-
+            // Adding Recipients
+            $mail->setFrom('rapportblatt@app.ch', 'RapportblattApp');
+            foreach($mailInfo["recipients"] as $recipient) {
+                $mail->addAddress($recipient->mail, $recipient->name);
+            }
             $mail->AddAttachment( $mailInfo["attachmentFilePath"]);
 
             //Content

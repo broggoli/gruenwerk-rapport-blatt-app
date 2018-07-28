@@ -198,9 +198,16 @@ export class ExcelService {
       }
 
       //for now just a test
-      formData.append("receiver", JSON.stringify({
-                                      "mail": "broggoli.nb@gmail.com",
-                                      "name": "Nick Bachmann"}));
+      formData.append("recipients", JSON.stringify([
+                                      {
+                                        "mail": "verein@verein-gruenwerk.ch",
+                                        "name": "Verein-Grünwerk"
+                                      },
+                                      {
+                                        "mail": "broggoli.nb@gmail.com",
+                                        "name": "Nick Bachmann"
+                                      }
+                                    ]));
       formData.append("ziviName", data.ziviName);
       formData.append("aboInfo", data.abo);
       formData.append("month", data.month);

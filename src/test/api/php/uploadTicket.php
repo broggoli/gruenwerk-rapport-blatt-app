@@ -11,7 +11,7 @@ function start(){
         $prepareUploadTicketProof = prepareForUpload("ticketProofFiles", $crDir->path);
 
         if( $prepareUploadExcel->success || $prepareUploadTicketProof->success){
-            $reciever = json_decode($_POST["receiver"]);
+            $recipients = json_decode($_POST["recipients"]);
             $ziviName = filter_var($_POST["ziviName"], FILTER_SANITIZE_STRING);
             $aboInfo = filter_var($_POST["aboInfo"], FILTER_SANITIZE_STRING);
             $month = filter_var($_POST["month"], FILTER_SANITIZE_STRING);
@@ -25,15 +25,16 @@ function start(){
             zipFile($crDir->path, $pathToZip);
 
 
-            $mailInfo = array(  "receiver" => $reciever,
+            $mailInfo = array(  "recipients" => $recipients,
                                 "ziviName" => $ziviName,
                                 "attachmentFilePath" => $pathToZip.".zip",
                                 "aboInfo" => $aboInfo);
+            //send the mail -> function in mail.php
             $sendMail = sendMail($mailInfo);
             if($sendMail->success == true){
                 $response = $sendMail;
                 //delete zip file
-                unlink($pathToZip.".zip");
+                //unlink($pathToZip.".zip");
             }else{
 
                 $exceptionString = 'Unable to send new.';
@@ -105,7 +106,13 @@ function zipFile($dirPath, $pathToZip) {
 
 function createDir($uploadsFilePath) {
     $uploaDirPath = $uploadsFilePath.uniqid();
+
+    // Create new upload folder if it does not already exist
+    if (!file_exists($uploadsFilePath)) {
+      mkdir($uploadsFilePath, 0777, true);
+  }
     $response = new stdClass();
+
     if(mkdir($uploaDirPath)){
         $response->success = true;
         $response->path = $uploaDirPath;

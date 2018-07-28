@@ -4,7 +4,7 @@
     <div id="rapportBlattHeader">
       <div id="rapportBlattInfo">
         <div id="dateInput">
-          <label for="rapportBlattMonth">Monat: </label>
+          <label for="rapportBlattMonth">Monat:</label>
           <input (change)="monthChanged($event)" value="{{monthString}}" type="month" id="rapportBlattMonth" name="Monat" class="dateInput"/>
         </div>
         <div id="unchangableInfo">
@@ -42,18 +42,18 @@
           <input [(ngModel)]="row.price" type="number" min="0.00" max="100.00" step="0.05" placeholder="Preis" name="Preis" class="textInput price"/>
         </div>
         <div *ngIf="row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="uploadTicketProof">
-          <div><span>Billet Belege hochladen: </span></div>
+          <div><span>Billet Belege hochladen:</span></div>
           <div>
-            <label for="ticketProofFileUpload" class="ticketProofLabel"> <img src="../../assets/svg/upload.svg" class="uploadIcon"/>
+            <label for="{{ row.date }}_upload" class="ticketProofLabel"><img src="../../assets/svg/upload.svg" class="uploadIcon"/>
               <!--span Billet Belege hochladen-->
             </label>
-            <input (change)="onFileSelected($event, row.date)" id="ticketProofFileUpload" type="file" multiple="true" class="ticketProof"/>
+            <input (change)="onFileSelected($event, row.date)" id="{{ row.date }}_upload" type="file" multiple="true" class="ticketProof ticketProofFileUpload"/>
           </div>
         </div>
         <div *ngIf="row.dayType == 'Krank'" class="uploadArztZeugnis">
-          <div><span>Arztzeugnis hochladen: </span></div>
+          <div><span>Arztzeugnis hochladen:</span></div>
           <div>
-            <label for="artztZeugnidsFileUpload" class="artztZeugnisLabel"> <img src="../../assets/svg/upload.svg" class="uploadIcon"/>
+            <label for="artztZeugnidsFileUpload" class="artztZeugnisLabel"><img src="../../assets/svg/upload.svg" class="uploadIcon"/>
               <!--span Billet Belege hochladen-->
             </label>
             <input (change)="onFileSelected($event, row.date)" id="artztZeugnidsFileUpload" type="file" multiple="true" class="arztZeugnisProof"/>
@@ -81,7 +81,7 @@
           <ng-container *ngFor="let dayType of daySummary()">
             <div class="legende">
               <label>{{dayType[0]}}</label>
-              <label>: </label>
+              <label>:</label>
               <div class="colorBlock {{dayType[0]}}C"></div>
             </div>
           </ng-container>
@@ -97,9 +97,11 @@
         <h3 id="totalPay">Total zur Auszahlung: {{ summary.total}}</h3>
       </div>
     </div>
-    <div id="actionButtons" *ngIf="rows.length &gt; 0">    
+    <div style="display: none" class="loadingAnim svgAnim"><img src="../../assets/svg/loader.svg"/></div>
+    <div style="display: none" class="inputsChecked svgAnim"><img src="../../assets/svg/check.svg"/></div>
+    <div id="actionButtons" *ngIf="rows.length &gt; 0">
       <button id="saveutton" (click)="save()" class="button rb-button"><img src="../../assets/svg/save.svg" class="icon"/><span>Speichern</span></button>
-      <button id="sendButton" (click)="send()" class="button rb-button"> <img src="../../assets/svg/send.svg" class="icon"/><span>Absenden</span></button>
+      <button id="sendButton" (click)="send()" class="button rb-button"><img src="../../assets/svg/send.svg" class="icon"/><span>Absenden</span></button>
     </div>
   </div>
 </div>

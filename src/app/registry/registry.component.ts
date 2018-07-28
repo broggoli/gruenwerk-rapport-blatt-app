@@ -142,16 +142,18 @@ export class RegistryComponent implements OnInit {
     }
   }
 
-  showLoader(show:boolean) {
-    let loadingAnim: HTMLElement = document.querySelector(".loadingAnim")
-    show ?  loadingAnim.style.display = "block" :
-            loadingAnim.style.display = "none"
+  showLoader( show: boolean ) {
+    showElement( show, ".loadingAnim");
   }
-  showInputsChecked( show:boolean ) {
-    let inputsChecked: HTMLElement = document.querySelector(".inputsChecked")
-    show ?  inputsChecked.style.display = "block" :
-            inputsChecked.style.display = "none"
+  showInputsChecked( show: boolean ) {
+    showElement( show, '.inputsChecked');
   }
+}
+
+function showElement( show: boolean, elementClass: string) {
+    const element : HTMLElement = document.querySelector(elementClass);
+    show ? element.style.display = 'block' :
+          element.style.display = 'none';
 }
 
 function validateAllFormFields(formGroup: FormGroup) {         //{1}

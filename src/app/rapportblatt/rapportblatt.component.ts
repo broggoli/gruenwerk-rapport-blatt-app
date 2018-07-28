@@ -106,27 +106,31 @@ export class RapportblattComponent implements OnInit {
               this.showLoader(false);
               if ( data.success ) {
                 this.showInputsChecked(true);
+                  alert("Rapportblatt wurde erfolgreich verschickt!")
                 this.sendError = '';
+              }else{
+                this.showInputsChecked( false );
+                this.sendError = data.message;
+                console.log(JSON.stringify( data ));
               }
-
-              this.showInputsChecked( false );
-              this.sendError = data.message;
-              console.log(JSON.stringify( data ));
             });
     }
   }
 
   save() {
+    this.showLoader(true)
     /** Saves the rows Object on the server and in localStorage**/
     this.user.saveRapportblatt(this.rows, this.monthString).subscribe( data => {
       console.log(data);
+        this.showLoader(false)
+        this.showInputsChecked(true)
     });
   }
 
   onFileSelected(event, date) {
-      const target = event.target;
-      const filesOnTarget = target.files;
-      console.log(filesOnTarget);
+      let target = event.target;
+      let filesOnTarget = target.files;
+      console.log(filesOnTarget, target, date, event);
       for ( const file of filesOnTarget) {
           this.imageHandler.addImage(file, date, target);
       }
@@ -206,16 +210,20 @@ export class RapportblattComponent implements OnInit {
   }
 
   showLoader( show: boolean ) {
-    const loadingAnim: HTMLElement = document.querySelector('.loadingAnim');
-    show ?  loadingAnim.style.display = 'block' :
-            loadingAnim.style.display = 'none';
+    showElement( show, ".loadingAnim");
   }
   showInputsChecked( show: boolean ) {
-    const loadingAnim: HTMLElement = document.querySelector('.inputsChecked');
-    show ?  loadingAnim.style.display = 'block' :
-          loadingAnim.style.display = 'none';
+    showElement( show, '.inputsChecked');
+    if( show === true){
+      setTimeout(() => showElement( false, '.inputsChecked'), 2000)
+    }
   }
 
   getPercentage(a, b) { return b > 0 ?  Math.floor(a / b * 100).toString() + '%' : '0%'; }
+}
 
+function showElement( show: boolean, elementClass: string) {
+    const element : HTMLElement = document.querySelector(elementClass);
+    show ? element.style.display = 'block' :
+          element.style.display = 'none';
 }
