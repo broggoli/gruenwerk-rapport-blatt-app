@@ -20,12 +20,12 @@
     function sendMail($mailInfo) {
         $response = new stdClass();
         try {
-            $ziviName = $mailInfo["ziviName"];
+            $ziviName = $mailInfo["firstName"]." ".$mailInfo["lastName"];
             $aboInfo = $mailInfo["aboInfo"];
             $mail = new PHPMailer();
 
             // Adding Recipients
-            $mail->setFrom('rapportblatt@app.ch', 'RapportblattApp');
+            $mail->setFrom('', 'RapportblattApp');
             foreach($mailInfo["recipients"] as $recipient) {
                 $mail->addAddress($recipient->mail, $recipient->name);
             }

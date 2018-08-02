@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { UserService,
         TableService,
         ExcelService,
-        ImageHandlerService } from '../_services';
+        ImageHandlerService,
+        SendService } from '../_services';
+import { ZiviData } from '../ziviData'
 
 // tslint:disable-next-line:class-name
 interface SendRbResponse {
@@ -20,7 +22,7 @@ export class RapportblattComponent implements OnInit {
 
   rows: any;
   sendError: string;
-  ziviData: any = this.user.getZiviData();
+  ziviData: ZiviData = this.user.getZiviData();
   todayDate = new Date();
   monthString = this.table.getMonthString(this.todayDate);
   today = this.table.getDateString(this.todayDate);
@@ -30,7 +32,8 @@ export class RapportblattComponent implements OnInit {
   constructor(private user: UserService,
               private table: TableService,
               private excel: ExcelService,
-              private imageHandler: ImageHandlerService) { }
+              private imageHandler: ImageHandlerService,
+              private s: SendService) { }
 
   ngOnInit() {
     this.getTable();
@@ -78,6 +81,8 @@ export class RapportblattComponent implements OnInit {
 
     const rapportblattData =  {
                                 ziviName: this.ziviName,
+                                firstName: this.ziviData.name.firstName,
+                                lastName: this.ziviData.name.lastName,
                                 table: this.rows,
                                 summary: this.getSummary(),
                                 month: this.monthString,
@@ -88,17 +93,23 @@ export class RapportblattComponent implements OnInit {
     if ( true ) {
       this.showLoader(true);
       this.showInputsChecked(false);
-        const sheetTitle = 'Rapportblatt_' +
-                            rapportblattData.ziviName.replace(' ', '_');
-        const excel = this.excel.excelForUpload(
-                        this.excel.getExcelFile(rapportblattData),
-                        rapportblattData.ziviName,
-                        rapportblattData.month);
 
-        this.excel.sendRapportblatt({   excel:      excel,
-                                        excelName:  sheetTitle,
+      //// TODO: add auto format change
+      const fileName = [
+                          "Rbl_Zivi",
+                          rapportblattData["lastName"],
+                          rapportblattData["firstName"],
+                          rapportblattData["month"].split("-")[0].slice(-2),
+                          rapportblattData["month"].split("-")[1]
+                        ].join("_");
+
+        const excel = { "file": this.excel.excelForUpload( this.excel.getExcelFile(rapportblattData, fileName) ),
+                        "name": fileName}
+
+        this.s.sendRapportblatt({       excel:      excel,
                                         images:     this.imageHandler.getImages,
-                                        ziviName:   rapportblattData.ziviName,
+                                        firstName:   rapportblattData.firstName,
+                                        lastName:   rapportblattData.lastName,
                                         abo:        this.ziviData.abo,
                                         month:      rapportblattData.month})
             .subscribe((data: SendRbResponse) => {
@@ -219,6 +230,9 @@ export class RapportblattComponent implements OnInit {
     }
   }
 
+  nDaysHere(){
+    //return Math.round( (this.ziviData - first) / ( 1000*60*60*24) );
+  }
   getPercentage(a, b) { return b > 0 ?  Math.floor(a / b * 100).toString() + '%' : '0%'; }
 }
 

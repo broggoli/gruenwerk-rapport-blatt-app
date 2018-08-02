@@ -33,14 +33,7 @@ export class ExcelService {
                             responseType: "arraybuffer"
                           })
   }
-  getExcelFile(rapportblattData){
-
-    const sheetTitle = [
-                        "RB",
-                        rapportblattData["ziviName"].replace(" ","_"),
-                        rapportblattData["month"]
-                      ].join("_");
-
+  getExcelFile(rapportblattData, sheetTitle){
     const r_opts = {
                       type: 'array',
                       bookType: 'xlsx',
@@ -51,11 +44,23 @@ export class ExcelService {
     let wb = XLSX.read(this.excelTemplate, {type: 'array'})
 
     let ws = wb.Sheets["Verein"]
-    console.log(ws)
     const cols = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"];
     const tableStartRow = 9;
+    var wscols = [
+                  {wch: 2.5},
+                  {wch: 6},
+                  {wch: 12},
+                  {wch: 9},
+                  {wch: 9},
+                  {wch: 9},
+                  {wch: 9},
+                  {wch: 9},
+                  {wch: 9},
+                  {wch: 9}
+                ]
 
-    console.log(rapportblattData, sheetTitle)
+    ws['!cols'] = wscols
+
     wb.Props = {
         "Title" : "Verein",
         "Subject" : "Rapportblatt",
@@ -108,7 +113,7 @@ export class ExcelService {
 
         const sheetRow = parseInt(rowNr) + startRow;
         ws = add_cell_to_sheet(ws, "A"+sheetRow, row["dayName"]);
-        ws = add_cell_to_sheet(ws, "B"+sheetRow, row["date"]);
+        ws = add_cell_to_sheet(ws, "B"+sheetRow, row["date"], false, true);
 
         for(const index in dayTypes){
           const rowIndex = parseInt(index) + 3;
@@ -127,16 +132,22 @@ export class ExcelService {
       return ws;
     }
 
-    function add_cell_to_sheet(worksheet, address, value, currency = false) {
+    function add_cell_to_sheet(worksheet, address, value, currency = false, date=false) {
       /* cell object */
-      let cell: {t: string, v: string, z: any} = {t: "?", v: value, z: false};
-      currency ? cell.z = "##0.00": cell.z="0";
+      let cell: any = {t: "s", v: value, z: false};
 
-      /* assign type */
-      if(typeof value == "string") cell.t = 's'; // string
-      else if(typeof value == "number") cell.t = 'n'; // number
-      else if(value instanceof Date) cell.t = 'd';
-      else throw new Error("cannot store value");
+      if( typeof value == "number" ) cell.t = 'n';
+      currency ? cell.z = "##0.00": cell.z="0";
+      if( date ) {
+        cell.t = 'd'
+        cell.z = 'dd/mm'
+        const d: number = parseInt(value.split(".")[0])
+        const m: number = parseInt(value.split(".")[1])-1
+        const y: number = parseInt("20"+value.split(".")[2])
+
+        cell.v = new Date(y, m , d)
+        XLSX.utils.format_cell(cell); // this refreshes the formatted text.
+      }
 
       /* add to worksheet, overwriting a cell if it exists */
       worksheet[address] = cell;
@@ -158,10 +169,8 @@ export class ExcelService {
 
       return wbout
   }
-  excelForUpload(wbout, ziviName, month){
+  excelForUpload(wbout){
       const now = new Date();
-      //Sheet title in the Form: Rapportblatt_Max_Mustermann_12-4-18
-      const fileName = ["RB", ziviName.replace(" ","_"), month].join("_");
 
       function s2ab(s) {
           var buf = new ArrayBuffer(s.length);
@@ -170,49 +179,6 @@ export class ExcelService {
           return buf;
       }
 
-      return  {
-                  "file": new Blob([s2ab(wbout)], {type:"application/octet-stream"}),
-                  "name": fileName
-              }
-  }
-  sendRapportblatt(data){
-      const ticketProofImages = data.images
-      let formData = new FormData()
-
-      formData.append("excelFile[]", data.excel.file, data.excel.name)
-      for(const date in data.images){
-          //declare the file name
-          const fileName = ["Billet_Beleg", data.ziviName.split(" ").join("_"), date].join("_");
-          if(ticketProofImages[date].length > 1) {
-              for(let i=0; i < ticketProofImages[date].length; i++){
-
-                  formData.append('ticketProofFiles[]', ticketProofImages[date][i], fileName+"_"+(i+1));
-              }
-          }else{
-              formData.append('ticketProofFiles[]', ticketProofImages[date][0], fileName);
-          }
-      }
-      function padZeros(n, width) {
-        n = n + '';
-        return n.length >= width ? n : new Array(width - n.length + 1).join("0") + n;
-      }
-
-      //for now just a test
-      formData.append("recipients", JSON.stringify([
-                                      {
-                                        "mail": "verein@verein-gruenwerk.ch",
-                                        "name": "Verein-Grünwerk"
-                                      },
-                                      {
-                                        "mail": "broggoli.nb@gmail.com",
-                                        "name": "Nick Bachmann"
-                                      }
-                                    ]));
-      formData.append("ziviName", data.ziviName);
-      formData.append("aboInfo", data.abo);
-      formData.append("month", data.month);
-
-      return this.http.post('/api/php/uploadTicket.php', formData)
-      //return this.http.post<myData>('/api/php/uploadTicket.php', formData)
+      return new Blob([s2ab(wbout)], {type:"application/octet-stream"})
   }
 }

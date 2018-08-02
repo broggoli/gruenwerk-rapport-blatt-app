@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http"
+import { ZiviData } from '../ziviData'
 
 // interface row{
 //
@@ -24,7 +25,7 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  getZiviData(){
+  getZiviData(): ZiviData{
       const localStorageFile = localStorage.getItem("userData");
       if (localStorageFile === null) {
           console.log("No file found in localStorage");

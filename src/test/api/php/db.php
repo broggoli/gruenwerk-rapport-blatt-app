@@ -1,7 +1,20 @@
 <?php
   $GLOBALS["ziviDBPath"]                  = "../db/zivi_db.json";
   $GLOBALS["logDBPath"]                   = "../db/log_db.json";
-  $GLOBALS["savedRapportblattDBPath"]  = "../db/saved_rapportblatt.json";
+  $GLOBALS["savedRapportblattDBPath"]     = "../db/saved_rapportblatt.json";
+  $GLOBALS["settings"]                    = "../db/settings.json";
+
+  function getSettings(){
+    //Get the data base as a string
+    $settingsStr = file_get_contents($GLOBALS["settings"]);
+    if($settingsStr == "" || $settingsStr == "null"){
+      $settingsStr = "{}";
+    }
+    //convert JSON string to object
+    $settingsObject =  (object) json_decode($settingsStr, true);
+
+    return $settingsObject;
+  }
 
   /* returns the Data saved in the jsn data base with the $ziviDataHeader as key*/
   function getUserData($ziviDataHeader) {
@@ -104,7 +117,6 @@
     }
     return $response;
   }
-
 /* returns the whole zivi data base as an object */
   function getZiviDB(){
     //Get the data base as a string
@@ -161,7 +173,7 @@
     }else{
       $response->message = "Successfully saved the rapportblatt!";
     }
-    
+
     $rbForMonth = $savedRapportblattObj->{$ziviDataHeader};
     $rbForMonth[$month] = $rbData;
     $savedRapportblattObj->{$ziviDataHeader} = $rbForMonth;

@@ -1,5 +1,6 @@
 <?php
 require_once('mail.php');
+require_once('db.php');
 start();
 
 function start(){
@@ -11,12 +12,21 @@ function start(){
         $prepareUploadTicketProof = prepareForUpload("ticketProofFiles", $crDir->path);
 
         if( $prepareUploadExcel->success || $prepareUploadTicketProof->success){
-            $recipients = json_decode($_POST["recipients"]);
-            $ziviName = filter_var($_POST["ziviName"], FILTER_SANITIZE_STRING);
+            $recipients = getSettings()->mailRecipients;//json_decode($_POST["recipients"]);
+            $recipients = json_decode(json_encode($recipients));
+            $firstName = filter_var($_POST["firstName"], FILTER_SANITIZE_STRING);
+            $lastName= filter_var($_POST["lastName"], FILTER_SANITIZE_STRING);
             $aboInfo = filter_var($_POST["aboInfo"], FILTER_SANITIZE_STRING);
             $month = filter_var($_POST["month"], FILTER_SANITIZE_STRING);
+            $year = filter_var($_POST["year"], FILTER_SANITIZE_STRING);
 
-            $zipFileName = "RB_".str_replace(" ", "_",$ziviName)."_".$month;
+
+            //Making the fileName
+            $zipFileName =  str_replace("year", $year,
+                            str_replace("month", $month,
+                            str_replace("lastName", $lastName,
+                            str_replace("firstName", $firstName,
+                            getSettings()->folderTitle))));
 
             //creating the path to the new zip file one folder up
             $k = explode("/", $crDir->path);
@@ -26,7 +36,8 @@ function start(){
 
 
             $mailInfo = array(  "recipients" => $recipients,
-                                "ziviName" => $ziviName,
+                                "firstName" => $firstName,
+                                "lastName" => $lastName,
                                 "attachmentFilePath" => $pathToZip.".zip",
                                 "aboInfo" => $aboInfo);
             //send the mail -> function in mail.php
