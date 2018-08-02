@@ -8,10 +8,14 @@
 
   //- #gruenWerkLogo
   //-   img(src="../assets/logo_blau.jpg")
-
+  nav#navigation(*ngIf="auth.isLoggedIn")
+    div([ngClass]="{'active': isActive('rapportblatt')}" routerLink="rapportblatt") 
+      a Rapportblatt
+    div([ngClass]="{'active': isActive('settings')}" routerLink="settings") 
+      a Einstellungen
   // This is the content area. The individual pages are loded in here
   #page
-    #content
+    #content      
       <router-outlet></router-outlet>
       //object(type="text/html" data="pages/loginPage.html")
           

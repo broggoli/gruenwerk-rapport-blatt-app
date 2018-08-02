@@ -1,0 +1,54 @@
+
+<div id="settingsPage">
+  <h1>Einstellungen</h1>
+  <div id="daysServed">
+    <h3>Noch zu leistende Diensttage</h3>
+    <div id="servedChart" class="barchart">
+      <div class="chart">
+        <div [ngStyle]="{width: percentServed}" class="served bar">
+          <div class="servedC"><span>{{daysServed}}</span></div>
+        </div>
+        <div [ngStyle]="{width: percentToServe}" class="toServe bar">
+          <div class="toServeC"><span>{{daysToServe}}</span></div>
+        </div>
+      </div>
+      <div class="legendeDiv">
+        <h4>Legende</h4>
+        <div class="legende">
+          <label>Geleistet</label>
+          <label>:</label>
+          <div class="colorBlock servedC"></div>
+        </div>
+        <div class="legende">
+          <label>Noch zu leisten</label>
+          <label>:</label>
+          <div class="colorBlock toServeC"></div>
+        </div>
+      </div>
+    </div>
+    <p>Sie haben {{ percentServed }} Ihres Dienstes Im grünwerk absolviert!</p>
+  </div>
+  <div id="changeServiceTimeDiv">
+    <h3>Dienstdauer ändern</h3>
+    <form [formGroup]="changeServiceTime" id="changeServiceTimeForm" novalidate="novalidate" (ngSubmit)="chnageServiceDuration()">
+      <div [ngClass]="{'has-danger': endDate.invalid && (endDate.dirty || endDate.touched), 'has-success': endDate.valid && (endDate.dirty || endDate.touched) }" class="container">
+        <label for="endDate">Neues Enddatum:</label>
+        <input formControlName="endDate" type="date" id="endDate" class="dateInput"/>
+      </div>
+      <div [ngClass]="{'has-danger': password.invalid && (password.dirty || password.touched), 'has-success': password.valid && (password.dirty || password.touched) }" class="container">
+        <input formControlName="password" placeholder="Passwort" type="password" id="password"/>
+      </div>
+      <button id="chnageServiceButton" [ngClass]="{'disabled': changeServiceTime.invalid}" type="submit" class="button">Ändere Dienstdauer</button>
+      <div class="datesNotValidError">
+        <div *ngIf="(endDate.errors?.required) && (endDate.dirty || endDate.touched)" class="form-control-feedback"><span>Geben Sie bitte ein gültiges Datum ein.</span></div>
+      </div>
+    </form>
+    <div *ngIf="changeServiceTime.valid &amp;&amp; changeServiceError !== '' " class="form-control-feedback"><span>Konnte die Dienstdauer nicht ändern!</span><br/><span>Error: {{ loginError }}</span></div>
+    <div style="display: none" class="loadingAnim svgAnim"><img src="../../assets/svg/loader.svg"/></div>
+    <div style="display: none" class="inputsChecked svgAnim"><img src="../../assets/svg/check.svg"/></div>
+  </div>
+  <div id="deleteAccount">
+    <h3>Account löschen</h3>
+    <button (click)="deleteAccount()" class="button">Löschen</button>
+  </div>
+</div>

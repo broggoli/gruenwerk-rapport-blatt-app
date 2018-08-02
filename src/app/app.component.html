@@ -7,9 +7,15 @@
     </div>
     <button id="logOutButton" routerLink="logout" class="button">Abmelden</button>
   </header>
+  <nav id="navigation" *ngIf="auth.isLoggedIn">
+    <div [ngClass]="{'active': isActive('rapportblatt')}" routerLink="rapportblatt"> <a>Rapportblatt</a></div>
+    <div [ngClass]="{'active': isActive('settings')}" routerLink="settings"> <a>Einstellungen</a></div>
+  </nav>
   <!-- This is the content area. The individual pages are loded in here-->
   <div id="page">
-    <div id="content"><router-outlet></router-outlet>
+    <div id="content">
+           
+      <router-outlet></router-outlet>
       <!--object(type="text/html" data="pages/loginPage.html")-->
     </div>
   </div>

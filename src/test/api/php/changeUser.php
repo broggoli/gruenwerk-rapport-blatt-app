@@ -14,18 +14,13 @@
   if(isset($request_body) && !empty($request_body)) {
     if(property_exists($request_body, "task")) {
       if(isset($_SESSION['user']) && !empty($_SESSION['user'])) {
-        if($request_body->task == "getRb"){
+        if($request_body->task == "changeServiceTime"){
+            $data = json_decode($request_body->dbData)->dbData;
 
-          $savedRapportblatt = getSavedRapportblatt($_SESSION["user"]["ziviDataHeader"], $request_body->month);
-          $response = $savedRapportblatt;
-        }elseif($request_body->task == "setRb"){
+            $replaceUserData = replaceUserData($data);
 
-          $ziviDataHeader =  $_SESSION['user']["ziviDataHeader"];
+            $response = $replaceUserData;
 
-          $saveRapportblatt = saveRapportblatt($ziviDataHeader, $request_body->rbData, $request_body->month);
-
-          //Check whether the data header exists
-          $response = $saveRapportblatt;
         }
       } else {
         $response->message = "Not logged in!";

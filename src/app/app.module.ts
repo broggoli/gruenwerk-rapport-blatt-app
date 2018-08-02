@@ -12,16 +12,19 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { RapportblattComponent } from './rapportblatt/rapportblatt.component';
+import { RegistryComponent } from './registry/registry.component';
+import { SettingsComponent } from './settings/settings.component';
 
 import { AuthGuard } from "./auth.guard";
-import { RegistryComponent } from './registry/registry.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     LogoutComponent,
     RapportblattComponent,
-    RegistryComponent
+    RegistryComponent,
+    SettingsComponent
   ],
   imports: [
     BrowserModule,
@@ -51,8 +54,13 @@ import { RegistryComponent } from './registry/registry.component';
           path: "rapportblatt",
           component: RapportblattComponent,
           canActivate: [AuthGuard]
-
-      }])
+      },
+      {
+        path: "settings",
+        component: SettingsComponent,
+        canActivate: [AuthGuard]
+    }
+    ])
   ],
   providers: [],
   bootstrap: [AppComponent]

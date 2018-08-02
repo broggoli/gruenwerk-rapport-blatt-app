@@ -12,23 +12,28 @@
                     Zivi: ".$ziviName."</p><br/>
                     Abo: ".$aboInfo."<br/>
 
-                    <p>Freundliche Grüsse</p>
+                    <p>Freundliche Gr&uuml;sse</p>
                     <p>Ihr Webserver</p>";
         return $mailText;
     }
 
     function sendMail($mailInfo) {
         $response = new stdClass();
+        
         try {
             $ziviName = $mailInfo["firstName"]." ".$mailInfo["lastName"];
             $aboInfo = $mailInfo["aboInfo"];
             $mail = new PHPMailer();
+            $mail->isSMTP();
 
+            $mail->SetFrom("verein@verein-gruenwerk.ch", "Server");
             // Adding Recipients
-            $mail->setFrom('', 'RapportblattApp');
+            
+            $mail->AddAddress("verein@verein-gruenwerk.ch", "Verein-Gruenwerk");
             foreach($mailInfo["recipients"] as $recipient) {
-                $mail->addAddress($recipient->mail, $recipient->name);
+                $mail->AddCC($recipient->mail, $recipient->name);
             }
+            //echo json_encode( $mail->getAllRecipientAddresses() );
             $mail->AddAttachment( $mailInfo["attachmentFilePath"]);
 
             //Content

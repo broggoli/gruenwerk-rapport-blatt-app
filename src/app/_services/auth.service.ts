@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { CryptoService } from './crypto.service'
-//import { ZiviData } from '../ziviData'
+import { ZiviData } from '../ziviData'
 
 interface myData {
     success: boolean,

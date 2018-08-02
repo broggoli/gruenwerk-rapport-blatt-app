@@ -15,9 +15,9 @@ export class SendService {
       formData.append("excelFile[]", data.excel.file, data.excel.name)
       for(const date in data.images){
           //declare the file name
-
+        
           // TODO: change name of images based on settings file
-          const fileName = ["Billet_Beleg", data.ziviName.split(" ").join("_"), date].join("_");
+          const fileName = ["Billet_Beleg", data.lastName, data.firstName, date].join("_");
           if(ticketProofImages[date].length > 1) {
               for(let i=0; i < ticketProofImages[date].length; i++){
 

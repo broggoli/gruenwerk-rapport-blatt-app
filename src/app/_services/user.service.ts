@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http"
+import { CryptoService } from './crypto.service'
 import { ZiviData } from '../ziviData'
 
 // interface row{
@@ -14,6 +15,10 @@ interface rapportblattRequest{
     success: boolean,
     data: savedRb
 }
+interface simpleRequest{
+      message: string,
+      success: boolean
+}
 interface logoutStatus{
     success: boolean
 }
@@ -23,15 +28,16 @@ interface logoutStatus{
 })
 export class UserService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+              private crypto: CryptoService) { }
 
-  getZiviData(): ZiviData{
+  getZiviData(){
       const localStorageFile = localStorage.getItem("userData");
       if (localStorageFile === null) {
           console.log("No file found in localStorage");
-          return false;
+          alert("An error occured!")
       }else{
-          return JSON.parse(localStorageFile);
+          return <ZiviData>JSON.parse(localStorageFile);
       }
     }
 
@@ -43,6 +49,16 @@ export class UserService {
                                             })
   }
 
+  changeServiceTime(newEndDate: string, password: string){
+    let userDataForDB = this.getZiviData().date.endDate = newEndDate;
+    //hashing the name and encrypt with password so it can't easily be read out of the db
+    const dbData = JSON.stringify({'dbData': this.crypto.encryptForDB(userDataForDB, password)})
+    return this.http.post<simpleRequest>("/api/php/changeUser.php",
+                                            {
+                                              dbData,
+                                              task  : "changeServiceTime"
+                                            })
+  }
   saveRapportblatt(rapportblatt, month: string){
 
     const savedRapportblatt = {

@@ -11,61 +11,63 @@
                       span#today  {{today}}
                   p
                       span#ziviName {{ziviData.name.firstName}} {{ziviData.name.lastName}}
-        #table
-          .rapportBlattRow(*ngFor="let row of rows")
-            .dayName {{row.dayName}}
-            .date {{row.date}}
-            select([(ngModel)]="row.dayType" class='dayTypeChooser' class='dayType')
-              option(value='Arbeitstag') Arbeitstag
-              option(value='Frei') Frei
-              option(value='Krank') Krank
-              option(value='Ferien') Ferien
-              option(value='Urlaub') Urlaub
+      #table(*ngIf="!loading")
+        .rapportBlattRow(*ngFor="let row of rows")
+          .dayName {{row.dayName}}
+          .date {{row.date}}
+          select([(ngModel)]="row.dayType" class='dayTypeChooser' class='dayType')
+            option(value='Arbeitstag') Arbeitstag
+            option(value='Frei') Frei
+            option(value='Krank') Krank
+            option(value='Ferien') Ferien
+            option(value='Urlaub') Urlaub
 
-            div.workDayInputs(*ngIf="row.dayType == 'Arbeitstag'")
-              input([(ngModel)]="row.workPlace" type='text' placeholder='Arbeitsort' name='Arbeitsort' class='textInput workPlace')
-            div.spesenInputs(*ngIf="row.dayType == 'Arbeitstag'")
-              label.switch
-                  span([ngClass]="{'checked':row.spesenChecked}" class="knob round checked" )
-                  input( [(ngModel)]="row.spesenChecked" type='checkbox' class='spesenCheckbox')
-              .spesenText(*ngIf="!row.spesenChecked && row.dayType == 'Arbeitstag'") Sind Fahrspesen angefallen?
+          div.workDayInputs(*ngIf="row.dayType == 'Arbeitstag'")
+            input([(ngModel)]="row.workPlace" type='text' placeholder='Arbeitsort' name='Arbeitsort' class='textInput workPlace')
+          div.spesenInputs(*ngIf="row.dayType == 'Arbeitstag'")
+            label.switch
+                span([ngClass]="{'checked':row.spesenChecked}" class="knob round checked" )
+                input( [(ngModel)]="row.spesenChecked" type='checkbox' class='spesenCheckbox')
+            .spesenText(*ngIf="!row.spesenChecked && row.dayType == 'Arbeitstag'") Sind Fahrspesen angefallen?
 
-            //div.fahrspesenDiv
-            div.route(*ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'")
-              input([(ngModel)]="row.route.start" type='text' placeholder='Abfahrtsort' name='Abfahrtsort' class='textInput routeInput')
-              span -
-              input([(ngModel)]="row.route.destination" type='text' placeholder='Ziel' name='destination' class='textInput routeInput')
-            div(*ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'" style="margin:0; padding: 0;")
-              input([(ngModel)]="row.price" type='number' min='0.00' max='100.00' step='0.05' placeholder='Preis' name='Preis' class='textInput price')
-            .uploadTicketProof(*ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'")
-              div
-                span Billet Belege hochladen:
-              div
-                label(class="ticketProofLabel" for="{{ row.date }}_upload")
-                    img(src="../../assets/svg/upload.svg" class="uploadIcon")
-                    //span Billet Belege hochladen
-                  input((change)="onFileSelected($event, row.date)" class="ticketProof" class="ticketProofFileUpload" id="{{ row.date }}_upload" type="file" multiple="true")
-                //- label(class="ticketProofLabel" for="ticketProofCamera")
-                //-     img(src="../../assets/svg/camera.svg" class="uploadIcon")
-                //-     //span Billet Belege hochladen
-                //-   input((change)="onFileSelected($event, row.date)" class="ticketProof" id="ticketProofCamera" type="file" accept="image/*" capture="camera" multiple="true")
+          //div.fahrspesenDiv
+          div.route(*ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'")
+            input([(ngModel)]="row.route.start" type='text' placeholder='Abfahrtsort' name='Abfahrtsort' class='textInput routeInput')
+            span -
+            input([(ngModel)]="row.route.destination" type='text' placeholder='Ziel' name='destination' class='textInput routeInput')
+          div(*ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'" style="margin:0; padding: 0;")
+            input([(ngModel)]="row.price" type='number' min='0.00' max='100.00' step='0.05' placeholder='Preis' name='Preis' class='textInput price')
+          .uploadTicketProof(*ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'")
+            div
+              span Billet Belege hochladen:
+            div
+              label(class="ticketProofLabel" for="{{ row.date }}_upload")
+                  img(src="../../assets/svg/upload.svg" class="uploadIcon")
+                  //span Billet Belege hochladen
+                input((change)="onFileSelected($event, row.date)" class="ticketProof" class="ticketProofFileUpload" id="{{ row.date }}_upload" type="file" multiple="true")
+              //- label(class="ticketProofLabel" for="ticketProofCamera")
+              //-     img(src="../../assets/svg/camera.svg" class="uploadIcon")
+              //-     //span Billet Belege hochladen
+              //-   input((change)="onFileSelected($event, row.date)" class="ticketProof" id="ticketProofCamera" type="file" accept="image/*" capture="camera" multiple="true")
 
-            .uploadArztZeugnis(*ngIf="row.dayType == 'Krank'")
-              div
-                span Arztzeugnis hochladen:
-              div
-                label(class="artztZeugnisLabel" for="artztZeugnidsFileUpload")
-                    img(src="../../assets/svg/upload.svg" class="uploadIcon")
-                    //span Billet Belege hochladen
-                  input((change)="onFileSelected($event, row.date)" class="arztZeugnisProof" id="artztZeugnidsFileUpload" type="file" multiple="true")
-                //- label(class="artztZeugnisLabel" for="artztZeugnidsCamera")
-                //-     img(src="../../assets/svg/camera.svg" class="uploadIcon")
-                //-     //span Billet Belege hochladen
-                //-   input((change)="onFileSelected($event, row.date)" class="arztZeugnisProof" id="artztZeugnidsCamera" type="file" accept="image/*" capture="camera" multiple="true")
+          .uploadArztZeugnis(*ngIf="row.dayType == 'Krank'")
+            div
+              span Arztzeugnis hochladen:
+            div
+              label(class="artztZeugnisLabel" for="artztZeugnidsFileUpload")
+                  img(src="../../assets/svg/upload.svg" class="uploadIcon")
+                  //span Billet Belege hochladen
+                input((change)="onFileSelected($event, row.date)" class="arztZeugnisProof" id="artztZeugnidsFileUpload" type="file" multiple="true")
+              //- label(class="artztZeugnisLabel" for="artztZeugnidsCamera")
+              //-     img(src="../../assets/svg/camera.svg" class="uploadIcon")
+              //-     //span Billet Belege hochladen
+              //-   input((change)="onFileSelected($event, row.date)" class="arztZeugnisProof" id="artztZeugnidsCamera" type="file" accept="image/*" capture="camera" multiple="true")
 
-      #NoDays(*ngIf="rows.length == 0")
+      #loading(*ngIf="loading")
+        p lade...
+      #NoDays(*ngIf="rows.length == 0 && !loading")
         p Du hast in diesem Monat nicht gearbeitet
-      #rapportBlattSummary(*ngIf="rows.length > 0")
+      #rapportBlattSummary(*ngIf="rows.length > 0 && !loading")
         h3 Zusammenfassung
         #dayChart.barchart
           .chart

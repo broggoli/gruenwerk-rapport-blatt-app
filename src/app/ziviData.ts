@@ -6,7 +6,7 @@ export interface ZiviData{
   email: string,
   abo: string,
   date: {
-    startDate: Date,
-    endDate: Date
+    startDate: string, //Date String
+    endDate: string    //Date String
   }
 }

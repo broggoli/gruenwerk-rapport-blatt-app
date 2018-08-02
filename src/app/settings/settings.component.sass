@@ -1,0 +1,86 @@
+@import "../sass/colors.sass"
+@import "../sass/components/button.sass"
+@import "../sass/inputs.sass"
+
+#settingsPage
+    width: 90%
+    @media (min-width:400px)
+      max-width: 50em
+
+    box-shadow: rgba(0, 0, 0, 0.3) 0 0.2em 1em
+    border-radius: 7px
+
+    margin-left: auto
+    margin-right: auto
+
+    padding-top: 2em
+    margin-top: 4em
+    padding-bottom: 2em
+
+    #servedChart.barchart
+      @media (min-width:550px)
+        display: grid
+        grid-template: auto auto / auto auto
+
+      .chart
+        grid-area: 1 / 1 / auto / span 3
+        display: flex
+        width: 100%
+        padding: 0
+        //TO change the layout change to -> row
+        flex-direction: row
+
+      .toServeC
+        background: #77C8FF
+      .servedC
+        background: #3EC193
+
+      .bar
+        margin: 0
+        padding: 0
+        justify-content: center
+        color: $backgroundColor
+        min-width: 1.5em
+        text-align: center
+        transition: width 10000ms ease-in-out
+
+    .legende
+      align-self: center
+      display: grid
+      grid-template-columns: 7em 1em auto
+      grid-gap: 0.1em
+      .colorBlock
+        display: inline-block
+        width: 1.2em
+        height: 1.2em
+
+    #changeServiceTimeDiv
+      margin-top: 3em
+      #changeServiceTimeForm
+        margin-top: 1em
+        .dateInput
+          max-width: 15em
+          margin-left: 1em
+        button
+          max-width: 15em
+        #password
+          max-width: 15em
+
+
+#settingsPage>h1
+    flex-direction: column
+    margin: auto
+    width: 80%
+
+#settingsPage>div
+    flex-direction: column
+    margin: auto
+    width: 80%
+
+    input
+        width: 96%
+        margin-bottom: 1em
+    .has-danger > input
+      border: solid red
+    .has-success > input
+      border: solid green

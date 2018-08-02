@@ -20,14 +20,15 @@ interface SendRbResponse {
 })
 export class RapportblattComponent implements OnInit {
 
-  rows: any;
-  sendError: string;
-  ziviData: ZiviData = this.user.getZiviData();
-  todayDate = new Date();
-  monthString = this.table.getMonthString(this.todayDate);
-  today = this.table.getDateString(this.todayDate);
-  ziviName = [this.ziviData.name.firstName, this.ziviData.name.lastName].join(' ');
-  summary: any;
+  rows: any
+  sendError: string
+  ziviData: ZiviData
+  todayDate: Date
+  monthString: string
+  today: string
+  ziviName: string
+  summary: any
+  loading: boolean;
 
   constructor(private user: UserService,
               private table: TableService,
@@ -36,9 +37,14 @@ export class RapportblattComponent implements OnInit {
               private s: SendService) { }
 
   ngOnInit() {
-    this.getTable();
+    this.loading = true
     this.ziviData = this.user.getZiviData();
-    console.log(this.user.getZiviData());
+    this.todayDate = new Date()
+    this.monthString = this.table.getMonthString(this.todayDate);
+    this.today = this.table.getDateString(this.todayDate);
+    this.ziviName = [this.ziviData.name.firstName, this.ziviData.name.lastName].join(' ');
+    this.getTable();
+    this.loading = false
   }
 
   monthChanged(event: Event): void {
@@ -46,7 +52,9 @@ export class RapportblattComponent implements OnInit {
     const target = <HTMLInputElement>event.target;
     console.log(target.value);
     this.monthString = target.value;
+    this.loading = true
     this.getTable();
+    this.loading = false
   }
   getTable() {
     const locallyStoredRB = localStorage.getItem('savedRapportblatt');
@@ -55,27 +63,33 @@ export class RapportblattComponent implements OnInit {
     this.rows = this.table.getTableData(this.ziviData, this.monthString);
     // If there is no RB saved Locally
     if ( locallyStoredRB === null ) {
-    // TODO: Multi rapportblatt save
-      this.user.getSavedRapportblatt(this.monthString).subscribe( savedRapportblatt => {
-      console.log(savedRapportblatt);
-        if ( savedRapportblatt.success ) {
-          localStorage.setItem('savedRapportblatt', JSON.stringify(savedRapportblatt.data));
-          if ( savedRapportblatt.data.month  === this.monthString ) {
-            this.rows = savedRapportblatt.data.rbData;
-            console.log(this.rows);
-          }
-        }
-      });
+      this.getRblOnline()
     } else {
       const savedRb = JSON.parse(locallyStoredRB);
       console.log('savedRb', savedRb);
       if ( savedRb.month  === this.monthString ) {
         this.rows = savedRb.rbData;
         console.log(this.rows);
+      }else{
+        this.getRblOnline()
       }
       console.log('RB loaded locally!');
     }
 
+  }
+  getRblOnline() {
+    this.user.getSavedRapportblatt(this.monthString).subscribe( savedRapportblatt => {
+      console.log(savedRapportblatt);
+        if ( savedRapportblatt.success ) {
+
+          localStorage.setItem('savedRapportblatt', JSON.stringify(savedRapportblatt.data));
+
+          if ( savedRapportblatt.data.month === this.monthString ) {
+            this.rows = savedRapportblatt.data.rbData;
+            console.log(this.rows);
+          }
+        }
+      });
   }
   send() {
 
@@ -186,7 +200,7 @@ export class RapportblattComponent implements OnInit {
       return previous;
     }, 0);
 
-    const shoeMoney = 0; // TODO: schuhgeld berechnung
+    const shoeMoney = this.isFirstMonth() ? this.calculateShoeMoney(): 0; // TODO: schuhgeld berechnung
 
     this.summary =  {
       dayTypes:
@@ -230,8 +244,30 @@ export class RapportblattComponent implements OnInit {
     }
   }
 
-  nDaysHere(){
-    //return Math.round( (this.ziviData - first) / ( 1000*60*60*24) );
+  isFirstMonth(): boolean {
+
+    if(this.monthString.split("-")[1] === this.ziviData.date.startDate.split("-")[1]){
+      return true
+    }else {
+      return false
+    }
+  }
+  calculateShoeMoney(): number {
+    const daysInGW: number = this.calculateDaysServed();
+
+    let shoeMoney: number = 60 * Math.floor(daysInGW / 26);
+    if( shoeMoney <= 4 * 60){
+      return shoeMoney;
+    }else{
+      return 4 * 60
+    }
+  }
+
+  totalDaysServing(): number{
+    console.log(new Date(this.ziviData.date.startDate), this.ziviData.date.endDate)
+    return Math.round( (new Date(this.ziviData.date.endDate).getTime()
+                        - new Date(this.ziviData.date.startDate).getTime())
+                        / ( 1000*60*60*24) );
   }
   getPercentage(a, b) { return b > 0 ?  Math.floor(a / b * 100).toString() + '%' : '0%'; }
 }

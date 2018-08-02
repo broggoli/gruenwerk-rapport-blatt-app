@@ -98,12 +98,13 @@
     return $response;
   }
 
-  function replaceUserData($ziviDataHeader, $registerData){
+  function replaceUserData( $registerData){
 
     $response = new StdClass();
     $response->success = false;
 
-    $deleteUserData = deleteUserData($ziviDataHeader);
+    $deleteUserData = deleteUserData($registerData->ziviDataHeader);
+    echo json_encode($deleteUserData);
     $saveUser = saveUser($registerData);
 
     if( $deleteUserData->success ){
@@ -142,17 +143,16 @@
     //Check whether the data header exists
     if(property_exists($savedRapportblattObj, $ziviDataHeader)){
       $response->message = "Data header exists!";
-
-      $responseData = new stdClass();
-      $responseData->rbData = $savedRapportblattObj->{$ziviDataHeader}[$month];
-      $responseData->month = $month;
-
-      //returning the encryptedZiviData
-      $response->data = $responseData;
-      if($response->data){
+      if(array_key_exists($month, $savedRapportblattObj->{$ziviDataHeader})){
+        $responseData = new stdClass();
+        $responseData->rbData = $savedRapportblattObj->{$ziviDataHeader}[$month];
+        $responseData->month = $month;
+        //returning the encryptedZiviData
+        $response->data = $responseData;
+        $response->message = "Successfully retrieved the rapportblatt for month: ".$month;
         $response->success = true;
       }else{
-        $response->success = false;
+        $response->message = "No rapportblatt for this month found!";
       }
     }else{
       $response->message = "No rapportblatt with this credentials found!";
