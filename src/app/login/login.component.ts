@@ -31,7 +31,10 @@ export class LoginComponent implements OnInit {
   loginError = '';
 
   constructor(private Auth: AuthService,
-              private router: Router) { }
+                private router: Router) {
+      this.createFormControls();
+      this.createForm();
+    }
 
   ngOnInit() {
     // Auto log in from index if data is already safed in localStorage
@@ -39,8 +42,6 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['rapportblatt']);
     } else {
       document.querySelector('#logOutButton').classList.add('loggedOut');
-      this.createFormControls();
-      this.createForm();
     }
   }
   createFormControls() {
