@@ -7,7 +7,7 @@
     </div>
     <button id="logOutButton" routerLink="logout" class="button">Abmelden</button>
   </header>
-  <nav id="navigation" *ngIf="auth.isLoggedIn">
+  <nav id="navigation" *ngIf="isLoggedIn">
     <div [ngClass]="{'active': isActive('rapportblatt')}" routerLink="rapportblatt"> <a>Rapportblatt</a></div>
     <div [ngClass]="{'active': isActive('settings')}" routerLink="settings"> <a>Einstellungen</a></div>
   </nav>

@@ -22,7 +22,7 @@ export class AuthService {
       localStorage.setItem("userData", JSON.stringify(decryptedData))
   }
   // get acts like a property name even thiugh it's a function
-  get isLoggedIn(): boolean{
+  get isLoggedIn(): boolean {
     return localStorage.getItem("userData") === null ? false : true
   }
 

@@ -3,27 +3,21 @@
 @import "../sass/inputs.sass"
 
 #settingsPage
-    width: 90%
-    @media (min-width:400px)
-      max-width: 50em
+  width: 95%
+  @media (min-width:400px)
+    max-width: 32em
 
-    box-shadow: rgba(0, 0, 0, 0.3) 0 0.2em 1em
-    border-radius: 7px
+  margin-left: auto
+  margin-right: auto
 
-    margin-left: auto
-    margin-right: auto
+  padding-top: 2em
+  padding-bottom: 2em
 
-    padding-top: 2em
-    margin-top: 4em
-    padding-bottom: 2em
+  #daysServed
+    margin-top: 2em
 
     #servedChart.barchart
-      @media (min-width:550px)
-        display: grid
-        grid-template: auto auto / auto auto
-
       .chart
-        grid-area: 1 / 1 / auto / span 3
         display: flex
         width: 100%
         padding: 0
@@ -42,30 +36,51 @@
         color: $backgroundColor
         min-width: 1.5em
         text-align: center
-        transition: width 10000ms ease-in-out
+        transition: width 400ms ease-in-out
 
     .legende
       align-self: center
-      display: grid
-      grid-template-columns: 7em 1em auto
-      grid-gap: 0.1em
+      display: flex
+      justify-content: space-between
       .colorBlock
-        display: inline-block
-        width: 1.2em
-        height: 1.2em
+        width: 1em
+        height: 1em
 
-    #changeServiceTimeDiv
-      margin-top: 3em
-      #changeServiceTimeForm
-        margin-top: 1em
-        .dateInput
-          max-width: 15em
-          margin-left: 1em
-        button
-          max-width: 15em
-        #password
-          max-width: 15em
+  #changeServiceTimeDiv
+    display: flex
+    flex-direction: column
+    justify-content: center
+    text-align: center
+    #changeServiceTimeForm
+      margin-top: 1em
+      input
+        max-width: 90%
+        align-self: center
+      button
+        width: 91%
+        align-self: center
+  #deleteAccountDiv
+    margin-top: 2em
+    display: flex
+    flex-direction: column
+    text-align: center
+    #deleteAccountForm
+      input
+        width: 90%
+        align-self: center
+      button
+        width: 91%
+        align-self: center
 
+  .svgAnim
+    width: 100%
+    height: 65px
+    align-content: center
+    text-align: center
+    justify-content: center
+    img
+      height: 60px
+      align-self: center
 
 #settingsPage>h1
     flex-direction: column

@@ -3,9 +3,6 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http'
 import {  FormsModule,
           ReactiveFormsModule} from '@angular/forms';
-import {  MatDatepickerModule,
-          MatNativeDateModule,
-          MatFormFieldModule } from '@angular/material';
 
 import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
@@ -16,6 +13,7 @@ import { RegistryComponent } from './registry/registry.component';
 import { SettingsComponent } from './settings/settings.component';
 
 import { AuthGuard } from "./auth.guard";
+import { FilterStringsPipe } from './filter-strings.pipe';
 
 @NgModule({
   declarations: [
@@ -24,16 +22,14 @@ import { AuthGuard } from "./auth.guard";
     LogoutComponent,
     RapportblattComponent,
     RegistryComponent,
-    SettingsComponent
+    SettingsComponent,
+    FilterStringsPipe
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatFormFieldModule,
     RouterModule.forRoot([
       {
           path: "",

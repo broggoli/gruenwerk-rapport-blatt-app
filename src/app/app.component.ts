@@ -13,10 +13,12 @@ export class AppComponent {
 
   constructor(private auth: AuthService,
               private router: Router){
-    this.loggedIn = this.auth.isLoggedIn;
+    this.loggedIn = this.isLoggedIn()
   }
   isActive(route: string){
     return "/"+route === this.router.url ? true : false
   }
+
+  isLoggedIn():boolean { return this.auth.isLoggedIn }
 
 }

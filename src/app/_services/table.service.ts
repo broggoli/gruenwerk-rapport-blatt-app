@@ -7,6 +7,26 @@ export class TableService {
 
   constructor() { }
 
+  filterTable(tableData, dates){
+  const startDate = new Date(Date.parse(dates.startDate))
+  const endDate = new Date(Date.parse(dates.endDate))
+
+    let filteredTable = tableData.filter(row => {
+      const dParts = row.date.split(".");
+      const d = parseInt(dParts[0]);
+      const m = parseInt(dParts[1])-1;
+      const y = parseInt("20"+dParts[2]);
+
+      const date = new Date(y, m, d)
+      if(date.setHours(0,0,0,0) >= startDate.setHours(0,0,0,0) &&
+          date.setHours(0,0,0,0) <= endDate.setHours(0,0,0,0)){
+            return true;
+          }else{
+            return false;
+          }
+    });
+    return filteredTable
+  }
   getTableData(ziviData, monthString) {
 
     const year = parseInt(monthString.split("-")[0]);
@@ -47,9 +67,9 @@ export class TableService {
         tableData.push(row)
       }
     }
-    console.log(tableData)
     return tableData
   }
+
   getDateString(date, separator="."){
     const dd = date.getDate();
     const mm = date.getMonth()+1; //January is 0

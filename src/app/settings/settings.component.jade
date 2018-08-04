@@ -1,33 +1,11 @@
 //output: settings.component.html
 #settingsPage
-  h1 Einstellungen
-  #daysServed
-    h3 Noch zu leistende Diensttage
-    #servedChart.barchart
-      .chart
-        .served.bar([ngStyle]="{width: percentServed}")
-            div(class="servedC" )
-              span {{daysServed}}
-        .toServe.bar([ngStyle]="{width: percentToServe}")
-            div(class="toServeC" )
-              span {{daysToServe}}
-
-      .legendeDiv
-        h4 Legende
-        .legende
-          label Geleistet
-          label :
-          .colorBlock(class="servedC" )
-        .legende
-          label Noch zu leisten
-          label :
-          .colorBlock(class="toServeC" )
-    p Sie haben {{ percentServed }} Ihres Dienstes Im grünwerk absolviert!
   #changeServiceTimeDiv
       h3 Dienstdauer ändern
-      form([formGroup]="changeServiceTime" id="changeServiceTimeForm" novalidate (ngSubmit)="chnageServiceDuration()")
+      form([formGroup]="changeServiceTime" id="changeServiceTimeForm" novalidate (ngSubmit)="changeServiceDuration()")
           .container([ngClass] != "{'has-danger': endDate.invalid && (endDate.dirty || endDate.touched), 'has-success': endDate.valid && (endDate.dirty || endDate.touched) }")
             label(for="endDate") Neues Enddatum:
+            br
             input( 
             formControlName="endDate"
             type="date" 
@@ -40,21 +18,68 @@
             type="password"
             id="password")
             
-          button#chnageServiceButton.button([ngClass]="{'disabled': changeServiceTime.invalid}" type="submit") Ändere Dienstdauer
           
-          .datesNotValidError
+          .notValid
+            .form-control-feedback(*ngIf!="(endDate.errors?.pattern) && (endDate.dirty || endDate.touched)")
+              span Geben Sie bitte ein gültiges Datum ein.
             .form-control-feedback(*ngIf!="(endDate.errors?.required) && (endDate.dirty || endDate.touched)")
               span Geben Sie bitte ein gültiges Datum ein.
-      
-        .form-control-feedback(*ngIf="changeServiceTime.valid && changeServiceError !== '' ")
-          span Konnte die Dienstdauer nicht ändern!
-          br
-          span Error: {{ loginError }}
-          
-        .loadingAnim.svgAnim( style="display: none" )
-          img( src="../../assets/svg/loader.svg" )
-        .inputsChecked.svgAnim( style="display: none" )
-          img( src="../../assets/svg/check.svg" )
-  #deleteAccount
+            .form-control-feedback(*ngIf!="(password.errors?.required) && (password.dirty || password.touched)")
+              span Geben Sie bitte ein Passwort ein.
+            .form-control-feedback(*ngIf!="(password.errors?.minlength) && (password.dirty || password.touched)")
+              span Geben Sie bitte ein Passwort ein, das mindestens 6 Zeichen hat.
+              
+          .form-control-feedback(*ngIf="changeServiceTime.valid && changeServiceError != '' ")
+            span Konnte die Dienstdauer nicht ändern!
+            br
+            span Error: {{ changeServiceError }}
+            
+          button#changeServiceButton.button([ngClass]="{'disabled': changeServiceTime.invalid}" type="submit") Ändern
+  #deleteAccountDiv
     h3 Account löschen
-    button.button((click)="deleteAccount()") Löschen
+    form([formGroup]="deleteAccountForm" id="deleteAccountForm" novalidate (ngSubmit)="deleteAccount()") 
+      .container([ngClass] != "{'has-danger': passwordDA.invalid && (passwordDA.dirty || passwordDA.touched), 'has-success': passwordDA.valid && (passwordDA.dirty || passwordDA.touched) }")
+        input( 
+        formControlName="passwordDA"
+        placeholder="Passwort"
+        type="password"
+        id="passwordDA")
+      
+      .form-control-feedback(*ngIf!="(passwordDA.errors?.required) && (passwordDA.dirty || passwordDA.touched)")
+        span Geben Sie bitte ein Passwort ein.
+        
+      .form-control-feedback(*ngIf!="(passwordDA.errors?.minlength) && (passwordDA.dirty || passwordDA.touched)")
+        span Geben Sie bitte ein Passwort ein, das mindestens 6 Zeichen hat.
+      .form-control-feedback(*ngIf="deleteAccountForm.valid && deleteAccountError != '' ")
+        span Konnte Ihren Account nicht löschen!
+        br
+        span Error: {{ deleteAccountError }}
+        
+      button.button([ngClass]="{'disabled': changeServiceTime.invalid}" type="submit") Löschen
+        
+          
+  .loadingAnim.svgAnim( style="display: none" )
+    img( src="../../assets/svg/loader.svg" )
+  .inputsChecked.svgAnim( style="display: none" )
+    img( src="../../assets/svg/check.svg" )
+  
+  #daysServed
+    h3 Noch zu leistende Diensttage
+    #servedChart.barchart
+      .chart
+        .served.bar([ngStyle]="{width: percentServed}")
+            div(class="servedC" )
+              span {{daysServed}}
+        .toServe.bar([ngStyle]="{width: percentToServe}")
+            div(class="toServeC" )
+              span {{daysToServe}}
+
+      .legendeDiv
+        h5 Legende
+        .legende
+          label Geleistet :
+          .colorBlock(class="servedC" )
+        .legende
+          label Noch zu leisten :
+          .colorBlock(class="toServeC" )
+    p Sie haben {{ percentServed }} Ihres Dienstes beim Grünwerk absolviert!

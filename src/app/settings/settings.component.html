@@ -1,6 +1,39 @@
 
 <div id="settingsPage">
-  <h1>Einstellungen</h1>
+  <div id="changeServiceTimeDiv">
+    <h3>Dienstdauer ändern</h3>
+    <form [formGroup]="changeServiceTime" id="changeServiceTimeForm" novalidate="novalidate" (ngSubmit)="changeServiceDuration()">
+      <div [ngClass]="{'has-danger': endDate.invalid && (endDate.dirty || endDate.touched), 'has-success': endDate.valid && (endDate.dirty || endDate.touched) }" class="container">
+        <label for="endDate">Neues Enddatum:</label><br/>
+        <input formControlName="endDate" type="date" id="endDate" class="dateInput"/>
+      </div>
+      <div [ngClass]="{'has-danger': password.invalid && (password.dirty || password.touched), 'has-success': password.valid && (password.dirty || password.touched) }" class="container">
+        <input formControlName="password" placeholder="Passwort" type="password" id="password"/>
+      </div>
+      <div class="notValid">
+        <div *ngIf="(endDate.errors?.pattern) && (endDate.dirty || endDate.touched)" class="form-control-feedback"><span>Geben Sie bitte ein gültiges Datum ein.</span></div>
+        <div *ngIf="(endDate.errors?.required) && (endDate.dirty || endDate.touched)" class="form-control-feedback"><span>Geben Sie bitte ein gültiges Datum ein.</span></div>
+        <div *ngIf="(password.errors?.required) && (password.dirty || password.touched)" class="form-control-feedback"><span>Geben Sie bitte ein Passwort ein.</span></div>
+        <div *ngIf="(password.errors?.minlength) && (password.dirty || password.touched)" class="form-control-feedback"><span>Geben Sie bitte ein Passwort ein, das mindestens 6 Zeichen hat.</span></div>
+      </div>
+      <div *ngIf="changeServiceTime.valid &amp;&amp; changeServiceError != '' " class="form-control-feedback"><span>Konnte die Dienstdauer nicht ändern!</span><br/><span>Error: {{ changeServiceError }}</span></div>
+      <button id="changeServiceButton" [ngClass]="{'disabled': changeServiceTime.invalid}" type="submit" class="button">Ändern</button>
+    </form>
+  </div>
+  <div id="deleteAccountDiv">
+    <h3>Account löschen</h3>
+    <form [formGroup]="deleteAccountForm" id="deleteAccountForm" novalidate="novalidate" (ngSubmit)="deleteAccount()"> 
+      <div [ngClass]="{'has-danger': passwordDA.invalid && (passwordDA.dirty || passwordDA.touched), 'has-success': passwordDA.valid && (passwordDA.dirty || passwordDA.touched) }" class="container">
+        <input formControlName="passwordDA" placeholder="Passwort" type="password" id="passwordDA"/>
+      </div>
+      <div *ngIf="(passwordDA.errors?.required) && (passwordDA.dirty || passwordDA.touched)" class="form-control-feedback"><span>Geben Sie bitte ein Passwort ein.</span></div>
+      <div *ngIf="(passwordDA.errors?.minlength) && (passwordDA.dirty || passwordDA.touched)" class="form-control-feedback"><span>Geben Sie bitte ein Passwort ein, das mindestens 6 Zeichen hat.</span></div>
+      <div *ngIf="deleteAccountForm.valid &amp;&amp; deleteAccountError != '' " class="form-control-feedback"><span>Konnte Ihren Account nicht löschen!</span><br/><span>Error: {{ deleteAccountError }}</span></div>
+      <button [ngClass]="{'disabled': changeServiceTime.invalid}" type="submit" class="button">Löschen</button>
+    </form>
+  </div>
+  <div style="display: none" class="loadingAnim svgAnim"><img src="../../assets/svg/loader.svg"/></div>
+  <div style="display: none" class="inputsChecked svgAnim"><img src="../../assets/svg/check.svg"/></div>
   <div id="daysServed">
     <h3>Noch zu leistende Diensttage</h3>
     <div id="servedChart" class="barchart">
@@ -13,42 +46,17 @@
         </div>
       </div>
       <div class="legendeDiv">
-        <h4>Legende</h4>
+        <h5>Legende</h5>
         <div class="legende">
-          <label>Geleistet</label>
-          <label>:</label>
+          <label>Geleistet :</label>
           <div class="colorBlock servedC"></div>
         </div>
         <div class="legende">
-          <label>Noch zu leisten</label>
-          <label>:</label>
+          <label>Noch zu leisten :</label>
           <div class="colorBlock toServeC"></div>
         </div>
       </div>
     </div>
-    <p>Sie haben {{ percentServed }} Ihres Dienstes Im grünwerk absolviert!</p>
-  </div>
-  <div id="changeServiceTimeDiv">
-    <h3>Dienstdauer ändern</h3>
-    <form [formGroup]="changeServiceTime" id="changeServiceTimeForm" novalidate="novalidate" (ngSubmit)="chnageServiceDuration()">
-      <div [ngClass]="{'has-danger': endDate.invalid && (endDate.dirty || endDate.touched), 'has-success': endDate.valid && (endDate.dirty || endDate.touched) }" class="container">
-        <label for="endDate">Neues Enddatum:</label>
-        <input formControlName="endDate" type="date" id="endDate" class="dateInput"/>
-      </div>
-      <div [ngClass]="{'has-danger': password.invalid && (password.dirty || password.touched), 'has-success': password.valid && (password.dirty || password.touched) }" class="container">
-        <input formControlName="password" placeholder="Passwort" type="password" id="password"/>
-      </div>
-      <button id="chnageServiceButton" [ngClass]="{'disabled': changeServiceTime.invalid}" type="submit" class="button">Ändere Dienstdauer</button>
-      <div class="datesNotValidError">
-        <div *ngIf="(endDate.errors?.required) && (endDate.dirty || endDate.touched)" class="form-control-feedback"><span>Geben Sie bitte ein gültiges Datum ein.</span></div>
-      </div>
-    </form>
-    <div *ngIf="changeServiceTime.valid &amp;&amp; changeServiceError !== '' " class="form-control-feedback"><span>Konnte die Dienstdauer nicht ändern!</span><br/><span>Error: {{ loginError }}</span></div>
-    <div style="display: none" class="loadingAnim svgAnim"><img src="../../assets/svg/loader.svg"/></div>
-    <div style="display: none" class="inputsChecked svgAnim"><img src="../../assets/svg/check.svg"/></div>
-  </div>
-  <div id="deleteAccount">
-    <h3>Account löschen</h3>
-    <button (click)="deleteAccount()" class="button">Löschen</button>
+    <p>Sie haben {{ percentServed }} Ihres Dienstes beim Grünwerk absolviert!</p>
   </div>
 </div>

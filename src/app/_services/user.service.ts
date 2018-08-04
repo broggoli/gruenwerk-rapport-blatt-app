@@ -50,7 +50,8 @@ export class UserService {
   }
 
   changeServiceTime(newEndDate: string, password: string){
-    let userDataForDB = this.getZiviData().date.endDate = newEndDate;
+    let userDataForDB = this.getZiviData()
+    userDataForDB.date.endDate = newEndDate;
     //hashing the name and encrypt with password so it can't easily be read out of the db
     const dbData = JSON.stringify({'dbData': this.crypto.encryptForDB(userDataForDB, password)})
     return this.http.post<simpleRequest>("/api/php/changeUser.php",
@@ -75,6 +76,17 @@ export class UserService {
 
     return this.http.post<rapportblattRequest>("/api/php/saveRapportblatt.php",
         JSON.stringify(savedRapportblatt))
+  }
+
+  deleteAccount(password) {
+    const ziviEmail = this.getZiviData().email;
+    const dataHeader = this.crypto.getZiviDataHeader(ziviEmail, password);
+
+    return this.http.post<simpleRequest>("/api/php/changeUser.php",
+                                            {
+                                              dataHeader,
+                                              task  : "deleteUser"
+                                            })
   }
 
   logout() {

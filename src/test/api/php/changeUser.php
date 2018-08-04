@@ -14,14 +14,24 @@
   if(isset($request_body) && !empty($request_body)) {
     if(property_exists($request_body, "task")) {
       if(isset($_SESSION['user']) && !empty($_SESSION['user'])) {
-        if($request_body->task == "changeServiceTime"){
-            $data = json_decode($request_body->dbData)->dbData;
+        switch ($request_body->task) {
+          case "changeServiceTime":
+              $data = json_decode($request_body->dbData)->dbData;
 
-            $replaceUserData = replaceUserData($data);
+              $replaceUserData = replaceUserData($data);
 
-            $response = $replaceUserData;
+              $response = $replaceUserData;
+              break;
 
-        }
+          case "deleteUser":
+              $dataHeader = $request_body->dataHeader;
+
+              $deleteUser = deleteUserData($dataHeader);
+
+              $response = $deleteUser;
+              break;
+          }
+
       } else {
         $response->message = "Not logged in!";
       }

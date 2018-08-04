@@ -104,18 +104,20 @@
     $response->success = false;
 
     $deleteUserData = deleteUserData($registerData->ziviDataHeader);
-    echo json_encode($deleteUserData);
-    $saveUser = saveUser($registerData);
 
     if( $deleteUserData->success ){
-      $response->success = true;
+      $saveUser = saveUser($registerData);
+
+      if( $saveUser->success ){
+        $response->success = true;
+        $response->message = "Successfully Deleted and resaved User.";
+      }else{
+          $response->message = "Could not resave the user.";
+      }
+    }else{
+      $response->message = "No User with these credentials found.";
     }
-    if( !$saveUser->success ){
-      $response = $saveUser;
-    }
-    if( $response->success ){
-      $response->message = "Successfully replaced user data.";
-    }
+
     return $response;
   }
 /* returns the whole zivi data base as an object */

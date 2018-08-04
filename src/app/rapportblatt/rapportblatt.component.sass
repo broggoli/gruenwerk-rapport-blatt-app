@@ -62,6 +62,25 @@
 
                 *
                     margin: 2px 5px
+                .invisible
+                  display: none
+                .autoCompleteDropdown
+                  position: absolute
+                  padding: 0
+                  z-index: 1
+                  width: 10.25em
+                  max-height: 300px
+                  background-color: $white
+                  border: solid 1px
+                  overflow-y: auto
+                  transition: 200ms ease
+                  transform: translateY(2.2em)
+
+                  .workPlaceOpt
+                    margin: 0.1em
+                    cursor: pointer
+                  .workPlaceOpt:hover
+                    background-color: lighten($darkblue, 20%)
 
                 .dayName
                     width: 1em
@@ -79,8 +98,12 @@
                   align-items: center
                 .workDayInputs
                   display: flex
+                  flex-direction: column
                   padding: 0
                   margin-left: 0
+                  // .dropDownContainer
+                  //   margin: 0
+                  //   padding: 0
                 .fahrspesenDiv
                   display: flex
                 .route
@@ -185,7 +208,7 @@
               color: $backgroundColor
               min-width: 1.5em
               text-align: center
-              transition: width 10000ms ease-in-out
+              transition: width 400ms ease-in-out
 
           .legende
             align-self: center
@@ -196,7 +219,7 @@
               display: inline-block
               width: 0.5em
               height: 0.5em
-      
+
         .svgAnim
           width: 100%
           align-content: center

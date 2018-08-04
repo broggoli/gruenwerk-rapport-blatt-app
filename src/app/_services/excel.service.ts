@@ -128,7 +128,7 @@ export class ExcelService {
           ws = add_cell_to_sheet(ws, "J"+sheetRow, row["price"])
         }
       }
-      ws = add_cell_to_sheet(ws, "J49", rapportblattData.shoeMoney)
+      ws = add_cell_to_sheet(ws, "J49", rapportblattData.summary.shoes)
       return ws;
     }
 

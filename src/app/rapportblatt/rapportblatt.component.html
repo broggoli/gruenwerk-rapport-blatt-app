@@ -13,7 +13,7 @@
         </div>
       </div>
     </div>
-    <div id="table">
+    <div id="table" *ngIf="!loading">
       <div *ngFor="let row of rows" class="rapportBlattRow">
         <div class="dayName">{{row.dayName}}</div>
         <div class="date">{{row.date}}</div>
@@ -24,10 +24,26 @@
           <option value="Ferien">Ferien</option>
           <option value="Urlaub">Urlaub</option>
         </select>
-        <div *ngIf="row.dayType == 'Arbeitstag'" class="workDayInputs">
-          <input [(ngModel)]="row.workPlace" type="text" placeholder="Arbeitsort" name="Arbeitsort" class="textInput workPlace"/>
+        <div *ngIf="row.dayType === 'Arbeitstag'" class="workDayInputs">
+
+          <input (click)="toggleDropDown($event)"
+                  (blur)="disableDropDown($event)"
+                  [(ngModel)]="row.workPlace"
+                  type="text"
+                  placeholder="Arbeitsort"
+                  name="Arbeitsort"
+                  class="textInput workPlace"/>
+
+          <div class="workPlaceDropDown autoCompleteDropdown invisible">
+            <div (click)="row.workPlace = opt"
+                  *ngFor="let opt of workPlaceOptions() | filterStrings:row.workPlace"
+                  class="workPlaceOpt">
+
+                  {{ opt }}
+            </div>
+          </div>
         </div>
-        <div *ngIf="row.dayType == 'Arbeitstag'" class="spesenInputs">
+        <div *ngIf="row.dayType === 'Arbeitstag'" class="spesenInputs">
           <label class="switch"><span [ngClass]="{'checked':row.spesenChecked}" class="knob round checked"></span>
             <input [(ngModel)]="row.spesenChecked" type="checkbox" class="spesenCheckbox"/>
           </label>
@@ -61,10 +77,13 @@
         </div>
       </div>
     </div>
-    <div id="NoDays" *ngIf="rows.length == 0">
+    <div id="loading" *ngIf="loading">
+      <p>lade...</p>
+    </div>
+    <div id="NoDays" *ngIf="rows.length == 0 &amp;&amp; !loading">
       <p>Du hast in diesem Monat nicht gearbeitet</p>
     </div>
-    <div id="rapportBlattSummary" *ngIf="rows.length &gt; 0">
+    <div id="rapportBlattSummary" *ngIf="rows.length &gt; 0 &amp;&amp; !loading">
       <h3>Zusammenfassung</h3>
       <div id="dayChart" class="barchart">
         <div class="chart">
@@ -79,10 +98,10 @@
         <div class="legendeDiv">
           <h4>Legende</h4>
           <ng-container *ngFor="let dayType of daySummary()">
-            <div class="legende">
-              <label>{{dayType[0]}}</label>
+            <div *ngIf="dayType[1] &gt; 0" class="legende">
+              <label>{{ dayTypeNames[dayType[0]] }}</label>
               <label>:</label>
-              <div class="colorBlock {{dayType[0]}}C"></div>
+              <div class="colorBlock {{ dayType[0] }}C"></div>
             </div>
           </ng-container>
         </div>
