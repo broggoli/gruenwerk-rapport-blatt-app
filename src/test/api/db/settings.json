@@ -3,14 +3,13 @@
   "excelTitle":   "Rbl_Zivi_year-month_lastName_firstName",
   "imageTitle":   "Billet_year-month-day_lastName_firstName",
   "mailRecipients":   [
-                        {"mail": "broggoli.nb@gmail.com",
-                         "name": "Nick Bachmann"
+                        {
+                          "mail": "verein@verein-gruenwerk.ch",
+                          "name": "Verein-Gruenwerk"
                         },
-                        {"mail": "nickbachmann@hotmail.ch",
-                         "name": "Nick Bachmann"
-                        },
-                        {"mail": "agneta.heuman@verein-gruenwerk.ch",
-                         "name": ""
+                        {
+                          "mail": "broggoli.nb@gmail.com",
+                          "name": "Nick Bachmann"
                         }
                   ],
   "saveRbOnline": "true"

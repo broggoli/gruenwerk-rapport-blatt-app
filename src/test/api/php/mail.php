@@ -29,9 +29,15 @@
             $mail->SetFrom("verein@verein-gruenwerk.ch", "Server");
             // Adding Recipients
             
-            $mail->AddAddress("verein@verein-gruenwerk.ch", "Verein-Gruenwerk");
+            $i = 0;
             foreach($mailInfo["recipients"] as $recipient) {
-                $mail->AddCC($recipient->mail, $recipient->name);
+                if($i > 0) {
+                    $mail->AddCC($recipient->mail, $recipient->name);
+                }else if( $i === 0){
+                    // Main Address is set as Adress. The others as CC
+                    $mail->AddAddress($recipient->mail, $recipient->name);
+                }
+                $i++;
             }
             //echo json_encode( $mail->getAllRecipientAddresses() );
             $mail->AddAttachment( $mailInfo["attachmentFilePath"]);
