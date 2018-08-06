@@ -29,10 +29,10 @@ export class TableService {
   }
   getTableData(ziviData, monthString) {
 
-    const year = parseInt(monthString.split("-")[0]);
-    const month = parseInt(monthString.split("-")[1])-1; // January is 0
-    const startDate = new Date(Date.parse(ziviData.date.startDate))
-    const endDate = new Date(Date.parse(ziviData.date.endDate))
+    const year: number = parseInt(monthString.split("-")[0]);
+    const month: number = parseInt(monthString.split("-")[1])-1; // January is 0
+    const startDate: Date = new Date(Date.parse(ziviData.date.startDate))
+    const endDate: Date = new Date(Date.parse(ziviData.date.endDate))
 
     const dates = this.getDatesOfMonth(month, year);
 
@@ -78,7 +78,7 @@ export class TableService {
     return [dd,mm,yy].join(separator);
   }
 
-  getDatesOfMonth(month, year) {
+  getDatesOfMonth(month: number, year:number) {
     /* Returns a 2D array of [nameOfDay, dateObject]*/
     //Make the last month the default month
 

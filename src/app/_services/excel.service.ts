@@ -7,13 +7,6 @@ interface myData {
     message: string,
     data: string
 }
-interface ParsingOptions {
-  type: string,
-  bookType: string,
-  cellStyles: boolean,
-  sheetStubs: boolean,
-  cellFormula: boolean
-}
 
 @Injectable({
   providedIn: 'root'
@@ -146,6 +139,7 @@ export class ExcelService {
         const y: number = parseInt("20"+value.split(".")[2])
 
         cell.v = new Date(y, m , d)
+
         XLSX.utils.format_cell(cell); // this refreshes the formatted text.
       }
 

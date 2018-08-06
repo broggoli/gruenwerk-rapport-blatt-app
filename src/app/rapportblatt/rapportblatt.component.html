@@ -14,73 +14,80 @@
       </div>
     </div>
     <div id="table" *ngIf="!loading">
-      <div *ngFor="let row of rows" class="rapportBlattRow">
-        <div class="dayName">{{row.dayName}}</div>
-        <div class="date">{{row.date}}</div>
-        <select [(ngModel)]="row.dayType" class="dayTypeChooser dayType">
-          <option value="Arbeitstag">Arbeitstag</option>
-          <option value="Frei">Frei</option>
-          <option value="Krank">Krank</option>
-          <option value="Ferien">Ferien</option>
-          <option value="Urlaub">Urlaub</option>
-        </select>
-        <div *ngIf="row.dayType === 'Arbeitstag'" class="workDayInputs">
+      <div *ngFor="let row of rows; let idx = index" class="rapportBlattRow rowIndex{{idx}}">
+        <div class="inputs">
+          <div class="dayName">{{row.dayName}}</div>
+          <div class="date">{{row.date}}</div>
+          <select [(ngModel)]="row.dayType" class="dayTypeChooser dayType">
+            <option value="Arbeitstag">Arbeitstag</option>
+            <option value="Frei">Frei</option>
+            <option value="Krank">Krank</option>
+            <option value="Ferien">Ferien</option>
+            <option value="Urlaub">Urlaub</option>
+          </select>
+          <div *ngIf="row.dayType === 'Arbeitstag'" class="workDayInputs">
 
-          <input (click)="toggleDropDown($event)"
-                  (blur)="disableDropDown($event)"
-                  [(ngModel)]="row.workPlace"
-                  type="text"
-                  placeholder="Arbeitsort"
-                  name="Arbeitsort"
-                  class="textInput workPlace"/>
+            <input (click)="toggleDropDown($event)"
+                    (blur)="disableDropDown($event)"
+                    [(ngModel)]="row.workPlace"
+                    type="text"
+                    placeholder="Arbeitsort"
+                    name="Arbeitsort"
+                    class="textInput workPlace"/>
 
-          <div class="workPlaceDropDown autoCompleteDropdown invisible">
-            <div (click)="row.workPlace = opt"
-                  *ngFor="let opt of workPlaceOptions() | filterStrings:row.workPlace"
-                  class="workPlaceOpt">
+            <div class="workPlaceDropDown autoCompleteDropdown invisible">
+              <div (click)="row.workPlace = opt"
+                    *ngFor="let opt of workPlaceOptions() | filterStrings:row.workPlace"
+                    class="workPlaceOpt">
 
-                  {{ opt }}
+                    {{ opt }}
+              </div>
+            </div>
+          </div>
+          <div *ngIf="row.dayType === 'Arbeitstag'" class="spesenInputs">
+            <label class="switch"><span [ngClass]="{'checked':row.spesenChecked}" class="knob round checked"></span>
+              <input [(ngModel)]="row.spesenChecked" type="checkbox" class="spesenCheckbox"/>
+            </label>
+            <div *ngIf="!row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="spesenText">Sind Fahrspesen angefallen?</div>
+          </div>
+          <!--div.fahrspesenDiv-->
+          <div *ngIf="row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="route">
+            <input [(ngModel)]="row.route.start" type="text" placeholder="Abfahrtsort" name="Abfahrtsort" class="textInput routeInput"/><span>-</span>
+            <input [(ngModel)]="row.route.destination" type="text" placeholder="Ziel" name="destination" class="textInput routeInput"/>
+          </div>
+          <div *ngIf="row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" style="margin:0; padding: 0;">
+            <input [(ngModel)]="row.price" type="number" min="0.00" max="100.00" step="0.05" placeholder="Preis" name="Preis" class="textInput price"/>
+          </div>
+          <div *ngIf="row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="uploadTicketProof">
+            <div><span>Billet Belege hochladen:</span></div>
+            <div>
+              <label for="{{ row.date }}_upload" class="ticketProofLabel"><img src="../../assets/svg/upload.svg" class="uploadIcon"/>
+                <!--span Billet Belege hochladen-->
+              </label>
+              <input (change)="onFileSelected($event, row.date, idx)" id="{{ row.date }}_upload" type="file" multiple="true" class="ticketProof ticketProofFileUpload"/>
+            </div>
+          </div>
+          <div *ngIf="row.dayType == 'Krank'" class="uploadArztZeugnis">
+            <div><span>Arztzeugnis hochladen:</span></div>
+            <div>
+              <label for="artztZeugnidsFileUpload" class="artztZeugnisLabel"><img src="../../assets/svg/upload.svg" class="uploadIcon"/>
+                <!--span Billet Belege hochladen-->
+              </label>
+              <input (change)="onFileSelected($event, row.date, idx)" id="artztZeugnidsFileUpload" type="file" multiple="true" class="arztZeugnisProof"/>
             </div>
           </div>
         </div>
-        <div *ngIf="row.dayType === 'Arbeitstag'" class="spesenInputs">
-          <label class="switch"><span [ngClass]="{'checked':row.spesenChecked}" class="knob round checked"></span>
-            <input [(ngModel)]="row.spesenChecked" type="checkbox" class="spesenCheckbox"/>
-          </label>
-          <div *ngIf="!row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="spesenText">Sind Fahrspesen angefallen?</div>
-        </div>
-        <!--div.fahrspesenDiv-->
-        <div *ngIf="row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="route">
-          <input [(ngModel)]="row.route.start" type="text" placeholder="Abfahrtsort" name="Abfahrtsort" class="textInput routeInput"/><span>-</span>
-          <input [(ngModel)]="row.route.destination" type="text" placeholder="Ziel" name="destination" class="textInput routeInput"/>
-        </div>
-        <div *ngIf="row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" style="margin:0; padding: 0;">
-          <input [(ngModel)]="row.price" type="number" min="0.00" max="100.00" step="0.05" placeholder="Preis" name="Preis" class="textInput price"/>
-        </div>
-        <div *ngIf="row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="uploadTicketProof">
-          <div><span>Billet Belege hochladen:</span></div>
-          <div>
-            <label for="{{ row.date }}_upload" class="ticketProofLabel"><img src="../../assets/svg/upload.svg" class="uploadIcon"/>
-              <!--span Billet Belege hochladen-->
-            </label>
-            <input (change)="onFileSelected($event, row.date)" id="{{ row.date }}_upload" type="file" multiple="true" class="ticketProof ticketProofFileUpload"/>
-          </div>
-        </div>
-        <div *ngIf="row.dayType == 'Krank'" class="uploadArztZeugnis">
-          <div><span>Arztzeugnis hochladen:</span></div>
-          <div>
-            <label for="artztZeugnidsFileUpload" class="artztZeugnisLabel"><img src="../../assets/svg/upload.svg" class="uploadIcon"/>
-              <!--span Billet Belege hochladen-->
-            </label>
-            <input (change)="onFileSelected($event, row.date)" id="artztZeugnidsFileUpload" type="file" multiple="true" class="arztZeugnisProof"/>
-          </div>
+        
+        <div class="errorMessage"
+          *ngIf="rowErrorMessages[idx] !== undefined && rowErrorMessages[idx] !== ''">
+          {{ rowErrorMessages[idx] }}
         </div>
       </div>
     </div>
     <div id="loading" *ngIf="loading">
       <p>lade...</p>
     </div>
-    <div id="NoDays" *ngIf="rows.length == 0 &amp;&amp; !loading">
+    <div id="NoDays" *ngIf="rows.length === 0 &amp;&amp; !loading">
       <p>Du hast in diesem Monat nicht gearbeitet</p>
     </div>
     <div id="rapportBlattSummary" *ngIf="rows.length &gt; 0 &amp;&amp; !loading">

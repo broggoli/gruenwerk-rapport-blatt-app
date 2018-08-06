@@ -12,6 +12,24 @@ interface SendRbResponse {
   message: string;
   success: boolean;
 }
+interface ValidationObj {
+  valid: boolean;
+  message: string;
+  sourceRow: number;
+}
+interface Row {
+  date: string;
+  dayName: string;
+  dayType: string;
+  price: string
+  route: {
+    start: string;
+    destination: string
+  }
+  spesenChecked: boolean
+  ticketProof: string       //Maybe save Images as strings in here
+  workPlace: string
+}
 
 @Component({
   selector: 'app-rapportblatt',
@@ -29,6 +47,8 @@ export class RapportblattComponent implements OnInit {
   summary: any
   loading: boolean;
   dayTypeNames: any;
+  rowErrorMessages: any = {}
+  ticketProofsRemarced: boolean = false
 
 
   constructor(private user: UserService,
@@ -74,7 +94,6 @@ export class RapportblattComponent implements OnInit {
   monthChanged(event: Event): void {
 
     const target = <HTMLInputElement>event.target;
-    console.log(target.value);
     this.monthString = target.value;
     this.loading = true
     this.getTable();
@@ -84,25 +103,30 @@ export class RapportblattComponent implements OnInit {
     const locallyStoredRB = localStorage.getItem('savedRapportblatt');
 
     // default rows config
-    this.rows = this.table.getTableData(this.ziviData, this.monthString);
-    this.rows = this.table.filterTable(this.rows, this.ziviData.date)
+    const defaultRows = this.table.getTableData(this.ziviData, this.monthString);
+    this.rows = this.table.filterTable(defaultRows, this.ziviData.date)
+
     // If there is no RB saved Locally
     if ( locallyStoredRB === null ) {
-      this.getRblOnline()
+      this.rows = this.getRblOnline(defaultRows)
     } else {
       const savedRb = JSON.parse(locallyStoredRB);
-      console.log('savedRb', savedRb);
+      
       if ( savedRb.month  === this.monthString ) {
         this.rows = this.table.filterTable(savedRb.rbData, this.ziviData.date);
-        console.log(this.rows);
+
+        if(this.rows.length !== defaultRows.length) {
+          // The saved RB is too small
+          console.log("the saved RB is too small")
+          this.rows = this.rows.concat(defaultRows.slice(this.rows.length))
+        }
       }else{
-        this.getRblOnline()
+        this.rows = this.getRblOnline(defaultRows)
       }
       console.log('RB loaded locally!');
     }
-
   }
-  getRblOnline() {
+  getRblOnline(defaultRows) {
     this.user.getSavedRapportblatt(this.monthString).subscribe( savedRapportblatt => {
       console.log(savedRapportblatt);
         if ( savedRapportblatt.success ) {
@@ -111,16 +135,89 @@ export class RapportblattComponent implements OnInit {
 
           if ( savedRapportblatt.data.month === this.monthString ) {
             this.rows = this.table.filterTable(savedRapportblatt.data.rbData, this.ziviData.date);
-
-            // //Deletes all the rows, which are not in the given service time
-            // this.rows = onlyServiceTime(this.rows)
-            console.log(this.rows);
+            
+          if(this.rows.length !== defaultRows.length) {
+            // The saved RB is too small
+            console.log("the saved RB is too small")
+            this.rows = this.rows.concat(defaultRows.slice(this.rows.length))
+          }
           }
         }
       });
   }
-  send() {
 
+  validateTable(rows: Row[]): ValidationObj[]{
+    // Validates the table data and fixes small errors in the data like e.g
+    // When there is still a workPlace defined even though the user had a free day
+    let validArray: ValidationObj[] = []
+
+    let i = 0;
+    for(let row of rows) {
+      let validationObj: ValidationObj = {
+        valid: true,
+        message: "",
+        sourceRow: i
+      }
+      switch(row.dayType){
+        case "Arbeitstag":
+          if( !row.workPlace || row.workPlace === "" ){
+            validationObj.valid = false
+            validationObj.message = "Sie müssen einen Arbeitsort eingeben."
+            validationObj.sourceRow = i
+          }else if( row.spesenChecked === true ) {
+            // If the user has checked the spesenInputs there must be inputs
+            if( (!row.route.start || row.route.start === "") 
+              || (!row.route.destination || row.route.destination === "") ) {
+                validationObj.valid = false
+                validationObj.message = "Sie müssen einen Abfahrts- und einen Zielort eingeben."
+                validationObj.sourceRow = i
+            }else if( !row.price || row.price === "" || row.price === "0"){
+              validationObj.valid = false
+              validationObj.message = "Sie müssen einen Preis für Ihr Billet eingeben."
+              validationObj.sourceRow = i
+            }else if( (!row.ticketProof || row.ticketProof === "") && !this.ticketProofsRemarced) {
+              validationObj.valid = false
+              validationObj.message = `Laden Sie bitte entweder einen Billet-Beleg hier hoch, `+
+                                        `oder schicken Sie ihn per Mail an verein@verein-gruenwerk.ch.`+
+                                        ` Billette werden nur mit Beleg zurückerstattet!`
+              validationObj.sourceRow = i
+              this.ticketProofsRemarced = true
+            }
+          }else{
+            
+            this.clearRow(i, ["dayType", "dayName", "date", "workPlace"])
+          }
+          break
+        case "Frei":
+        this.clearRow(i, ["dayType", "dayName", "date"])
+          break
+        case "Krank":
+        this.clearRow(i, ["dayType", "dayName", "date"])
+          break
+        case "Ferien":
+        this.clearRow(i, ["dayType", "dayName", "date"])
+          break
+        case "Urlaub":
+        this.clearRow(i, ["dayType", "dayName", "date"])
+          break
+      }
+      validArray.push(validationObj);
+      i++
+    }
+    return validArray;
+  }
+  clearRow(rowIndex, leaveTheSame: string[]) {
+    for(const item in this.rows[rowIndex]) {
+      if( leaveTheSame.indexOf(item) === -1 ) {
+        if(typeof this.rows[rowIndex][item] === "string"){
+          this.rows[rowIndex][item] = "";
+        }else  if(typeof this.rows[rowIndex][item] === "boolean"){
+          this.rows[rowIndex][item] = false;
+        }
+      }
+    }
+  }
+  send() {
     const rapportblattData =  {
                                 ziviName: this.ziviName,
                                 firstName: this.ziviData.name.firstName,
@@ -129,26 +226,43 @@ export class RapportblattComponent implements OnInit {
                                 summary: this.getSummary(),
                                 month: this.monthString
                               };
-    console.log(rapportblattData);
     // Validate ToDo
-    if ( true ) {
+    const rapportblattTableVal: ValidationObj[] = this.validateTable(this.rows);
+    console.log(rapportblattTableVal, )
+    const rbIsValid = rapportblattTableVal.reduce( (previous: ValidationObj, valObj: ValidationObj) => {
+      return {
+        valid: valObj.valid && previous.valid,
+        message: valObj.valid && previous.valid ? previous.message: valObj.message,
+        sourceRow: valObj.valid && previous.valid ? previous.sourceRow: valObj.sourceRow
+      }
+    }, {valid: true, message:"", sourceRow: null})
+
+    if ( rbIsValid.valid === true ) {
+      
+      const rowElements = document.getElementsByClassName("rapportBlattRow")
+      for(let i=0; i < rowElements.length ;i++){
+        rowElements[i].classList.remove("error")
+      }
+      this.save()
       this.showLoader(true);
       this.showInputsChecked(false);
 
       //// TODO: add auto format change
       const fileName = [
                           "Rbl_Zivi",
+                          rapportblattData["month"].split("-")[0].slice(-2),
+                          rapportblattData["month"].split("-")[1],
                           rapportblattData["lastName"],
                           rapportblattData["firstName"],
-                          rapportblattData["month"].split("-")[0].slice(-2),
-                          rapportblattData["month"].split("-")[1]
                         ].join("_");
 
         const excel = { "file": this.excel.excelForUpload( this.excel.getExcelFile(rapportblattData, fileName) ),
                         "name": fileName}
+        
+        const images = this.imageHandler.getImages
 
         this.s.sendRapportblatt({       excel:      excel,
-                                        images:     this.imageHandler.getImages,
+                                        images,
                                         firstName:   rapportblattData.firstName,
                                         lastName:   rapportblattData.lastName,
                                         abo:        this.ziviData.abo,
@@ -166,6 +280,26 @@ export class RapportblattComponent implements OnInit {
                 console.log(JSON.stringify( data ));
               }
             });
+    }else{
+      let firstErrorElement = null
+      for(let rowVal of rapportblattTableVal) {
+        const rowElement = document.getElementsByClassName("rowIndex" + rowVal.sourceRow)[0];
+        if( !rowVal.valid ){
+          if(!firstErrorElement){
+            // To scroll to the first element
+            firstErrorElement = rowElement
+          }
+          rowElement.classList.add("error");
+          this.rowErrorMessages[rowVal.sourceRow] = rowVal.message
+
+          console.log(this.rowErrorMessages)
+          firstErrorElement.scrollIntoView({ 
+            behavior: 'smooth' 
+          });
+        }else{
+          rowElement.classList.remove("error")
+        }
+      }
     }
   }
 
@@ -178,13 +312,17 @@ export class RapportblattComponent implements OnInit {
         this.showInputsChecked(true)
     });
   }
-
-  onFileSelected(event, date) {
+  saveImageInRows(file, rowIndex) {
+    const callback = (image) => this.rows[rowIndex].ticketProof += image+"|seperator|"
+    this.imageHandler.scaleFile(file, callback, true)
+  }
+  onFileSelected(event, date, rowIndex) {
       let target = event.target;
       let filesOnTarget = target.files;
-      console.log(filesOnTarget, target, date, event);
       for ( const file of filesOnTarget) {
-          this.imageHandler.addImage(file, date, target);
+        //this.saveImageInRows(file, rowIndex)
+        this.rows[rowIndex].ticketProof += file.name+"|"
+        this.imageHandler.addImage(file, date, target);
       }
   }
 
@@ -218,7 +356,9 @@ export class RapportblattComponent implements OnInit {
     const urlaubPay = 0;
 
     const spesenPreis = this.rows.reduce((previous, o) => {
-      if (o['price'] !== '') { return previous + o['price']; }
+      if (o['price'] !== '' && 
+          o['spesenChecked'] === true && 
+          o['dayType'] === "Arbeitstag") { return previous + o['price']; }
       return previous;
     }, 0);
 
@@ -293,7 +433,6 @@ export class RapportblattComponent implements OnInit {
       return maxMoney
     }
   }
-
   totalDaysServing(): number{
     return Math.round( (new Date(this.ziviData.date.endDate).getTime()
                         - new Date(this.ziviData.date.startDate).getTime())
@@ -310,8 +449,8 @@ export class RapportblattComponent implements OnInit {
     //target.nextElementSibling.classList.add("windUp")
     setTimeout(() => target.nextElementSibling.classList.add("invisible"), 200);
   }
+  
 }
-
 function showElement( show: boolean, elementClass: string) {
     const element : HTMLElement = document.querySelector(elementClass);
     show ? element.style.display = 'block' :

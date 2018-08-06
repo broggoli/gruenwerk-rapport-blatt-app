@@ -11,7 +11,7 @@ export class ImageHandlerService {
       //Files is an object which saves the resized image-files:
       // Exmpl: {"4.4.18": [File_Object, File_Object],
       //          "5.4.18": [File_Object]}
-      this.images = []
+      this.images = {}
   }
 
   get getImages(){
@@ -19,15 +19,15 @@ export class ImageHandlerService {
   }
   addImage(file, date, thisElement) {
 
-      let appendImage = (scaledFile) => {
+      let appendImage = (scaledFile, dataURL) => {
           if(date in this.images){
               console.log("key already exists!");
               this.images[date].push(scaledFile);
           }else{
               this.images[date] = [scaledFile];
           }
+          this.displayImage(dataURL, thisElement, date);
       }
-
       //Check the filetype
       const filterType = /^(?:image\/bmp|image\/cis\-cod|image\/gif|image\/ief|image\/jpeg|image\/jpeg|image\/jpeg|image\/pipeg|image\/png|image\/svg\+xml|image\/tiff|image\/x\-cmu\-raster|image\/x\-cmx|image\/x\-icon|image\/x\-portable\-anymap|image\/x\-portable\-bitmap|image\/x\-portable\-graymap|image\/x\-portable\-pixmap|image\/x\-rgb|image\/x\-xbitmap|image\/x\-xpixmap|image\/x\-xwindowdump)$/i;
 
@@ -36,79 +36,82 @@ export class ImageHandlerService {
         return false;
       }
 
-      this.scaleFile(file, appendImage, thisElement);
+      this.scaleFile(file, appendImage);
 
   }
-  deleteImage(date, index=0){
+  deleteImage(event){
+      const target = event.target
+      const id = target.id
+      const date = id.split("/")[0]
+      const index = id.split("/")[1]
+
       this.images[date].splice(index);
       //check whether the object of this date is now empty
-      if(this.images[date].length == 0){
+      if(this.images[date].length === 0){
           delete this.images[date];
       }
       return true;
   }
-  scaleFile(imageFile, callback, thisElement){
+  getCanvas( image ){  
+    const max_size = 720;
+    let canvas = document.createElement("canvas"),
+    context = canvas.getContext("2d"),
+    width = image.width,
+    height = image.height;
+
+    if (width > height) {
+        if (width > max_size) {
+            height *= max_size / width;
+            width = max_size;
+        }
+    } else if (height > max_size) {
+            width *= max_size / height;
+            height = max_size;
+    }
+        
+    canvas.width = width;
+    canvas.height = height;
+    context.drawImage(image,
+        0,
+        0,
+        image.width,
+        image.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+    return canvas
+  }
+  scaleFile(imageFile, callback, getDataURL=false){
       const fileReader = new FileReader();
-      const max_size = 720;
 
       fileReader.onload = (event: any) => {
           let image: any = new Image();
-          let imageReturned = false;
 
           image.onload= () => {
-              let canvas = document.createElement("canvas"),
-                  context = canvas.getContext("2d"),
-                  width = image.width,
-                  height = image.height;
-
-              if (width > height) {
-                  if (width > max_size) {
-                      height *= max_size / width;
-                      width = max_size;
-                  }else{
-                      //return the image but still make a canvas element
-                      //to return an dataURL
-                      callback(imageFile);
-                      imageReturned = true;
-                  }
-              } else {
-                  if (height > max_size) {
-                      width *= max_size / height;
-                      height = max_size;
-                  }else{
-                      //return the image but still make a canvas element
-                      //to return an dataURL
-                      callback(imageFile);
-                      imageReturned = true;
-                  }
-              }
-              canvas.width = width;
-              canvas.height = height;
-              context.drawImage(image,
-                0,
-                0,
-                image.width,
-                image.height,
-                0,
-                0,
-                canvas.width,
-                canvas.height
-              );
-
-              if(!imageReturned){
-                  const scaledImage = dataURLtoFile(canvas.toDataURL(), Date.now());
-                  // If the downscaledImage is still bigger in byte size than the
-                  // original just return the original
-                  if(scaledImage.size < imageFile.size){
-                      // console.log("scaled size: "+scaledImage.size);
-                      // console.log("original size: "+imageFile.size);
-                      callback(scaledImage);
-                  }else{
-                      callback(imageFile);
-                      imageReturned = true;
-                  }
-              }
-              this.displayImage(canvas.toDataURL(), thisElement);
+            const canvas = this.getCanvas(image)
+            const dataURL = canvas.toDataURL()
+            if( !getDataURL ){
+                const scaledImage = dataURLtoFile(dataURL, Date.now());
+                // If the downscaledImage is still bigger in byte size than the
+                // original just return the original
+                if(scaledImage.size < imageFile.size){
+                    callback(scaledImage, dataURL);
+                }else{
+                    callback(imageFile, dataURL);
+                }
+            }else{
+                const scaledImage = dataURL
+                const origImage = image.src
+                // If the downscaledImage is still bigger in byte size than the
+                // original just return the original
+                if(scaledImage.length < origImage.length){
+                    callback(scaledImage);
+                }else{
+                    callback(origImage);
+                }
+            }
           }
           image.src=event.target.result;
       };
@@ -126,15 +129,16 @@ export class ImageHandlerService {
           }
   }
 
-  displayImage(dataUrl, thisElement){
-
-      const uploadTicketProof = thisElement.parentElement.parentElement
+  displayImage(dataUrl, thisElement, date){
+    
+      const uploadTicketProof = thisElement.parentElement
       //display imageFile
       let imageElement: any = document.createElement("img");
       imageElement.src = dataUrl;
+      imageElement.id = date+"/"+(this.images[date].length-1)
       imageElement.classList.add('imagePreview')
       imageElement.style = "height: 1.8em; right: 0.5em;"
-      //imageElement.setAttribute("onClick", "this.openSlideshow()")
+      //imageElement.setAttribute("click", "deleteImage($event)")
 
       let previewImage = uploadTicketProof.append(imageElement)
 

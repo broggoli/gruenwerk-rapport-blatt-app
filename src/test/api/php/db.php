@@ -164,21 +164,27 @@
 
   function saveRapportblatt($ziviDataHeader, $rbData, $month){
 
-    $userData = new stdClass();
+    $rapportBlattData = new stdClass();
     $response = new StdClass();
     //Getting the rapportblatt DB as an object
     $savedRapportblattObj = getSavedRapportblattDB();
 
     //Check whether the data header already exists
     if( property_exists($savedRapportblattObj, $ziviDataHeader) ){
-      $response->message = "new rapportblatt saved!";
-    }else{
+
+      $rbForMonth = $savedRapportblattObj->{$ziviDataHeader};
+      $rbForMonth[$month] = $rbData;
+      $savedRapportblattObj->{$ziviDataHeader} = $rbForMonth;
+
       $response->message = "Successfully saved the rapportblatt!";
+    }else{
+      $rbForMonth = [];
+      $rbForMonth[$month] = $rbData;
+      $savedRapportblattObj->{$ziviDataHeader} = $rbForMonth;
+
+      $response->message = "Successfully saved the rapportblatt!asd";
     }
 
-    $rbForMonth = $savedRapportblattObj->{$ziviDataHeader};
-    $rbForMonth[$month] = $rbData;
-    $savedRapportblattObj->{$ziviDataHeader} = $rbForMonth;
 
     // encode array to json and save to file
     file_put_contents($GLOBALS["savedRapportblattDBPath"], json_encode($savedRapportblattObj));
