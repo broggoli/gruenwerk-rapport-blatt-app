@@ -24,9 +24,11 @@
           <option value="Ferien">Ferien</option>
           <option value="Urlaub">Urlaub</option>
         </select>
+
         <div *ngIf="row.dayType === 'Arbeitstag'" class="workDayInputs">
 
-          <input (click)="toggleDropDown($event)"
+          <input (click)="toggleDropDown( $event ); 
+                          updateWorkPlaceOptions(row) "
                   (blur)="disableDropDown($event)"
                   [(ngModel)]="row.workPlace"
                   type="text"
@@ -34,15 +36,17 @@
                   name="Arbeitsort"
                   class="textInput workPlace"/>
 
-          <div class="workPlaceDropDown autoCompleteDropdown invisible">
+          <div class="workPlaceDropDown autoCompleteDropdown invisible"
+                *ngIf="(workPlaceOptions | filterStrings:row.workPlace).length > 0">
             <div (click)="row.workPlace = opt"
-                  *ngFor="let opt of workPlaceOptions() | filterStrings:row.workPlace"
+                  *ngFor="let opt of workPlaceOptions | filterStrings:row.workPlace"
                   class="workPlaceOpt">
 
                   {{ opt }}
             </div>
           </div>
         </div>
+
         <div *ngIf="row.dayType === 'Arbeitstag'" class="spesenInputs">
           <label class="switch"><span [ngClass]="{'checked':row.spesenChecked}" class="knob round checked"></span>
             <input [(ngModel)]="row.spesenChecked" type="checkbox" class="spesenCheckbox"/>
