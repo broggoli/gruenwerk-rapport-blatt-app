@@ -8,7 +8,6 @@ import {
 } from '../_services';
 import { ZiviData } from '../ziviData'
 
-// tslint:disable-next-line:class-name
 interface SendRbResponse {
   data: any;
   message: string;
@@ -76,6 +75,9 @@ export class RapportblattComponent implements OnInit {
       "urlaubstage": "Urlaubstage",
       "arbeitsTage": "Arbeitstage"
     }
+    for(const row in this.rows){
+      this.updateWorkPlaceOptions(row)
+    }
     //["Winterthur", "Zürich", "Dätlikon", "Bülach", "Katzensee", "Ossingen"]
   }
 
@@ -119,7 +121,7 @@ export class RapportblattComponent implements OnInit {
                           thisRow,
                           "workPlace")
                         )
-    this.workPlaceOptions = options;
+    this.workPlaceOptions = options
 
     function removeDuplicates(arr) {
       let unique_array = []
@@ -493,7 +495,7 @@ export class RapportblattComponent implements OnInit {
       if (target.nextElementSibling !== null) {
         target.nextElementSibling.classList.add("invisible");
       }
-    }, 300);
+    }, 200);
   }
   
 }

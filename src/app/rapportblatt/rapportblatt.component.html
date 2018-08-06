@@ -27,7 +27,8 @@
           </select>
           <div *ngIf="row.dayType === 'Arbeitstag'" class="workDayInputs">
 
-            <input (click)="toggleDropDown($event)"
+            <input (click)="updateWorkPlaceOptions(row);
+                            toggleDropDown($event)"
                     (blur)="disableDropDown($event)"
                     [(ngModel)]="row.workPlace"
                     type="text"
@@ -35,9 +36,10 @@
                     name="Arbeitsort"
                     class="textInput workPlace"/>
 
-            <div class="workPlaceDropDown autoCompleteDropdown invisible">
+            <div class="workPlaceDropDown autoCompleteDropdown invisible"
+                  *ngIf="(workPlaceOptions | filterStrings:row.workPlace).length > 0">
               <div (click)="row.workPlace = opt"
-                    *ngFor="let opt of workPlaceOptions() | filterStrings:row.workPlace"
+                    *ngFor="let opt of workPlaceOptions | filterStrings:row.workPlace"
                     class="workPlaceOpt">
 
                     {{ opt }}
