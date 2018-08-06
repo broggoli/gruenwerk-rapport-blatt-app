@@ -29,7 +29,7 @@
       <div *ngIf="(passwordDA.errors?.required) && (passwordDA.dirty || passwordDA.touched)" class="form-control-feedback"><span>Geben Sie bitte ein Passwort ein.</span></div>
       <div *ngIf="(passwordDA.errors?.minlength) && (passwordDA.dirty || passwordDA.touched)" class="form-control-feedback"><span>Geben Sie bitte ein Passwort ein, das mindestens 6 Zeichen hat.</span></div>
       <div *ngIf="deleteAccountForm.valid &amp;&amp; deleteAccountError != '' " class="form-control-feedback"><span>Konnte Ihren Account nicht löschen!</span><br/><span>Error: {{ deleteAccountError }}</span></div>
-      <button [ngClass]="{'disabled': changeServiceTime.invalid}" type="submit" class="button">Löschen</button>
+      <button [ngClass]="{'disabled': deleteAccountForm.invalid}" type="submit" class="button">Löschen</button>
     </form>
   </div>
   <div style="display: none" class="loadingAnim svgAnim"><img src="../../assets/svg/loader.svg"/></div>
