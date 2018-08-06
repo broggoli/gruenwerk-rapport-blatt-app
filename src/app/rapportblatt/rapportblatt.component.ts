@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService,
-        TableService,
-        ExcelService,
-        ImageHandlerService,
-        SendService } from '../_services';
+import {
+  UserService,
+  TableService,
+  ExcelService,
+  ImageHandlerService,
+  SendService
+} from '../_services';
 import { ZiviData } from '../ziviData'
 
 // tslint:disable-next-line:class-name
@@ -50,12 +52,13 @@ export class RapportblattComponent implements OnInit {
   rowErrorMessages: any = {}
   ticketProofsRemarced: boolean = false
 
+  workPlaceOptions: string[] = [];
 
   constructor(private user: UserService,
-              private table: TableService,
-              private excel: ExcelService,
-              private imageHandler: ImageHandlerService,
-              private s: SendService) { }
+    private table: TableService,
+    private excel: ExcelService,
+    private imageHandler: ImageHandlerService,
+    private s: SendService) { }
 
   ngOnInit() {
     this.loading = true
@@ -75,18 +78,55 @@ export class RapportblattComponent implements OnInit {
     }
     //["Winterthur", "Zürich", "Dätlikon", "Bülach", "Katzensee", "Ossingen"]
   }
-  workPlaceOptions() {
-    let options = this.rows.map(row => row.workPlace !== "" ? row.workPlace : false)
-                    .filter(workPlace => workPlace ? true : false)
 
-    return removeDuplicates(options)
+  // Ths function see to it that the first element in the list will be the option that is above it
+  sortIndividually( optionsArray: string[],
+                    thisRow: any, 
+                    previousFieldName: string){
+    
+    const previousRowIndex = this.rows.indexOf(thisRow)-1
 
-    function removeDuplicates(arr){
+    if( previousRowIndex > -1){
+      const previousRow = this.rows[ previousRowIndex ]
+      const previousInput = previousRow[previousFieldName]
+
+      if( previousInput && previousInput !== ""){
+
+        const indexOfArrayItem = optionsArray.indexOf(previousInput);
+        
+        if( indexOfArrayItem >= 0 ){
+          let swap = optionsArray[indexOfArrayItem]
+          optionsArray[indexOfArrayItem] = optionsArray[0]
+          optionsArray[0] = swap
+        }
+      }else{
+        return this.sortIndividually(optionsArray, previousRow, previousFieldName)
+      }
+    }
+    return optionsArray
+  }
+  updateWorkPlaceOptions(thisRow) {
+    let options =  removeDuplicates(
+                      this.sortIndividually(
+                            this.rows.map(row =>
+                              row.workPlace !== ""
+                                ? row.workPlace
+                                : undefined)
+                              .filter(workPlace =>
+                                workPlace
+                                  ? true
+                                  : false),
+                          thisRow,
+                          "workPlace")
+                        )
+    this.workPlaceOptions = options;
+
+    function removeDuplicates(arr) {
       let unique_array = []
-      for(let i = 0;i < arr.length; i++){
-          if(unique_array.indexOf(arr[i]) == -1){
-              unique_array.push(arr[i])
-          }
+      for (let i = 0; i < arr.length; i++) {
+        if (unique_array.indexOf(arr[i]) == -1) {
+          unique_array.push(arr[i])
+        }
       }
       return unique_array
     }
@@ -129,9 +169,9 @@ export class RapportblattComponent implements OnInit {
   getRblOnline(defaultRows) {
     this.user.getSavedRapportblatt(this.monthString).subscribe( savedRapportblatt => {
       console.log(savedRapportblatt);
-        if ( savedRapportblatt.success ) {
+      if (savedRapportblatt.success) {
 
-          localStorage.setItem('savedRapportblatt', JSON.stringify(savedRapportblatt.data));
+        localStorage.setItem('savedRapportblatt', JSON.stringify(savedRapportblatt.data));
 
           if ( savedRapportblatt.data.month === this.monthString ) {
             this.rows = this.table.filterTable(savedRapportblatt.data.rbData, this.ziviData.date);
@@ -144,7 +184,7 @@ export class RapportblattComponent implements OnInit {
           }
         }
       });
-  }
+    }
 
   validateTable(rows: Row[]): ValidationObj[]{
     // Validates the table data and fixes small errors in the data like e.g
@@ -306,10 +346,10 @@ export class RapportblattComponent implements OnInit {
   save() {
     this.showLoader(true)
     /** Saves the rows Object on the server and in localStorage**/
-    this.user.saveRapportblatt(this.rows, this.monthString).subscribe( data => {
+    this.user.saveRapportblatt(this.rows, this.monthString).subscribe(data => {
       console.log(data);
-        this.showLoader(false)
-        this.showInputsChecked(true)
+      this.showLoader(false)
+      this.showInputsChecked(true)
     });
   }
   saveImageInRows(file, rowIndex) {
@@ -326,28 +366,28 @@ export class RapportblattComponent implements OnInit {
       }
   }
 
-  daySummary(sort= false) {
+  daySummary(sort = false) {
     const dayTypes = this.getSummary().dayTypes;
-    const dayTypesArray  = Object.keys(dayTypes)
-            .map((key, index) => {
-              return [key, dayTypes[key]];
-            });
-    function sortedArray( dayTypesArray ) {
+    const dayTypesArray = Object.keys(dayTypes)
+      .map((key, index) => {
+        return [key, dayTypes[key]];
+      });
+    function sortedArray(dayTypesArray) {
       return dayTypesArray.sort((a, b) => {
-                      if (a[1] < b[1]) {
-                          return 1;
-                      }
-                      if (a[1] < b[1]) {
-                          return -1;
-                      }
-                      return 0;
-                    });
+        if (a[1] < b[1]) {
+          return 1;
+        }
+        if (a[1] < b[1]) {
+          return -1;
+        }
+        return 0;
+      });
     }
     return sort ? sortedArray(dayTypesArray) : dayTypesArray;
   }
 
   openSlideshow() {
-      console.log('openSlideshow!');
+    console.log('openSlideshow!');
   }
 
   getSummary() {
@@ -367,26 +407,26 @@ export class RapportblattComponent implements OnInit {
       return previous;
     }, 0);
 
-    const shoeMoney = this.isFirstMonth() ? this.calculateShoeMoney(): 0; // TODO: schuhgeld berechnung
+    const shoeMoney = this.isFirstMonth() ? this.calculateShoeMoney() : 0; // TODO: schuhgeld berechnung
 
-    this.summary =  {
+    this.summary = {
       dayTypes:
       {
         krankTage: this.rows.reduce((previous, o) => (o['dayType'] === 'Krank')
-                                                        ? previous + 1
-                                                        : previous, 0),
+          ? previous + 1
+          : previous, 0),
         freiTage: this.rows.reduce((previous, o) => (o['dayType'] === 'Frei')
-                                                        ? previous + 1
-                                                        : previous, 0),
+          ? previous + 1
+          : previous, 0),
         ferienTage: this.rows.reduce((previous, o) => (o['dayType'] === 'Ferien')
-                                                        ? previous + 1
-                                                        : previous, 0),
+          ? previous + 1
+          : previous, 0),
         urlaubstage: this.rows.reduce((previous, o) => (o['dayType'] === 'Urlaub')
-                                                        ? previous + 1
-                                                        : previous, 0),
+          ? previous + 1
+          : previous, 0),
         arbeitsTage: this.rows.reduce((previous, o) => (o['dayType'] === 'Arbeitstag')
-                                                          ? previous + 1
-                                                          : previous, 0)
+          ? previous + 1
+          : previous, 0)
       },
 
       // total daily compensation
@@ -401,35 +441,35 @@ export class RapportblattComponent implements OnInit {
     return this.summary;
   }
 
-  showLoader( show: boolean ) {
-    showElement( show, ".loadingAnim");
+  showLoader(show: boolean) {
+    showElement(show, ".loadingAnim");
   }
-  showInputsChecked( show: boolean ) {
-    showElement( show, '.inputsChecked');
-    if( show === true){
-      setTimeout(() => showElement( false, '.inputsChecked'), 2000)
+  showInputsChecked(show: boolean) {
+    showElement(show, '.inputsChecked');
+    if (show === true) {
+      setTimeout(() => showElement(false, '.inputsChecked'), 2000)
     }
   }
 
   isFirstMonth(): boolean {
 
-    if(this.monthString.split("-")[1] === this.ziviData.date.startDate.split("-")[1]){
+    if (this.monthString.split("-")[1] === this.ziviData.date.startDate.split("-")[1]) {
       return true
-    }else {
+    } else {
       return false
     }
   }
   calculateShoeMoney(): number {
     // TODO: outsource these values for easier mnipulation
     const daysInGW: number = this.totalDaysServing(),
-          shoeMoneyPerMonth = 60,
-          monthLength = 26,
-          maxMoney = 4 * 60
+      shoeMoneyPerMonth = 60,
+      monthLength = 26,
+      maxMoney = 4 * 60
 
     let shoeMoney: number = shoeMoneyPerMonth * Math.floor(daysInGW / monthLength);
-    if( shoeMoney <= maxMoney){
+    if (shoeMoney <= maxMoney) {
       return shoeMoney;
-    }else{
+    } else {
       return maxMoney
     }
   }
@@ -438,16 +478,22 @@ export class RapportblattComponent implements OnInit {
                         - new Date(this.ziviData.date.startDate).getTime())
                         / ( 1000*60*60*24) );
   }
-  getPercentage(a, b) { return b > 0 ?  Math.floor(a / b * 100).toString() + '%' : '0%'; }
+  getPercentage(a, b) { return b > 0 ? Math.floor(a / b * 100).toString() + '%' : '0%'; }
 
-  toggleDropDown(event: Event){
+  toggleDropDown(event: Event) {
     const target = <HTMLInputElement>event.target;
-    target.nextElementSibling.classList.toggle("invisible");
+    if (target.nextElementSibling !== null) {
+      target.nextElementSibling.classList.toggle("invisible");
+    }
   }
-  disableDropDown(event: Event){
+  disableDropDown(event: Event) {
     const target = <HTMLInputElement>event.target;
     //target.nextElementSibling.classList.add("windUp")
-    setTimeout(() => target.nextElementSibling.classList.add("invisible"), 200);
+    setTimeout(() => {
+      if (target.nextElementSibling !== null) {
+        target.nextElementSibling.classList.add("invisible");
+      }
+    }, 300);
   }
   
 }
