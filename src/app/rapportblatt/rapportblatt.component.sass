@@ -240,15 +240,22 @@
 
 
         #actionButtons
+          display: flex
+          flex-direction: column
+          @media (min-width:550px)
+            display: grid
+            width: 10em
+            grid-template: auto auto / auto auto
+          grid-gap: 1em
+
           padding: 0.6em
           .rb-button
             width: 100%
-            display: block
-            margin: 0.5em auto
+            margin-bottom: 1em
+            
             @media (min-width:550px)
-              margin: auto 0.5em
-              width: auto
-              display: inline-block
+              width: 100%
+              margin-bottom: 0
             .icon
               height: 1.4em
               position: relative
@@ -257,3 +264,16 @@
               transition: 200ms
           .rb-button:hover .icon
             transform: scale(1.1)
+
+          .sendMeTooDiv
+            @media (min-width:550px)
+              grid-area: 2 / 1 / 2 / span 2
+            .sendMeTooCheckBox
+              margin-left: 1em
+              .knob:before
+                height: 1.4em
+                width: 1.4em
+              .knob.checked:before
+                  transform: translateX(1.4em)
+
+

@@ -38,10 +38,9 @@ interface Row {
   styleUrls: ['./rapportblatt.component.sass']
 })
 export class RapportblattComponent implements OnInit {
-  rows: any
+  rows: Row[]
   sendError: string
   ziviData: ZiviData
-  todayDate: Date
   monthString: string
   today: string
   ziviName: string
@@ -50,6 +49,7 @@ export class RapportblattComponent implements OnInit {
   dayTypeNames: any;
   rowErrorMessages: any = {}
   ticketProofsRemarced: boolean = false
+  sendMeToo: boolean
 
   workPlaceOptions: string[] = [];
 
@@ -57,17 +57,18 @@ export class RapportblattComponent implements OnInit {
     private table: TableService,
     private excel: ExcelService,
     private imageHandler: ImageHandlerService,
-    private s: SendService) { }
+    private s: SendService) { 
+      this.rows = []}
 
   ngOnInit() {
     this.loading = true
+    this.sendMeToo = true
+    this.monthString = this.table.getMonthString(new Date())
+    console.log(this.monthString)
     this.ziviData = this.user.getZiviData();
-    this.todayDate = new Date()
-    this.monthString = this.table.getMonthString(this.todayDate);
-    this.today = this.table.getDateString(this.todayDate);
+    this.getTable(this.monthString);
+    this.today = this.table.getDateString(new Date());
     this.ziviName = [this.ziviData.name.firstName, this.ziviData.name.lastName].join(' ');
-    this.getTable();
-    this.loading = false
     this.dayTypeNames = {
       "krankTage": "Krankheitstage",
       "freiTage": "Freitage",
@@ -78,14 +79,12 @@ export class RapportblattComponent implements OnInit {
     for(const row in this.rows){
       this.updateWorkPlaceOptions(row)
     }
-    //["Winterthur", "Zürich", "Dätlikon", "Bülach", "Katzensee", "Ossingen"]
   }
 
   // Ths function see to it that the first element in the list will be the option that is above it
   sortIndividually( optionsArray: string[],
                     thisRow: any, 
                     previousFieldName: string){
-    
     const previousRowIndex = this.rows.indexOf(thisRow)-1
 
     if( previousRowIndex > -1){
@@ -108,12 +107,19 @@ export class RapportblattComponent implements OnInit {
     return optionsArray
   }
   updateWorkPlaceOptions(thisRow) {
+    const standartOptions = [ 
+                              "Winterthur", 
+                              "Zürich", 
+                              "Seebach", 
+                              "Hettlingen"
+                            ]
     let options =  removeDuplicates(
                       this.sortIndividually(
                             this.rows.map(row =>
                               row.workPlace !== ""
                                 ? row.workPlace
                                 : undefined)
+                                .concat(standartOptions)
                               .filter(workPlace =>
                                 workPlace
                                   ? true
@@ -135,57 +141,63 @@ export class RapportblattComponent implements OnInit {
   }
   monthChanged(event: Event): void {
 
+    this.loading = true
     const target = <HTMLInputElement>event.target;
     this.monthString = target.value;
-    this.loading = true
-    this.getTable();
+    this.getTable(this.monthString);
     this.loading = false
   }
-  getTable() {
-    const locallyStoredRB = localStorage.getItem('savedRapportblatt');
-
+  getTable(monthS: string) {
     // default rows config
-    const defaultRows = this.table.getTableData(this.ziviData, this.monthString);
-    this.rows = this.table.filterTable(defaultRows, this.ziviData.date)
+    if( monthS ){
+      const ziviDataSnap = this.user.getZiviData()
+      const locallyStoredRB = localStorage.getItem('savedRapportblatt');
 
-    // If there is no RB saved Locally
-    if ( locallyStoredRB === null ) {
-      this.rows = this.getRblOnline(defaultRows)
-    } else {
-      const savedRb = JSON.parse(locallyStoredRB);
+      const defaultRows = this.table.getTableData(ziviDataSnap, monthS);
+      this.rows = this.table.filterTable(defaultRows, ziviDataSnap.date)
       
-      if ( savedRb.month  === this.monthString ) {
-        this.rows = this.table.filterTable(savedRb.rbData, this.ziviData.date);
-
-        if(this.rows.length !== defaultRows.length) {
-          // The saved RB is too small
-          console.log("the saved RB is too small")
-          this.rows = this.rows.concat(defaultRows.slice(this.rows.length))
-        }
-      }else{
-        this.rows = this.getRblOnline(defaultRows)
-      }
-      console.log('RB loaded locally!');
-    }
-  }
-  getRblOnline(defaultRows) {
-    this.user.getSavedRapportblatt(this.monthString).subscribe( savedRapportblatt => {
-      console.log(savedRapportblatt);
-      if (savedRapportblatt.success) {
-
-        localStorage.setItem('savedRapportblatt', JSON.stringify(savedRapportblatt.data));
-
-          if ( savedRapportblatt.data.month === this.monthString ) {
-            this.rows = this.table.filterTable(savedRapportblatt.data.rbData, this.ziviData.date);
-            
+      // If there is no RB saved Locally
+      if ( locallyStoredRB === null ) {
+        this.getRblOnline(defaultRows, monthS, ziviDataSnap)
+      } else {
+        const savedRb = JSON.parse(locallyStoredRB);
+        
+        if ( savedRb.month  === monthS ) {
+          this.rows = this.table.filterTable(savedRb.rbData, ziviDataSnap.date);
+          
           if(this.rows.length !== defaultRows.length) {
             // The saved RB is too small
             console.log("the saved RB is too small")
             this.rows = this.rows.concat(defaultRows.slice(this.rows.length))
           }
+          this.loading = false
+        }else{
+          this.getRblOnline(defaultRows, monthS, ziviDataSnap)
+        }
+        console.log('RB loaded locally!');
+      }
+    }else{
+      console.log("There was no Month input!")
+    }
+  }
+  getRblOnline(defaultRows: Row[], monthS: string, ziviDataSnap: ZiviData) {
+    this.user.getSavedRapportblatt(monthS).subscribe( savedRapportblatt => {
+      if (savedRapportblatt.success) {
+
+        localStorage.setItem('savedRapportblatt', JSON.stringify(savedRapportblatt.data));
+
+          if ( savedRapportblatt.data.month === monthS ) {
+            this.rows = this.table.filterTable(savedRapportblatt.data.rbData, ziviDataSnap.date);
+            
+            if(this.rows.length !== defaultRows.length) {
+              // The saved RB is too small
+              console.log("the saved RB is too small")
+              this.rows = this.rows.concat(defaultRows.slice(this.rows.length))
+            }
           }
         }
       });
+      this.loading = false
     }
 
   validateTable(rows: Row[]): ValidationObj[]{
@@ -194,6 +206,7 @@ export class RapportblattComponent implements OnInit {
     let validArray: ValidationObj[] = []
 
     let i = 0;
+    const images = this.imageHandler.getImages
     for(let row of rows) {
       let validationObj: ValidationObj = {
         valid: true,
@@ -217,13 +230,17 @@ export class RapportblattComponent implements OnInit {
               validationObj.valid = false
               validationObj.message = "Sie müssen einen Preis für Ihr Billet eingeben."
               validationObj.sourceRow = i
-            }else if( (!row.ticketProof || row.ticketProof === "") && !this.ticketProofsRemarced) {
-              validationObj.valid = false
-              validationObj.message = `Laden Sie bitte entweder einen Billet-Beleg hier hoch, `+
-                                        `oder schicken Sie ihn per Mail an verein@verein-gruenwerk.ch.`+
-                                        ` Billette werden nur mit Beleg zurückerstattet!`
-              validationObj.sourceRow = i
-              this.ticketProofsRemarced = true
+            }else if( !images[row.date] ) {
+              console.log(images[row.date])
+              if(!this.ticketProofsRemarced)
+              {
+                validationObj.valid = false
+                validationObj.message = `Laden Sie bitte entweder einen Billet-Beleg hier hoch, `+
+                                          `oder schicken Sie ihn per Mail an verein@verein-gruenwerk.ch.`+
+                                          ` Billette werden nur mit Beleg zurückerstattet!`
+                validationObj.sourceRow = i
+                this.ticketProofsRemarced = true
+              }
             }
           }else{
             
@@ -270,7 +287,6 @@ export class RapportblattComponent implements OnInit {
                               };
     // Validate ToDo
     const rapportblattTableVal: ValidationObj[] = this.validateTable(this.rows);
-    console.log(rapportblattTableVal, )
     const rbIsValid = rapportblattTableVal.reduce( (previous: ValidationObj, valObj: ValidationObj) => {
       return {
         valid: valObj.valid && previous.valid,
@@ -303,10 +319,15 @@ export class RapportblattComponent implements OnInit {
         
         const images = this.imageHandler.getImages
 
+        const ccMe = {
+          yes: this.sendMeToo, 
+          email: this.sendMeToo ? this.ziviData.email : null
+        }
         this.s.sendRapportblatt({       excel:      excel,
                                         images,
-                                        firstName:   rapportblattData.firstName,
+                                        firstName:  rapportblattData.firstName,
                                         lastName:   rapportblattData.lastName,
+                                        ccMe,
                                         abo:        this.ziviData.abo,
                                         month:      rapportblattData.month})
             .subscribe((data: SendRbResponse) => {
@@ -363,7 +384,7 @@ export class RapportblattComponent implements OnInit {
       let filesOnTarget = target.files;
       for ( const file of filesOnTarget) {
         //this.saveImageInRows(file, rowIndex)
-        this.rows[rowIndex].ticketProof += file.name+"|"
+        //this.rows[rowIndex].ticketProof += file.name+"|"
         this.imageHandler.addImage(file, date, target);
       }
   }
@@ -397,10 +418,13 @@ export class RapportblattComponent implements OnInit {
     const normalPay = 25;
     const urlaubPay = 0;
 
-    const spesenPreis = this.rows.reduce((previous, o) => {
-      if (o['price'] !== '' && 
+    const spesenPreis: number = this.rows.reduce((previous, o) => {
+      if (o['price'] &&
+          o['price'] !== '' && 
           o['spesenChecked'] === true && 
-          o['dayType'] === "Arbeitstag") { return previous + o['price']; }
+          o['dayType'] === "Arbeitstag") {
+            return previous + <number>parseInt(o['price']); 
+          }
       return previous;
     }, 0);
 

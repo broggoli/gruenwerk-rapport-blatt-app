@@ -60,7 +60,8 @@ export class ExcelService {
         "Author": "Nick Bachmanns Rapportblatt-Programm",
         "CreatedDate": new Date()
     }
-    wb.SheetNames.push(sheetTitle)
+    console.log(trimTitle(sheetTitle))
+    wb.SheetNames.push(trimTitle(sheetTitle))
 
 
     ws = addTableData(ws, cols, tableStartRow);
@@ -174,5 +175,20 @@ export class ExcelService {
       }
 
       return new Blob([s2ab(wbout)], {type:"application/octet-stream"})
+  }
+}
+function trimTitle(title) {
+  if(title.length > 31){
+    const titleParts = title.split("_")
+    const firstName = titleParts[titleParts.length - 1]
+    const lastName = titleParts[titleParts.length - 2]
+    const firstPart = title.split(lastName)[0]
+    if(lastName.length + firstPart.length > 28){
+      return firstPart+[lastName[0], firstName[0]].join("_")
+    }else{
+      return firstPart+[lastName, firstName[0]].join("_")
+    }
+  }else{
+    return title
   }
 }

@@ -23,8 +23,16 @@
         try {
             $ziviName = $mailInfo["firstName"]." ".$mailInfo["lastName"];
             $aboInfo = $mailInfo["aboInfo"];
-            $mail = new PHPMailer();
+            $mail = new PHPMailer(true);
             $mail->isSMTP();
+            //$mail->SMTPDebug = 3;
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                )
+            );
 
             $mail->SetFrom("verein@verein-gruenwerk.ch", "Server");
             // Adding Recipients

@@ -50,17 +50,17 @@
             <label class="switch"><span [ngClass]="{'checked':row.spesenChecked}" class="knob round checked"></span>
               <input [(ngModel)]="row.spesenChecked" type="checkbox" class="spesenCheckbox"/>
             </label>
-            <div *ngIf="!row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="spesenText">Sind Fahrspesen angefallen?</div>
+            <div *ngIf="!row.spesenChecked && row.dayType == 'Arbeitstag'" class="spesenText">Sind Fahrspesen angefallen?</div>
           </div>
           <!--div.fahrspesenDiv-->
-          <div *ngIf="row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="route">
+          <div *ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'" class="route">
             <input [(ngModel)]="row.route.start" type="text" placeholder="Abfahrtsort" name="Abfahrtsort" class="textInput routeInput"/><span>-</span>
             <input [(ngModel)]="row.route.destination" type="text" placeholder="Ziel" name="destination" class="textInput routeInput"/>
           </div>
-          <div *ngIf="row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" style="margin:0; padding: 0;">
+          <div *ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'" style="margin:0; padding: 0;">
             <input [(ngModel)]="row.price" type="number" min="0.00" max="100.00" step="0.05" placeholder="Preis" name="Preis" class="textInput price"/>
           </div>
-          <div *ngIf="row.spesenChecked &amp;&amp; row.dayType == 'Arbeitstag'" class="uploadTicketProof">
+          <div *ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'" class="uploadTicketProof">
             <div><span>Billet Belege hochladen:</span></div>
             <div>
               <label for="{{ row.date }}_upload" class="ticketProofLabel"><img src="../../assets/svg/upload.svg" class="uploadIcon"/>
@@ -89,16 +89,16 @@
     <div id="loading" *ngIf="loading">
       <p>lade...</p>
     </div>
-    <div id="NoDays" *ngIf="rows.length === 0 &amp;&amp; !loading">
+    <div id="NoDays" *ngIf="rows.length === 0 && !loading">
       <p>Du hast in diesem Monat nicht gearbeitet</p>
     </div>
-    <div id="rapportBlattSummary" *ngIf="rows.length &gt; 0 &amp;&amp; !loading">
+    <div id="rapportBlattSummary" *ngIf="rows.length > 0 && !loading">
       <h3>Zusammenfassung</h3>
       <div id="dayChart" class="barchart">
         <div class="chart">
           <ng-container *ngFor="let dayType of daySummary(true)">
             <ng-container *ngIf="dayType[1] != '0'">
-              <div [ngStyle]="{width: getPercentage(dayType[1], this.rows.length)}" class="dayType">
+              <div [ngStyle]="{width: getPercentage(dayType[1], rows.length)}" class="dayType">
                 <div class="{{dayType[0]}}C"><span>{{dayType[1]}}</span></div>
               </div>
             </ng-container>
@@ -107,7 +107,7 @@
         <div class="legendeDiv">
           <h4>Legende</h4>
           <ng-container *ngFor="let dayType of daySummary()">
-            <div *ngIf="dayType[1] &gt; 0" class="legende">
+            <div *ngIf="dayType[1] > 0" class="legende">
               <label>{{ dayTypeNames[dayType[0]] }}</label>
               <label>:</label>
               <div class="colorBlock {{ dayType[0] }}C"></div>
@@ -127,9 +127,17 @@
     </div>
     <div style="display: none" class="loadingAnim svgAnim"><img src="../../assets/svg/loader.svg"/></div>
     <div style="display: none" class="inputsChecked svgAnim"><img src="../../assets/svg/check.svg"/></div>
-    <div id="actionButtons" *ngIf="rows.length &gt; 0">
+    <div id="actionButtons" *ngIf="rows.length > 0">
       <button id="saveutton" (click)="save()" class="button rb-button"><img src="../../assets/svg/save.svg" class="icon"/><span>Speichern</span></button>
       <button id="sendButton" (click)="send()" class="button rb-button"><img src="../../assets/svg/send.svg" class="icon"/><span>Absenden</span></button>
+  
+      <div  class="sendMeTooDiv" >
+        Kopie an mich senden:
+        <label class="switch sendMeTooCheckBox"> 
+          <span [ngClass]="{'checked': sendMeToo}" class="knob round checked"></span>
+          <input [(ngModel)]="sendMeToo" type="checkbox" class="sendMeToo"/>
+        </label>
+      </div>
     </div>
   </div>
 </div>

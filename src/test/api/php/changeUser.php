@@ -5,7 +5,8 @@
   session_start();
   $response = new StdClass();
   $response->success = false;
-  $request_body = json_decode(file_get_contents('php://input'));
+
+  $request_body = json_decode( file_get_contents('php://input'));
   // if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   //   $savedRapportblatt = getSavedRapportblatt($_SESSION["user"]["ziviDataHeader"]);
   //   $response = $savedRapportblatt;

@@ -19,7 +19,11 @@ function start(){
             $aboInfo = filter_var($_POST["aboInfo"], FILTER_SANITIZE_STRING);
             $month = filter_var($_POST["month"], FILTER_SANITIZE_STRING);
             $year = filter_var($_POST["year"], FILTER_SANITIZE_STRING);
-
+            $userEmail = filter_var($_POST["userEmail"]);
+            
+            if( json_decode($userEmail) != false){
+                array_push($recipients, json_decode($userEmail));
+            }
 
             //Making the fileName
             $zipFileName =  str_replace("year", $year,
@@ -45,7 +49,7 @@ function start(){
             if($sendMail->success == true){
                 $response = $sendMail;
                 //delete zip file
-                //unlink($pathToZip.".zip");
+                unlink($pathToZip.".zip");
             }else{
 
                 $exceptionString = 'Unable to send new.';

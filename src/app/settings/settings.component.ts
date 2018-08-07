@@ -68,7 +68,7 @@ export class SettingsComponent implements OnInit {
             if (data.success) {
               this.changeServiceError = "";
               /* Tryes to get the user's data from the backend */
-              this.Auth.getEncryptedData(this.ziviData.email, password).subscribe(d => {
+              this.Auth.login(this.ziviData.email, password).subscribe(d => {
                 if (d.success) {
                     this.changeServiceError = '';
                     // let ziviDBObj: ZiviDBObj = data.data
@@ -78,7 +78,7 @@ export class SettingsComponent implements OnInit {
                     this.showInputsChecked(true);
                     setTimeout(() => this.calculateDays(), 200)
                     this.showLoader(false);
-
+                    
                 } else {
                   this.showInputsChecked(false);
                   this.changeServiceError = d.message;

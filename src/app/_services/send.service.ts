@@ -32,17 +32,16 @@ export class SendService {
         return n.length >= width ? n : new Array(width - n.length + 1).join("0") + n;
       }
 
-      //for now just a test
-      // formData.append("recipients", JSON.stringify([
-      //                                 {
-      //                                   "mail": "verein@verein-gruenwerk.ch",
-      //                                   "name": "Verein-Gruenwerk"
-      //                                 },
-      //                                 {
-      //                                   "mail": "broggoli.nb@gmail.com",
-      //                                   "name": "Nick Bachmann"
-      //                                 }
-      //                               ]));
+      console.log(data.ccMe)
+      if( data.ccMe.yes === true ){
+        const recipienObj = {
+                                "mail": data.ccMe.email,
+                                "name": data.firstName+" "+data.lastName
+                            }
+        formData.append("userEmail", JSON.stringify(recipienObj))
+      }else{
+        formData.append("userEmail", JSON.stringify(false))
+      }
       formData.append("firstName", data.firstName);
       formData.append("firstName", data.firstName);
       formData.append("lastName", data.lastName);

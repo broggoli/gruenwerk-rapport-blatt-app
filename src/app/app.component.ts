@@ -18,6 +18,6 @@ export class AppComponent {
     return "/"+route === this.router.url ? true : false
   }
 
-  get isLoggedIn():boolean { return this.auth.isLoggedIn }
+  get isLoggedIn():boolean { return this.auth.isLoggedIn.local }
 
 }
