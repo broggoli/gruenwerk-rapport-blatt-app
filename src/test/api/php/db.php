@@ -42,9 +42,10 @@
     $response->success = false;
 
     $ziviDBObject = getZiviDB();
+    $rapportBlattDataObject = getSavedRapportblattDB();
 
     $userData = getUserData($ziviDataHeader);
-
+    $rapportBlattData = getSavedRapportblatt($ziviDataHeader, "all");
     if($userData->success == true){
 
       //delete the element form the objet
@@ -53,7 +54,19 @@
       // encode array to json and save to file
       file_put_contents($GLOBALS["ziviDBPath"], json_encode($ziviDBObject));
 
-      $response->message = "User data successsfully deleted.";
+      $response->message = "User data successsfully deleted";
+      if($rapportBlattDataObject->{$ziviDataHeader}){
+
+        unset($rapportBlattDataObject->{$ziviDataHeader});
+
+        // encode array to json and save to file
+        file_put_contents($GLOBALS["savedRapportblattDBPath"], json_encode($rapportBlattDataObject));
+
+        $response->message = "User data and rapports successsfully deleted.";
+      }else{
+        $response->message = "User data successsfully deleted. But rapports remain!!";
+      }
+
       $response->success = true;
     }else{
       $response = $userData;
@@ -138,26 +151,39 @@
 
     $response = new StdClass();
     $response->success = false;
-    $rbForMonth = new stdClass();
     //Getting the DB as an object
     $savedRapportblattObj = getSavedRapportblattDB();
 
     //Check whether the data header exists
     if(property_exists($savedRapportblattObj, $ziviDataHeader)){
       $response->message = "Data header exists!";
-      if(array_key_exists($month, $savedRapportblattObj->{$ziviDataHeader})){
+
+      if( !isset($month) || trim($month) == '' || trim($month) == 'all') {
+        // Return all rapports of the user
         $responseData = new stdClass();
-        $responseData->rbData = $savedRapportblattObj->{$ziviDataHeader}[$month];
-        $responseData->month = $month;
+        $responseData->rbData = $savedRapportblattObj->{$ziviDataHeader};
+        $responseData->month = "all";
         //returning the encryptedZiviData
         $response->data = $responseData;
-        $response->message = "Successfully retrieved the rapportblatt for month: ".$month;
+        $response->message = "Successfully retrieved all rapports.";
         $response->success = true;
       }else{
-        $response->message = "No rapportblatt for this month found!";
+        // Return Rapportblatt for specific month
+        if(array_key_exists($month, $savedRapportblattObj->{$ziviDataHeader})){
+          $responseData = new stdClass();
+          $responseData->rbData = $savedRapportblattObj->{$ziviDataHeader}[$month];
+          $responseData->month = $month;
+          //returning the encryptedZiviData
+          $response->data = $responseData;
+          $response->message = "Successfully retrieved the rapportblatt for month: ".$month;
+          $response->success = true;
+        }else{
+          $response->message = "No rapportblatt for this month found!";
+        }
       }
     }else{
       $response->message = "No rapportblatt with this credentials found!";
+      $response->data = json_encode(new stdClass());
     }
     return $response;
   }
