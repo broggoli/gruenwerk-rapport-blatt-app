@@ -22,12 +22,11 @@ export class AuthService {
               private http : HttpClient) { }
 
   saveData(data: string, password: string){
-      console.log(data, password)
       const decryptedData: ZiviData = JSON.parse(this.crypto.decryptData(data, password))
       localStorage.setItem("userData", JSON.stringify(decryptedData))
       console.log(localStorage.getItem("userData"))
   }
-  // get acts like a property name even thiugh it's a function
+  // get acts like a property name even though it's a function
   get isLoggedIn(): LoginStatus {
     if( localStorage.getItem("userData") !== null ){
       return {  
@@ -46,8 +45,7 @@ export class AuthService {
     const dataHeader= JSON.stringify({
                         data: 
                           {
-                            'ziviDataHeader': this.crypto.
-                                  getZiviDataHeader(userName, password)
+                            'ziviDataHeader': this.crypto.getZiviDataHeader(userName, password)
                           },
                         task: "login"
                       })
