@@ -39,20 +39,11 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     if(lsTest() == true){
       // Auto log in from index if data is already safed in localStorage
-      const loginStatus = this.Auth.isLoggedIn;
-      if ( loginStatus.local ) {
-        loginStatus.online.subscribe( data => {
-          if(data.success){
-            if(data.data === true) {
-              this.router.navigate(['rapportblatt']);
-            }
-          }else{
-            alert("Konnte nicht herausfinden ob Sie eingelogged sind! Error: "+JSON.stringify(data))
-          }
-        })
-      } else {
-        document.querySelector('#logOutButton').classList.add('loggedOut');
-      }
+      this.Auth.isLoggedIn.subscribe( loginStatus => {
+        if( loginStatus === true) {
+          this.router.navigate(['rapportblatt']);
+        }
+      });
     }else{
       // LocalStorage isn't avalable
       alert("Benutzen Sie bitte einen anderen Browser um diese App zu benutzen!")
@@ -89,9 +80,6 @@ export class LoginComponent implements OnInit {
               this.Auth.saveData(userData, password);
               this.loginError = '';
               // let ziviDBObj: ZiviDBObj = data.data
-              
-              // Display the logout button
-              document.querySelector('#logOutButton').classList.remove('loggedOut');
 
               // if the backend says everything is ok -> redirect to user's page
               this.showInputsChecked(true);

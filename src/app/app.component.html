@@ -5,9 +5,9 @@
       <h4>Verrein Grünwerk</h4>
       <h3>Zivildienst</h3>
     </div>
-    <button id="logOutButton" routerLink="logout" class="button">Abmelden</button>
+    <button *ngIf="loggedIn" id="logOutButton" routerLink="logout" class="button">Abmelden</button>
   </header>
-  <nav id="navigation" *ngIf="isLoggedIn">
+  <nav id="navigation" *ngIf="loggedIn">
     <div [ngClass]="{'active': isActive('rapportblatt')}" routerLink="rapportblatt"> <a>Rapportblatt</a></div>
     <div [ngClass]="{'active': isActive('settings')}" routerLink="settings"> <a>Einstellungen</a></div>
   </nav>
@@ -15,7 +15,7 @@
   <div id="page">
     <div id="content">
            
-      <router-outlet></router-outlet>
+      <router-outlet (activate)="onRoutesChanged()" ></router-outlet>
       <!--object(type="text/html" data="pages/loginPage.html")-->
     </div>
   </div>
