@@ -4,12 +4,18 @@
     <h2 id="loginTitle">Login</h2>
     <form [formGroup]="loginForm" novalidate="novalidate" (ngSubmit)="login()">
       <div id="email" [ngClass]="{'has-danger': email.invalid && (email.dirty || email.touched), 'has-success': email.valid && (email.dirty || email.touched) }">
-        <input formControlName="email" type="text" placeholder="Email" id="userName" name="Benutzername" pattern="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$" class="textInput"/>
+        <input formControlName="email" 
+        type="text" placeholder="Email" 
+        id="userName" 
+        name="Benutzername"
+        class="textInput"/>
+
         <div *ngIf="email.errors && (email.dirty || email.touched) " class="form-control-feedback">
           <span *ngIf="email.errors.required">Geben Sie bitte ihre Email-Adresse ein.</span>
           <span *ngIf="email.errors.pattern">Bitte geben sie eine korrekte Email-Adresse an.</span></div>
       </div>
-      <div id="passwordInput" [ngClass]="{'has-danger': password.invalid && (password.dirty || password.touched), 'has-success': password.valid && (password.dirty || password.touched) }">
+      <div id="passwordInput" 
+      [ngClass]="{'has-danger': password.invalid && (password.dirty || password.touched), 'has-success': password.valid && (password.dirty || password.touched) }">
         <input formControlName="password" type="password" placeholder="Passwort" id="password" name="Passwort" class="textInput passwordInput"/>
         <div *ngIf="password.errors && (password.dirty || password.touched) " class="form-control-feedback">
           <span *ngIf="password.errors.required">Bitte geben Sie ein Passwort ein.</span>
