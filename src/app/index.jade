@@ -4,11 +4,11 @@
     #rapportBlattTitel
       h4 Verrein Grünwerk
       h3 Zivildienst
-    button#logOutButton.button(routerLink="logout") Abmelden
+    button#logOutButton.button( *ngIf="logedIn" routerLink="logout") Abmelden
 
   //- #gruenWerkLogo
   //-   img(src="../assets/logo_blau.jpg")
-  nav#navigation(*ngIf="auth.isLoggedIn")
+  nav#navigation(*ngIf="logedIn")
     div([ngClass]="{'active': isActive('rapportblatt')}" routerLink="rapportblatt") 
       a Rapportblatt
     div([ngClass]="{'active': isActive('settings')}" routerLink="settings") 
@@ -16,7 +16,7 @@
   // This is the content area. The individual pages are loded in here
   #page
     #content      
-      <router-outlet></router-outlet>
+      <router-outlet (activate)="onRoutesChanged()"></router-outlet>
       //object(type="text/html" data="pages/loginPage.html")
           
   #footer

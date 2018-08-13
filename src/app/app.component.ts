@@ -18,6 +18,8 @@ export class AppComponent {
     return "/"+route === this.router.url ? true : false
   }
 
-  get isLoggedIn():boolean { return this.auth.isLoggedIn.local }
+  onRoutesChanged(): void {
+    this.auth.isLoggedIn.subscribe( status => this.loggedIn = status)
+  }
 
 }

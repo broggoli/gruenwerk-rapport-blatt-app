@@ -33,7 +33,6 @@ export class RegistryComponent implements OnInit {
   ngOnInit() {
     this.createFormControls()
     this.createForm()
-    document.querySelector("#logOutButton").classList.add("loggedOut")
   }
   createFormControls(){
     this.firstName = new FormControl("",
