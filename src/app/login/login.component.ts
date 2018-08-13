@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
     }
 
   ngOnInit() {
-    if(lsTest() == true){
+    if(lsTest() === true){
       // Auto log in from index if data is already safed in localStorage
       const loginStatus = this.Auth.isLoggedIn;
       if ( loginStatus.local ) {
