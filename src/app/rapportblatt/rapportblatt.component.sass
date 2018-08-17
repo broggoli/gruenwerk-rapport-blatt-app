@@ -5,6 +5,7 @@
 //component styling
 @import "../sass/components/switch.sass"
 
+$responsiveBreakingPointHeader: 30em
 #rapportBlattPage
 
     @media (min-width:400px)
@@ -30,23 +31,27 @@
               display: flex
               flex-direction: column-reverse
               justify-content: center
-              @media (min-width:400px)
+              @media (min-width: $responsiveBreakingPointHeader)
                 flex-direction: row
                 justify-content: space-between
-
-              #rapportBlattMonth
-                background: inherit
-                width: 12em
 
               #unchangableInfo
                 background: inherit
                 text-align: center
-                @media (min-width:400px)
+                @media (min-width: $responsiveBreakingPointHeader)
                   text-align: right
 
               #dateInput
-                background: inherit
+                width: 14em
+                display: flex
+                flex-direction: row
+                justify-content: space-between
+                align-items: center
                 align-self: center
+
+                #rapportBlattMonth
+                  margin: 0
+                  width: 12em
 
 
         #table
@@ -84,7 +89,12 @@
                     cursor: pointer
                   .workPlaceOpt:hover
                     background-color: lighten($darkblue, 20%)
-
+                .imagePreview
+                      height: 1.5em
+                      right: 0.5em
+                      transition: 200ms
+                .imagePreview:hover
+                    transform: scale(1.1)
                 .dayName
                     width: 1em
                 .date
@@ -115,14 +125,7 @@
                   display: flex
                   flex-wrap: wrap
                   align-items: center
-
-                .imagePreview
-                    height: 1.5em
-                    right: 0.5em
-                    transition: 200ms
-                .imagePreview:hover
-                    transform: scale(1.1)
-
+                
                 .uploadTicketProof
                   display: flex
                   flex-direction: row
@@ -132,10 +135,7 @@
 
                   .ticketProof
                     display: none
-                .uploadTicketProof>div
-                  display: flex
-                  flex-direction: row
-                  .ticketProofLabel
+                .ticketProofLabel
                     background: $darkblue
                     box-sizing: border-box
                     display: flex
@@ -147,23 +147,25 @@
                       align-self: center
                       height: 15px
                       width: 15px
-                  .ticketProofLabel:hover
-                    background: #1ebce3
-
-                .uploadArztZeugnis
+                .ticketProofLabel:hover
+                  background: #1ebce3
+                .ticketProofImagesContainer
+                  display: flex
+                  flex-direction: row
+                .uploadMCContainer
                   display: flex
                   flex-direction: row
                   justify-content: center
                   align-items: center
                   flex-wrap: wrap
 
-                .uploadArztZeugnis>div
+                .uploadMCContainer>div
                   display: flex
                   flex-direction: row
 
-                  .arztZeugnisProof
+                  .MCUpload
                     display: none
-                  .artztZeugnisLabel
+                  .MCLabel
                     background: $darkblue
                     box-sizing: border-box
                     display: flex
@@ -175,7 +177,7 @@
                       align-self: center
                       height: 15px
                       width: 15px
-                  .artztZeugnisLabel:hover
+                  .MCLabel:hover
                     background: #1ebce3
             .errorMessage
               color: $white
@@ -275,5 +277,29 @@
                 width: 1.4em
               .knob.checked:before
                   transform: translateX(1.4em)
-
+//
+  #slideShow::after
+  content: ""
+  position: fixed
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  -webkit-backdrop-filter: blur(8px)
+  backdrop-filter: blur(8px)
+  z-index: 100
+#slideShow
+  position: fixed
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  z-index: 10000
+  display: flex
+  flex-direction: row
+  img
+    height: auto
+    width: auto
+    margin-left: auto
+    margin-right: auto
 

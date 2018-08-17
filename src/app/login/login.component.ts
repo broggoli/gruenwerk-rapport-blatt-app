@@ -10,13 +10,6 @@ interface ZiviDBObj {
   encryptedZiviData: string;
   expirationDate: number;
 }
-/*
-interface LoginData {
-  success: boolean;
-  data: ZiviDBObj;
-  message: string;
-}
-*/
 
 @Component({
   selector: 'login',
@@ -76,8 +69,6 @@ export class LoginComponent implements OnInit {
           this.showLoader(false);
           if (data.success) {
               console.log(data)
-              const userData: string = data.data['encryptedZiviData'];
-              this.Auth.saveData(userData, password);
               this.loginError = '';
               // let ziviDBObj: ZiviDBObj = data.data
 

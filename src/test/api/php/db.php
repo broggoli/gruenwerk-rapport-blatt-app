@@ -36,7 +36,7 @@
     return $response;
   }
 
-  function deleteUserData($ziviDataHeader) {
+  function deleteUserData($ziviDataHeader, $deleteRB) {
 
     $response = new StdClass();
     $response->success = false;
@@ -48,15 +48,15 @@
     $rapportBlattData = getSavedRapportblatt($ziviDataHeader, "all");
     if($userData->success == true){
 
-      //delete the element form the objet
+      //delete the element form the object
       unset($ziviDBObject->{$ziviDataHeader});
 
       // encode array to json and save to file
       file_put_contents($GLOBALS["ziviDBPath"], json_encode($ziviDBObject));
 
       $response->message = "User data successsfully deleted";
-      if($rapportBlattDataObject->{$ziviDataHeader}){
-
+      if( property_exists($rapportBlattDataObject, $ziviDataHeader )
+           && $deleteRB == true) {
         unset($rapportBlattDataObject->{$ziviDataHeader});
 
         // encode array to json and save to file
@@ -116,7 +116,7 @@
     $response = new StdClass();
     $response->success = false;
 
-    $deleteUserData = deleteUserData($registerData->ziviDataHeader);
+    $deleteUserData = deleteUserData($registerData->ziviDataHeader, false);
 
     if( $deleteUserData->success ){
       $saveUser = saveUser($registerData);

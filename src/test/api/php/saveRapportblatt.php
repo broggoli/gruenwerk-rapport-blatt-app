@@ -21,7 +21,6 @@
         }elseif($request_body->task == "setRb"){
 
           $ziviDataHeader =  $_SESSION['user']["ziviDataHeader"];
-
           $saveRapportblatt = saveRapportblatt($ziviDataHeader, $request_body->rbData, $request_body->month);
 
           //Check whether the data header exists

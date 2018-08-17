@@ -18,6 +18,8 @@ export class SettingsComponent implements OnInit {
   changeServiceError: string
   changeServiceTime: FormGroup;
   deleteAccountForm: FormGroup;
+  dateInput: FormGroup;
+  startDate: FormControl;
   endDate: FormControl;
   password: FormControl;
   passwordDA: FormControl;
@@ -59,10 +61,12 @@ export class SettingsComponent implements OnInit {
     if( this.changeServiceTime.valid ) {
       this.showLoader(true)
       this.showInputsChecked(false)
-      const newEndDate = this.endDate.value.toLowerCase().trim(),
+      const startDate = this.startDate.value.toLowerCase().trim(),
+            newEndDate = this.endDate.value.toLowerCase().trim(),
             password = this.password.value.trim();
 
-      this.user.changeServiceTime(newEndDate, password).subscribe(
+      console.log(startDate, newEndDate, password)
+      this.user.changeServiceTime(startDate, newEndDate, password).subscribe(
         data => {
             console.log(data)
             if (data.success) {
@@ -71,13 +75,13 @@ export class SettingsComponent implements OnInit {
               this.Auth.login(this.ziviData.email, password).subscribe(d => {
                 if (d.success) {
                     this.changeServiceError = '';
-                    // let ziviDBObj: ZiviDBObj = data.data
+                    
                     const userData: string = d.data['encryptedZiviData'];
 
                     this.Auth.saveData(userData, password);
                     this.showInputsChecked(true);
-                    setTimeout(() => this.calculateDays(), 200)
-                    this.showLoader(false);
+                    // Wait 200 ms to show he check sign
+                    setTimeout(() => this.calculateDays(), this.showLoader(false), 200);
                     
                 } else {
                   this.showInputsChecked(false);
@@ -96,6 +100,11 @@ export class SettingsComponent implements OnInit {
   }
 
   createFormControls() {
+    this.startDate = new FormControl(this.ziviData.date.startDate,
+      [
+        Validators.required,
+        Validators.pattern('^([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))$')
+      ])
     this.endDate = new FormControl(this.ziviData.date.endDate,
       [
         Validators.required,
@@ -111,8 +120,13 @@ export class SettingsComponent implements OnInit {
       ]);
   }
   createForm() {
+    this.dateInput = new FormGroup({
+      startDate: this.startDate,
+      endDate: this.endDate
+    }, dateValidator)
+    console.log(this.dateInput)
     this.changeServiceTime = new FormGroup({
-      endDate: this.endDate,
+      dateInput: this.dateInput,
       password: this.password
     });
     this.deleteAccountForm = new FormGroup({
@@ -123,7 +137,7 @@ export class SettingsComponent implements OnInit {
   calcTotalDaysServing(): number {
     const end = new Date(this.ziviData.date.endDate).getTime()
     const start = new Date(this.ziviData.date.startDate).getTime()
-    return Math.round( (end - start) / ( 1000*60*60*24) )
+    return Math.round( (end - start) / ( 1000*60*60*24) ) + 1
   }
   calcDaysServed(): number{
     const today = new Date().getTime()
@@ -172,4 +186,15 @@ function showElement( show: boolean, elementClass: string) {
     const element : HTMLElement = document.querySelector(elementClass);
     show ? element.style.display = 'block' :
           element.style.display = 'none';
+}
+
+function dateValidator(group: FormGroup){
+  const startDate = Date.parse(group.get('startDate').value)
+  const endDate = Date.parse(group.get('endDate').value)
+
+  // If the starting date is after the ending date, return a validation error
+  if(endDate && startDate)
+  {
+    return endDate > startDate ? null : { endBeforeStart: true }
+  }
 }

@@ -27,7 +27,7 @@
           case "deleteUser":
               $dataHeader = $request_body->dataHeader;
 
-              $deleteUser = deleteUserData($dataHeader);
+              $deleteUser = deleteUserData($dataHeader, true);
 
               $response = $deleteUser;
               break;

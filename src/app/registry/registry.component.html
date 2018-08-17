@@ -32,7 +32,7 @@
         <!--.form-control-feedback(*ngIf!="userPassword.errors && (userPassword.dirty || userPassword.touched) ")-->
         <div *ngIf="passwordInput.errors && (passwordInput.dirty || passwordInput.touched) && repeatPassword.valid && password.valid" class="form-control-feedback"><span *ngIf="passwordInput.errors?.mismatch">Die Passwöter stimmen nicht überein.</span></div>
       </div>
-      <div id="startEndDateInput" formGroupName="date">
+      <div id="startEndDateInput" formGroupName="dateInput">
         <div [ngClass]="{'has-danger': startDate.invalid && (startDate.dirty || startDate.touched), 'has-success': startDate.valid && (startDate.dirty || startDate.touched) }" class="container">
           <label for="startDate">Im Grünwerk von:</label>
           <input formControlName="startDate" type="date" id="startDate" name="start" class="dateInput"/>
@@ -45,7 +45,13 @@
           <div *ngIf="(startDate.errors?.required || endDate.errors?.required) && (endDate.dirty || endDate.touched) && (startDate.dirty || startDate.touched)" class="form-control-feedback"><span>Geben Sie bitte zwei Gültige Daten ein.</span></div>
         </div>
         <div class="endBeforeStartError">
-          <div *ngIf="dateInput.errors && (dateInput.dirty || dateInput.touched) && startDate.valid && endDate.valid" class="form-control-feedback"><span *ngIf="dateInput.errors?.endBeforeStart">Geben Sie bitte ein End-Datum ein, das nach dem Anfangsatum ist.</span></div>
+          <div *ngIf="dateInput.errors 
+                      && (dateInput.dirty || dateInput.touched) 
+                      && startDate.valid 
+                      && endDate.valid" 
+                      class="form-control-feedback">
+            <span *ngIf="dateInput.errors?.endBeforeStart">Geben Sie bitte ein End-Datum ein, das nach dem Anfangsatum ist.</span>
+          </div>
         </div>
       </div>
       <div *ngIf="registerForm.invalid" class="form-control-feedback"> <span>Sie müssen das Formular korrekt ausfüllen, bevor sie es abschicken können.</span></div>

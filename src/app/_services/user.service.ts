@@ -3,19 +3,14 @@ import { HttpClient } from "@angular/common/http"
 import { CryptoService } from './crypto.service'
 import { ZiviData } from '../ziviData'
 
-// interface row{
-//
-// }
-interface savedRb{
-  month: string,
-  rbData: any[]
-}
-interface rapportblattRequest{
+import {RapportblattTable, Row} from "../models/rapportblatt.model"
+
+interface RapportblattRequest{
     message: string,
     success: boolean,
-    data: savedRb
+    data: RapportblattTable
 }
-interface simpleRequest{
+interface SimpleRequest{
       message: string,
       success: boolean
 }
@@ -31,30 +26,32 @@ export class UserService {
   constructor(private http: HttpClient,
               private crypto: CryptoService) { }
 
+  
   getZiviData(){
       const localStorageFile = localStorage.getItem("userData");
       if (localStorageFile === null) {
-          console.log("No file found in localStorage");
-          alert("An error occured!")
+          console.log("No user data found in localStorage");
+          alert("No user data found in localStorage")
       }else{
           return <ZiviData>JSON.parse(localStorageFile);
       }
-    }
+  }
 
   getSavedRapportblatt(month: string){
-    return this.http.post<rapportblattRequest>("/api/php/saveRapportblatt.php",
+    return this.http.post<RapportblattRequest>("/api/php/saveRapportblatt.php",
                                             {
                                               month       : month,
                                               task        : "getRb"
                                             })
   }
 
-  changeServiceTime(newEndDate: string, password: string){
+  changeServiceTime(newStartDate: string, newEndDate: string, password: string){
     let userDataForDB = this.getZiviData()
+    userDataForDB.date.startDate = newStartDate;
     userDataForDB.date.endDate = newEndDate;
     //hashing the name and encrypt with password so it can't easily be read out of the db
     const dbData = JSON.stringify({'dbData': this.crypto.encryptForDB(userDataForDB, password)})
-    return this.http.post<simpleRequest>("/api/php/changeUser.php",
+    return this.http.post<SimpleRequest>("/api/php/changeUser.php",
                                             {
                                               dbData,
                                               task  : "changeServiceTime"
@@ -73,16 +70,16 @@ export class UserService {
                                 rbData      : rapportblatt,
                                 month       : month}
                               ))
-
-    return this.http.post<rapportblattRequest>("/api/php/saveRapportblatt.php",
-        JSON.stringify(savedRapportblatt))
+    console.log(savedRapportblatt)
+    return this.http.post<SimpleRequest>("/api/php/saveRapportblatt.php",
+        savedRapportblatt)
   }
 
   deleteAccount(password) {
     const ziviEmail = this.getZiviData().email;
     const dataHeader = this.crypto.getZiviDataHeader(ziviEmail, password);
 
-    return this.http.post<simpleRequest>("/api/php/changeUser.php",
+    return this.http.post<SimpleRequest>("/api/php/changeUser.php",
                                             {
                                               dataHeader,
                                               task  : "deleteUser"

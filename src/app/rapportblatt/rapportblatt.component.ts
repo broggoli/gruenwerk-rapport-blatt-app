@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { of, Observable } from "rxjs"
+import  { flatMap, map, tap } from "rxjs/operators"
 import {
   UserService,
   TableService,
@@ -7,6 +9,8 @@ import {
   SendService
 } from '../_services';
 import { ZiviData } from '../ziviData'
+
+import {RapportblattTable, Row} from "../models/rapportblatt.model"
 
 interface SendRbResponse {
   data: any;
@@ -17,19 +21,6 @@ interface ValidationObj {
   valid: boolean;
   message: string;
   sourceRow: number;
-}
-interface Row {
-  date: string;
-  dayName: string;
-  dayType: string;
-  price: string
-  route: {
-    start: string;
-    destination: string
-  }
-  spesenChecked: boolean
-  ticketProof: string       //Maybe save Images as strings in here
-  workPlace: string
 }
 
 @Component({
@@ -50,6 +41,8 @@ export class RapportblattComponent implements OnInit {
   rowErrorMessages: any = {}
   ticketProofsRemarced: boolean = false
   sendMeToo: boolean
+  currentSlideshowImage: string
+  slideShowIsOpen: boolean
 
   workPlaceOptions: string[] = [];
 
@@ -62,11 +55,11 @@ export class RapportblattComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true
+    this.slideShowIsOpen = false
     this.sendMeToo = true
     this.monthString = this.table.getMonthString(new Date())
-    console.log(this.monthString)
     this.ziviData = this.user.getZiviData();
-    this.getTable(this.monthString);
+    this.monthChanged(this.monthString)
     this.today = this.table.getDateString(new Date());
     this.ziviName = [this.ziviData.name.firstName, this.ziviData.name.lastName].join(' ');
     this.dayTypeNames = {
@@ -139,66 +132,87 @@ export class RapportblattComponent implements OnInit {
       return unique_array
     }
   }
-  monthChanged(event: Event): void {
+  monthChanged(monthString): void {
 
     this.loading = true
-    const target = <HTMLInputElement>event.target;
-    this.monthString = target.value;
-    this.getTable(this.monthString);
+    this.monthString = monthString;
+    this.getTable(this.monthString).subscribe(res => {
+      this.rows = res
+      this.rows.map( row => {
+        if( !row.medicalCertificate ) {
+          row.medicalCertificate = []
+        }
+      })
+      console.log(this.rows)
+    });
     this.loading = false
   }
-  getTable(monthS: string) {
+  getTable(monthS: string): Observable<Row[]> {
     // default rows config
-    if( monthS ){
+    let loadedRows: Row[] = []
+    if( monthS ) {
       const ziviDataSnap = this.user.getZiviData()
       const locallyStoredRB = localStorage.getItem('savedRapportblatt');
 
       const defaultRows = this.table.getTableData(ziviDataSnap, monthS);
-      this.rows = this.table.filterTable(defaultRows, ziviDataSnap.date)
+      loadedRows = this.table.filterTable(defaultRows, ziviDataSnap.date)
       
       // If there is no RB saved Locally
       if ( locallyStoredRB === null ) {
-        this.getRblOnline(defaultRows, monthS, ziviDataSnap)
+        return this.getRblOnline(defaultRows, monthS, ziviDataSnap).pipe(map( loadedRows => {
+
+          if(loadedRows.length !== defaultRows.length) {
+            // The saved RB is too small
+            console.log("the saved RB is too small")
+            loadedRows = loadedRows.concat(defaultRows.slice(loadedRows.length))
+          }
+          this.loading = false
+          localStorage.setItem('savedRapportblatt', 
+            JSON.stringify({
+            month: monthS,
+            rbData: loadedRows
+          }));
+          return loadedRows
+        }))
       } else {
         const savedRb = JSON.parse(locallyStoredRB);
         
         if ( savedRb.month  === monthS ) {
-          this.rows = this.table.filterTable(savedRb.rbData, ziviDataSnap.date);
+          console.log(savedRb)
+          loadedRows = this.table.filterTable(savedRb.rbData, ziviDataSnap.date);
           
-          if(this.rows.length !== defaultRows.length) {
+          if(loadedRows.length !== defaultRows.length) {
             // The saved RB is too small
             console.log("the saved RB is too small")
-            this.rows = this.rows.concat(defaultRows.slice(this.rows.length))
+            loadedRows = loadedRows.concat(defaultRows.slice(loadedRows.length))
           }
           this.loading = false
-        }else{
-          this.getRblOnline(defaultRows, monthS, ziviDataSnap)
+          
+          console.log('RB loaded locally!');
+          return of(loadedRows)
+        } else {
+          return of(loadedRows)
         }
-        console.log('RB loaded locally!');
       }
     }else{
       console.log("There was no Month input!")
+      return of(loadedRows)
     }
   }
-  getRblOnline(defaultRows: Row[], monthS: string, ziviDataSnap: ZiviData) {
-    this.user.getSavedRapportblatt(monthS).subscribe( savedRapportblatt => {
+  getRblOnline(defaultRows: Row[], monthS: string, ziviDataSnap: ZiviData): Observable<Row[]> {
+    return this.user.getSavedRapportblatt(monthS).pipe(flatMap(savedRapportblatt => {
+      
+      let loadedRows: Row[] = []
       if (savedRapportblatt.success) {
-
-        localStorage.setItem('savedRapportblatt', JSON.stringify(savedRapportblatt.data));
-
           if ( savedRapportblatt.data.month === monthS ) {
-            this.rows = this.table.filterTable(savedRapportblatt.data.rbData, ziviDataSnap.date);
-            
-            if(this.rows.length !== defaultRows.length) {
-              // The saved RB is too small
-              console.log("the saved RB is too small")
-              this.rows = this.rows.concat(defaultRows.slice(this.rows.length))
-            }
+            console.log(savedRapportblatt)
+            loadedRows = this.table.filterTable(savedRapportblatt.data.rbData, ziviDataSnap.date);
           }
-        }
-      });
-      this.loading = false
-    }
+      }
+
+      return of(loadedRows)
+    }));
+  }
 
   validateTable(rows: Row[]): ValidationObj[]{
     // Validates the table data and fixes small errors in the data like e.g
@@ -206,7 +220,6 @@ export class RapportblattComponent implements OnInit {
     let validArray: ValidationObj[] = []
 
     let i = 0;
-    const images = this.imageHandler.getImages
     for(let row of rows) {
       let validationObj: ValidationObj = {
         valid: true,
@@ -230,8 +243,7 @@ export class RapportblattComponent implements OnInit {
               validationObj.valid = false
               validationObj.message = "Sie müssen einen Preis für Ihr Billet eingeben."
               validationObj.sourceRow = i
-            }else if( !images[row.date] ) {
-              console.log(images[row.date])
+            }else if( row.ticketProof.length == 0 ) {
               if(!this.ticketProofsRemarced)
               {
                 validationObj.valid = false
@@ -251,7 +263,7 @@ export class RapportblattComponent implements OnInit {
         this.clearRow(i, ["dayType", "dayName", "date"])
           break
         case "Krank":
-        this.clearRow(i, ["dayType", "dayName", "date"])
+        this.clearRow(i, ["dayType", "dayName", "date", "medicalCertificate"])
           break
         case "Ferien":
         this.clearRow(i, ["dayType", "dayName", "date"])
@@ -270,8 +282,10 @@ export class RapportblattComponent implements OnInit {
       if( leaveTheSame.indexOf(item) === -1 ) {
         if(typeof this.rows[rowIndex][item] === "string"){
           this.rows[rowIndex][item] = "";
-        }else  if(typeof this.rows[rowIndex][item] === "boolean"){
+        }else if(typeof this.rows[rowIndex][item] === "boolean"){
           this.rows[rowIndex][item] = false;
+        }else if(Array.isArray(item)) {
+          this.rows[rowIndex][item] = [];
         }
       }
     }
@@ -301,7 +315,11 @@ export class RapportblattComponent implements OnInit {
       for(let i=0; i < rowElements.length ;i++){
         rowElements[i].classList.remove("error")
       }
-      this.save()
+      this.save(false).subscribe( res => {
+        if( res.success === true) {
+          console.log(res.message)
+        }
+      })
       this.showLoader(true);
       this.showInputsChecked(false);
 
@@ -317,7 +335,7 @@ export class RapportblattComponent implements OnInit {
         const excel = { "file": this.excel.excelForUpload( this.excel.getExcelFile(rapportblattData, fileName) ),
                         "name": fileName}
         
-        const images = this.imageHandler.getImages
+        const images = this.imageHandler.getImages(this.rows)
 
         const ccMe = {
           yes: this.sendMeToo, 
@@ -366,28 +384,45 @@ export class RapportblattComponent implements OnInit {
     }
   }
 
-  save() {
-    this.showLoader(true)
+  save(show=true): Observable<any> {
+    show ? this.showLoader(true) : null
     /** Saves the rows Object on the server and in localStorage**/
-    this.user.saveRapportblatt(this.rows, this.monthString).subscribe(data => {
-      console.log(data);
-      this.showLoader(false)
-      this.showInputsChecked(true)
-    });
+    return this.user.saveRapportblatt(this.rows, this.monthString).pipe(tap(data => {
+      show ? this.showLoader(false) : null
+      console.log(show)
+      if( data.success === true ) {
+        show ? this.showInputsChecked(true) : null
+      }else {
+        show ? this.showErrorIcon(true) : null
+      }
+    }));
   }
-  saveImageInRows(file, rowIndex) {
-    const callback = (image) => this.rows[rowIndex].ticketProof += image+"|seperator|"
-    this.imageHandler.scaleFile(file, callback, true)
+  saveImageInRows(file, rowIndex, imageType) {
+    console.log(this.rows[rowIndex])
+    const callback = (imageDataURL) => {
+      if( this.rows[rowIndex][imageType].length > 0 ) {
+        this.rows[rowIndex][imageType].push(imageDataURL)
+      } else {
+        this.rows[rowIndex][imageType] = [imageDataURL]
+      }
+    }
+    this.imageHandler.scaleFile(file, callback)
   }
-  onFileSelected(event, date, rowIndex) {
+  onFileSelected(event, rowIndex) {
       let target = event.target;
       let filesOnTarget = target.files;
       for ( const file of filesOnTarget) {
-        //this.saveImageInRows(file, rowIndex)
-        //this.rows[rowIndex].ticketProof += file.name+"|"
-        this.imageHandler.addImage(file, date, target);
+        this.saveImageInRows(file, rowIndex, "ticketProof")
       }
   }
+  
+  onMCSelected(event, rowIndex) {
+    let target = event.target;
+    let filesOnTarget = target.files;
+    for ( const file of filesOnTarget) {
+      this.saveImageInRows(file, rowIndex, "medicalCertificate")
+    }
+}
 
   daySummary(sort = false) {
     const dayTypes = this.getSummary().dayTypes;
@@ -407,10 +442,6 @@ export class RapportblattComponent implements OnInit {
       });
     }
     return sort ? sortedArray(dayTypesArray) : dayTypesArray;
-  }
-
-  openSlideshow() {
-    console.log('openSlideshow!');
   }
 
   getSummary() {
@@ -468,12 +499,26 @@ export class RapportblattComponent implements OnInit {
   }
 
   showLoader(show: boolean) {
-    showElement(show, ".loadingAnim");
+    
+    showElement(show, '.loadingAnim')
+    if (show === true) {
+      this.showErrorIcon(false)
+      this.showInputsChecked(false)
+    }
   }
   showInputsChecked(show: boolean) {
     showElement(show, '.inputsChecked');
     if (show === true) {
+      this.showLoader(false)
+      this.showErrorIcon(false)
       setTimeout(() => showElement(false, '.inputsChecked'), 2000)
+    }
+  }
+  showErrorIcon(show: boolean) {
+    showElement(show, '.errorIcon')
+    if (show === true) {
+      this.showLoader(false)
+      this.showInputsChecked(false)
     }
   }
 
@@ -522,6 +567,26 @@ export class RapportblattComponent implements OnInit {
     }, 200);
   }
   
+  deleteImage( rowIndex, imageIndex ) {
+    const imageToDel = this.rows[rowIndex].ticketProof[imageIndex]
+    const imgIndex = this.rows[rowIndex].ticketProof.indexOf(imageToDel)
+    if( imgIndex !== -1 ) {
+      this.rows[rowIndex].ticketProof.splice(imgIndex, 1);
+    }
+  }
+  deleteMCImage( rowIndex, imageIndex ) {
+    const imageToDel = this.rows[rowIndex].medicalCertificate[imageIndex]
+    const imgIndex = this.rows[rowIndex].medicalCertificate.indexOf(imageToDel)
+    if( imgIndex !== -1 ) {
+      this.rows[rowIndex].medicalCertificate.splice(imgIndex, 1);
+    }
+  }
+  openSlideshow( rowIndex, imageIndex ) {
+    console.log('openSlideshow!', rowIndex, imageIndex);
+    this.currentSlideshowImage = this.rows[rowIndex].ticketProof[imageIndex]
+
+    this.slideShowIsOpen = true
+  }
 }
 function showElement( show: boolean, elementClass: string) {
     const element : HTMLElement = document.querySelector(elementClass);

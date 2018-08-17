@@ -3,23 +3,75 @@
   <div id="changeServiceTimeDiv">
     <h3>Dienstdauer ändern</h3>
     <form [formGroup]="changeServiceTime" id="changeServiceTimeForm" novalidate="novalidate" (ngSubmit)="changeServiceDuration()">
-      <div [ngClass]="{'has-danger': endDate.invalid && (endDate.dirty || endDate.touched), 'has-success': endDate.valid && (endDate.dirty || endDate.touched) }" class="container">
-        <label for="endDate">Neues Enddatum:</label><br/>
-        <input formControlName="endDate" type="date" id="endDate" class="dateInput"/>
-      </div>
-      <div [ngClass]="{'has-danger': password.invalid && (password.dirty || password.touched), 'has-success': password.valid && (password.dirty || password.touched) }" class="container">
-        <input formControlName="password" placeholder="Passwort" type="password" id="password"/>
+      <div formGroupName="dateInput">
+        <div [ngClass]="{ 'has-danger': startDate.invalid && (startDate.dirty || startDate.touched), 
+                          'has-success': startDate.valid && (startDate.dirty || startDate.touched) }" 
+                          class="container">
+
+          <label for="startDate">Anfangsdatum:</label><br/>
+          <input formControlName="startDate" 
+                  type="date" 
+                  id="startDate" 
+                  class="dateInput"/>
+        </div>
+        <div [ngClass]="{ 'has-danger': endDate.invalid && (endDate.dirty || endDate.touched), 
+                          'has-success': endDate.valid && (endDate.dirty || endDate.touched) }" 
+                          class="container">
+
+          <label for="endDate">Enddatum:</label><br/>
+          <input formControlName="endDate" 
+                  type="date" 
+                  id="endDate" 
+                  class="dateInput"/>
+        </div>
+      
+      </div> 
+      <div [ngClass]="{ 'has-danger': password.invalid && (password.dirty || password.touched), 
+                        'has-success': password.valid && (password.dirty || password.touched) }" 
+                        class="container">
+        <input formControlName="password" 
+                placeholder="Passwort" 
+                type="password" 
+                id="password"/>
       </div>
       <div class="notValid">
-        <div *ngIf="(endDate.errors?.pattern) && (endDate.dirty || endDate.touched)" class="form-control-feedback"><span>Geben Sie bitte ein gültiges Datum ein.</span></div>
-        <div *ngIf="(endDate.errors?.required) && (endDate.dirty || endDate.touched)" class="form-control-feedback"><span>Geben Sie bitte ein gültiges Datum ein.</span></div>
-        <div *ngIf="(password.errors?.required) && (password.dirty || password.touched)" class="form-control-feedback"><span>Geben Sie bitte ein Passwort ein.</span></div>
+        
+        <div *ngIf="(startDate.errors?.pattern) && (startDate.dirty || startDate.touched)" 
+          class="form-control-feedback">
+          <span>Geben Sie bitte ein gültiges Datum ein.</span>
+         </div>
+        <div *ngIf="(endDate.errors?.pattern) && (endDate.dirty || endDate.touched)" 
+              class="form-control-feedback">
+              <span>Geben Sie bitte ein gültiges Datum ein.</span>
+        </div>
+        
+        <div *ngIf="(startDate.errors?.required || endDate.errors?.required) 
+                    && (endDate.dirty || endDate.touched) 
+                    && (startDate.dirty || startDate.touched)" 
+                    class="form-control-feedback">
+          <span>Geben Sie bitte zwei Gültige Daten ein.</span>
+        </div>
+        <div class="endBeforeStartError">
+            <div *ngIf="dateInput.errors 
+                        && (dateInput.dirty || dateInput.touched) 
+                        && startDate.valid 
+                        && endDate.valid
+                        && dateInput.errors?.endBeforeStart" 
+                        class="form-control-feedback">
+          <span>Geben Sie bitte ein End-Datum ein, das nach dem Anfangsatum ist.</span>
+        </div>
+          </div>
+        <div *ngIf="(password.errors?.required) && (password.dirty || password.touched)" 
+              class="form-control-feedback">
+          <span>Geben Sie bitte ein Passwort ein.</span>
+        </div>
         <div *ngIf="(password.errors?.minlength) && (password.dirty || password.touched)" class="form-control-feedback"><span>Geben Sie bitte ein Passwort ein, das mindestens 6 Zeichen hat.</span></div>
       </div>
       <div *ngIf="changeServiceTime.valid &amp;&amp; changeServiceError != '' " class="form-control-feedback"><span>Konnte die Dienstdauer nicht ändern!</span><br/><span>Error: {{ changeServiceError }}</span></div>
       <button id="changeServiceButton" [ngClass]="{'disabled': changeServiceTime.invalid}" type="submit" class="button">Ändern</button>
     </form>
   </div>
+
   <div id="deleteAccountDiv">
     <h3>Account löschen</h3>
     <form [formGroup]="deleteAccountForm" id="deleteAccountForm" novalidate="novalidate" (ngSubmit)="deleteAccount()"> 
@@ -35,7 +87,7 @@
   <div style="display: none" class="loadingAnim svgAnim"><img src="../../assets/svg/loader.svg"/></div>
   <div style="display: none" class="inputsChecked svgAnim"><img src="../../assets/svg/check.svg"/></div>
   <div id="daysServed">
-    <h3>Noch zu leistende Diensttage</h3>
+    <h3>Übersicht</h3>
     <div id="servedChart" class="barchart">
       <div class="chart">
         <div [ngStyle]="{width: percentServed}" class="served bar">

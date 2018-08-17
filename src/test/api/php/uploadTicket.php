@@ -7,7 +7,7 @@ function start(){
     $crDir = createDir("../uploads/");
     $response = new stdClass();
     $response->success = false;
-    if($crDir->success){
+    if($crDir->success) {
         $prepareUploadExcel = prepareForUpload("excelFile", $crDir->path);
         $prepareUploadTicketProof = prepareForUpload("ticketProofFiles", $crDir->path);
 
@@ -52,7 +52,7 @@ function start(){
                 unlink($pathToZip.".zip");
             }else{
 
-                $exceptionString = 'Unable to send new.';
+                $exceptionString = 'Unable to send Mail. Error: '.$sendMail->message;
                 $response->message = $exceptionString;
                 throw new RuntimeException($exceptionString);
             }
@@ -65,8 +65,7 @@ function start(){
         }
 
     }else{
-        $exceptionString = 'Unable to create a new folder.';
-        $response->message = $exceptionString;
+        $response->message = 'Unable to create a new folder.';
         throw new RuntimeException($exceptionString);
     }
     echo json_encode($response);

@@ -5,7 +5,7 @@
       <div id="rapportBlattInfo">
         <div id="dateInput">
           <label for="rapportBlattMonth">Monat:</label>
-          <input (change)="monthChanged($event)" value="{{monthString}}" type="month" id="rapportBlattMonth" name="Monat" class="dateInput"/>
+          <input (change)="monthChanged($event.target.value)" value="{{monthString}}" type="month" id="rapportBlattMonth" name="Monat" class="dateInput"/>
         </div>
         <div id="unchangableInfo">
           <p>Heute:<span id="today"> {{today}}</span></p>
@@ -27,7 +27,7 @@
           </select>
           <div *ngIf="row.dayType === 'Arbeitstag'" class="workDayInputs">
 
-            <input (click)="updateWorkPlaceOptions(row);
+            <input (focus)="updateWorkPlaceOptions(row);
                             toggleDropDown($event)"
                     (blur)="disableDropDown($event)"
                     [(ngModel)]="row.workPlace"
@@ -63,19 +63,41 @@
           <div *ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'" class="uploadTicketProof">
             <div><span>Billet Belege hochladen:</span></div>
             <div>
-              <label for="{{ row.date }}_upload" class="ticketProofLabel"><img src="../../assets/svg/upload.svg" class="uploadIcon"/>
-                <!--span Billet Belege hochladen-->
+              <label for="{{ row.date }}_upload" class="ticketProofLabel">
+                <img src="../../assets/svg/upload.svg" class="uploadIcon"/>
               </label>
-              <input (change)="onFileSelected($event, row.date, idx)" id="{{ row.date }}_upload" type="file" multiple="true" class="ticketProof ticketProofFileUpload"/>
+              <input (change)="onFileSelected($event, idx)" 
+                      id="{{ row.date }}_upload" 
+                      type="file" 
+                      multiple="true" 
+                      class="ticketProof"/>
+            </div>
+            <div class="ticketProofImagesContainer">
+                <img *ngFor="let dataUrl of row.ticketProof; let imageIndex = index"
+                      (click)="deleteImage(idx, imageIndex)"
+                      src="{{ dataUrl }}"
+                      class="imagePreview"/>
             </div>
           </div>
-          <div *ngIf="row.dayType == 'Krank'" class="uploadArztZeugnis">
-            <div><span>Arztzeugnis hochladen:</span></div>
+          <div *ngIf="row.dayType == 'Krank'" class="uploadMCContainer">
+            <div><span>Ärztliches Zeugnis hochladen:</span></div>
             <div>
-              <label for="artztZeugnidsFileUpload" class="artztZeugnisLabel"><img src="../../assets/svg/upload.svg" class="uploadIcon"/>
-                <!--span Billet Belege hochladen-->
+              <label class="MCLabel">
+                <img src="../../assets/svg/upload.svg" class="uploadIcon"/>
+                <input (change)="onMCSelected($event, idx)" 
+                      id="MCUpload" 
+                      type="file" 
+                      multiple="true" 
+                      class="MCUpload"/>
+              
               </label>
-              <input (change)="onFileSelected($event, row.date, idx)" id="artztZeugnidsFileUpload" type="file" multiple="true" class="arztZeugnisProof"/>
+            </div>
+            
+            <div class="MCImagesContainer">
+                <img *ngFor="let dataUrl of row.medicalCertificate; let imageIndex = index"
+                      (click)="deleteMCImage(idx, imageIndex)"
+                      src="{{ dataUrl }}"
+                      class="imagePreview"/>
             </div>
           </div>
         </div>
@@ -127,9 +149,16 @@
     </div>
     <div style="display: none" class="loadingAnim svgAnim"><img src="../../assets/svg/loader.svg"/></div>
     <div style="display: none" class="inputsChecked svgAnim"><img src="../../assets/svg/check.svg"/></div>
+    <div style="display: none" class="inputsChecked errorIcon"><img src="../../assets/svg/error.svg"/></div>
     <div id="actionButtons" *ngIf="rows.length > 0">
-      <button id="saveutton" (click)="save()" class="button rb-button"><img src="../../assets/svg/save.svg" class="icon"/><span>Speichern</span></button>
-      <button id="sendButton" (click)="send()" class="button rb-button"><img src="../../assets/svg/send.svg" class="icon"/><span>Absenden</span></button>
+      <button id="saveutton" (click)="save()" class="button rb-button">
+        <img src="../../assets/svg/save.svg" class="icon"/>
+        <span>Speichern</span>
+      </button>
+      <button id="sendButton" (click)="send()" class="button rb-button">
+        <img src="../../assets/svg/send.svg" class="icon"/>
+        <span>Absenden</span>
+      </button>
   
       <div  class="sendMeTooDiv" >
         Kopie an mich senden:
@@ -140,4 +169,12 @@
       </div>
     </div>
   </div>
+</div>
+
+<div id="slideShow"
+    *ngIf="slideShowIsOpen">
+  <img id="currentSlideshowImage"
+      [src]="currentSlideshowImage"
+      alt="Loading..."
+      onerror="this.src='../../assets/svg/loader.svg'"/>
 </div>

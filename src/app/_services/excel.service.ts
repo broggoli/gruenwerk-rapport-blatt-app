@@ -31,6 +31,7 @@ export class ExcelService {
                       type: 'array',
                       bookType: 'xlsx',
                       cellStyles: true,
+                      cellFormat: true,
                       sheetStubs: true,
                       cellFormula: true
                     }
@@ -48,7 +49,7 @@ export class ExcelService {
                   {wch: 9},
                   {wch: 9},
                   {wch: 9},
-                  {wch: 9},
+                  {wch: 20},
                   {wch: 9}
                 ]
 
@@ -119,7 +120,7 @@ export class ExcelService {
         }
         if(row["spesenChecked"] === true){
           ws = add_cell_to_sheet(ws, "I"+sheetRow, row["route"]["start"]+" - "+row["route"]["destination"])
-          ws = add_cell_to_sheet(ws, "J"+sheetRow, row["price"])
+          ws = add_cell_to_sheet(ws, "J"+sheetRow, row["price"], true, false)
         }
       }
       ws = add_cell_to_sheet(ws, "J49", rapportblattData.summary.shoes)
