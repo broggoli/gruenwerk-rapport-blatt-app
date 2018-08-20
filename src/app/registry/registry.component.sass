@@ -32,6 +32,26 @@
         .has-success > input
           border: solid green
 
+        .invisible
+                  display: none
+        .autoCompleteDropdown
+            position: absolute
+            padding: 0
+            z-index: 1
+            max-height: 250px
+            background-color: $white
+            border: solid 1px
+            overflow-y: auto
+            transition: 200ms ease
+            transform: translateY(-0.5)
+            width: 10.5em
+
+            .autoCompleteOpt
+                margin: 0.1em
+                cursor: pointer
+            .autoCompleteOpt:hover
+                background-color: lighten($darkblue, 20%)
+                  
         #startEndDateInput
             margin-top: 1em
             display: grid

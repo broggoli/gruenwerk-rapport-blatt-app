@@ -1,65 +1,118 @@
 
 <div id="registerPage">
-  <div id="registerForm">
-    <h2 id="registerTitle">Registrierung</h2>
-    <form [formGroup]="registerForm" novalidate="novalidate" (ngSubmit)="register()">
-      <div id="userNameinput" formGroupName="name">
-        <div [ngClass]="{'has-danger': firstName.invalid && (firstName.dirty || firstName.touched), 'has-success': firstName.valid && (firstName.dirty || firstName.touched) }" class="container">
-          <input formControlName="firstName" type="text" placeholder="Vorname" id="registerFirstName" name="firstName" class="textInput"/>
-          <div *ngIf="firstName.errors && (firstName.dirty || firstName.touched) " class="form-control-feedback"><span *ngIf="firstName.errors.required">Geben Sie bitte ihren Vornamen ein.</span><span *ngIf="firstName.errors.pattern">Geben Sie bitte nur ihren Vornamen ohne Abstand oder Sonderzeichen ein.</span></div><br/>
-          <div [ngClass]="{'has-danger': lastName.invalid && (lastName.dirty || lastName.touched), 'has-success': lastName.valid && (lastName.dirty || lastName.touched) }" class="container">
-            <input formControlName="lastName" type="text" placeholder="Nachname" id="registerLastName" name="lastName" pattern="^[-'a-zA-ZÀ-ÖØ-öø-ſ]+$" class="textInput"/>
-            <div *ngIf="lastName.errors && (lastName.dirty || lastName.touched) " class="form-control-feedback"><span *ngIf="lastName.errors.required">Geben Sie bitte ihren Nachnamen ein.</span><span *ngIf="lastName.errors.pattern">Geben Sie bitte ihren Nachnamen ohne Abstand oder Sonderzeichen ein.</span></div>
+    <div id="registerForm">
+      <h2 id="registerTitle">Registrierung</h2>
+      <form [formGroup]="registerForm" novalidate="novalidate" (ngSubmit)="register()">
+        <div id="userNameinput" formGroupName="names">
+          <div [ngClass]="{'has-danger': firstName.invalid && (firstName.dirty || firstName.touched), 'has-success': firstName.valid && (firstName.dirty || firstName.touched) }" class="container">
+            <input formControlName="firstName" type="text" placeholder="Vorname" id="registerFirstName" name="firstName" class="textInput"/>
+            <div *ngIf="firstName.errors && (firstName.dirty || firstName.touched) " class="form-control-feedback"><span *ngIf="firstName.errors.required">Geben Sie bitte ihren Vornamen ein.</span><span *ngIf="firstName.errors.pattern">Geben Sie bitte nur ihren Vornamen ohne Abstand oder Sonderzeichen ein.</span></div><br/>
+            
+            <div [ngClass]="{'has-danger': lastName.invalid && (lastName.dirty || lastName.touched), 
+                              'has-success': lastName.valid && (lastName.dirty || lastName.touched) }" class="container">
+              <input formControlName="lastName" 
+                      type="text" 
+                      placeholder="Nachname" 
+                      id="registerLastName" 
+                      name="lastName" 
+                      pattern="^[-'a-zA-ZÀ-ÖØ-öø-ſ]+$" 
+                      class="textInput"/>
+              <div *ngIf="lastName.errors && (lastName.dirty || lastName.touched) " class="form-control-feedback"><span *ngIf="lastName.errors.required">Geben Sie bitte ihren Nachnamen ein.</span><span *ngIf="lastName.errors.pattern">Geben Sie bitte ihren Nachnamen ohne Abstand oder Sonderzeichen ein.</span></div>
+            </div>
           </div>
         </div>
-      </div>
-      <div id="emailInput" [ngClass]="{'has-danger': email.invalid && (email.dirty || email.touched), 'has-success': email.valid && (email.dirty || email.touched) }">
-        <input formControlName="email" type="email" placeholder="Mail" id="email" name="email" pattern="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$" class="textInput"/>
-        <div *ngIf="email.errors && (email.dirty || email.touched) " class="form-control-feedback"><span *ngIf="email.errors.required">Geben Sie bitte ihre Email-Adresse ein.</span><span *ngIf="email.errors.pattern">Geben Sie bitte eine gültige Email-Adresse ein.</span></div>
-      </div>
-      <div id="aboInput" [ngClass]="{'has-danger': abo.invalid && (abo.dirty || abo.touched), 'has-success': abo.valid && (abo.dirty || abo.touched) }">
-        <input formControlName="abo" type="text" placeholder="ÖV-Abonement" id="abo" name="abo" class="textInput"/>
-      </div>
-      <div id="passwordInput" formGroupName="passwordInputs">
-        <div [ngClass]="{'has-danger': password.invalid && (password.dirty || password.touched), 'has-success': passwordInput.valid &&  password.valid && (password.dirty || password.touched) }" class="container">
-          <input formControlName="password" type="password" placeholder="Passwort" id="registerpassword" name="registerpassword" class="textInput passwordInput"/>
-          <div *ngIf="password.errors && (password.dirty || password.touched) " class="form-control-feedback"><span *ngIf="password.errors.required">Geben Sie bitte ein Passwort ein.</span><span *ngIf="password.errors.minlength">Geben Sie bitte ein Passwort ein, das mindestens 6 Zeichen lang ist.</span></div>
+        <div id="emailInput" [ngClass]="{'has-danger': email.invalid && (email.dirty || email.touched), 'has-success': email.valid && (email.dirty || email.touched) }">
+          <input formControlName="email" type="email" placeholder="Mail" id="email" name="email" pattern="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:.[a-zA-Z0-9-]+)*$" class="textInput"/>
+          <div *ngIf="email.errors && (email.dirty || email.touched) " class="form-control-feedback"><span *ngIf="email.errors.required">Geben Sie bitte ihre Email-Adresse ein.</span><span *ngIf="email.errors.pattern">Geben Sie bitte eine gültige Email-Adresse ein.</span></div>
         </div>
-        <div [ngClass]="{'has-danger': repeatPassword.invalid && (repeatPassword.dirty || repeatPassword.touched), 'has-success': passwordInput.valid && repeatPassword.valid && (repeatPassword.dirty || repeatPassword.touched) }" class="container">
-          <input formControlName="repeatPassword" type="password" placeholder="Passwort wiederholen" id="repeatPassword" name="repeatPassword" class="textInput passwordInput"/>
-          <div *ngIf="repeatPassword.errors && (repeatPassword.dirty || repeatPassword.touched) " class="form-control-feedback"><span *ngIf="repeatPassword.errors.required">Geben Sie bitte ein Passwort ein.</span><span *ngIf="repeatPassword.errors.minlength">Geben Sie bitte ein Passwort ein, das mindestens 6 Zeichen lang ist.</span></div>
-        </div>
-        <!--.form-control-feedback(*ngIf!="userPassword.errors && (userPassword.dirty || userPassword.touched) ")-->
-        <div *ngIf="passwordInput.errors && (passwordInput.dirty || passwordInput.touched) && repeatPassword.valid && password.valid" class="form-control-feedback"><span *ngIf="passwordInput.errors?.mismatch">Die Passwöter stimmen nicht überein.</span></div>
-      </div>
-      <div id="startEndDateInput" formGroupName="dateInput">
-        <div [ngClass]="{'has-danger': startDate.invalid && (startDate.dirty || startDate.touched), 'has-success': startDate.valid && (startDate.dirty || startDate.touched) }" class="container">
-          <label for="startDate">Im Grünwerk von:</label>
-          <input formControlName="startDate" type="date" id="startDate" name="start" class="dateInput"/>
-        </div>
-        <div [ngClass]="{'has-danger': endDate.invalid && (endDate.dirty || endDate.touched), 'has-success': endDate.valid && (endDate.dirty || endDate.touched) }" class="container">
-          <label for="endDate">Im Grünwerk bis:</label>
-          <input formControlName="endDate" type="date" id="endDate" name="end" class="dateInput"/>
-        </div>
-        <div class="datesNotValidError">
-          <div *ngIf="(startDate.errors?.required || endDate.errors?.required) && (endDate.dirty || endDate.touched) && (startDate.dirty || startDate.touched)" class="form-control-feedback"><span>Geben Sie bitte zwei Gültige Daten ein.</span></div>
-        </div>
-        <div class="endBeforeStartError">
-          <div *ngIf="dateInput.errors 
-                      && (dateInput.dirty || dateInput.touched) 
-                      && startDate.valid 
-                      && endDate.valid" 
-                      class="form-control-feedback">
-            <span *ngIf="dateInput.errors?.endBeforeStart">Geben Sie bitte ein End-Datum ein, das nach dem Anfangsatum ist.</span>
+        <div>
+          <div id="aboInput" [ngClass]="{'has-danger': abo.invalid && (abo.dirty || abo.touched), 
+                'has-success': abo.valid && (abo.dirty || abo.touched) }">
+            <input formControlName="abo" 
+                    (focus)="toggleDropDown($event)"
+                    (blur)="disableDropDown($event)"
+                    type="text" 
+                    placeholder="ÖV-Abonement" 
+                    id="abo" 
+                    name="abo" 
+                    class="textInput"
+                    autocomplete="off"
+                    [value]=aboValue/>
+            <div class="aboDropdown autoCompleteDropdown invisible"
+                  *ngIf="(stdAboOpts | filterStrings:abo.value).length > 0">
+                <div (click)="setAboValue = opt"
+                      *ngFor="let opt of stdAboOpts | filterStrings:abo.value"
+                      class="autoCompleteOpt">
+
+                      {{ opt }}
+                </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div *ngIf="registerForm.invalid" class="form-control-feedback"> <span>Sie müssen das Formular korrekt ausfüllen, bevor sie es abschicken können.</span></div>
-      <div *ngIf="registerForm.valid &amp;&amp; registerError != '' " class="form-control-feedback"><span>Die Registrierung ist fehlgeschlagen.</span><br/><span>Error: {{ registerError }}</span></div>
-      <div style="display: none" class="loadingAnim svgAnim"><img src="../../assets/svg/loader.svg"/></div>
-      <div style="display: none" class="inputsChecked svgAnim"><img src="../../assets/svg/check.svg"/></div>
-      <button id="register" [ngClass]="{'disabled': registerForm.invalid}" type="submit" class="button">Registrieren</button>
-    </form>
-    <div id="backButton"><a id="registerBackButton" routerLink="">Zurück zum Login</a></div>
+        <div id="passwordInput" formGroupName="passwordInputs">
+          <div [ngClass]="{'has-danger': password.invalid && (password.dirty || password.touched), 
+                            'has-success': passwordInputs.valid &&  password.valid && (password.dirty || password.touched) }" 
+                class="container">
+            <input formControlName="password" 
+                    type="password" placeholder="Passwort" 
+                    id="registerpassword" 
+                    name="registerpassword" 
+                    class="textInput passwordInput"/>
+            <div *ngIf="password.errors && (password.dirty || password.touched) " 
+                  class="form-control-feedback">
+                  <span *ngIf="password.errors.required">Geben Sie bitte ein Passwort ein.</span>
+                  <span *ngIf="password.errors.minlength">Geben Sie bitte ein Passwort ein, das mindestens 6 Zeichen lang ist.</span></div>
+          </div>
+          <div [ngClass]="{'has-danger': repeatPassword.invalid && (repeatPassword.dirty || repeatPassword.touched), 
+                          'has-success': passwordInputs.valid && repeatPassword.valid && (repeatPassword.dirty || repeatPassword.touched) }" class="container">
+            <input formControlName="repeatPassword" 
+                    type="password" 
+                    placeholder="Passwort wiederholen" 
+                    id="repeatPassword"
+                    class="textInput passwordInput"/>
+            <div *ngIf="repeatPassword.errors 
+                        && (repeatPassword.dirty || repeatPassword.touched) " 
+                  class="form-control-feedback">
+              <span *ngIf="repeatPassword.errors.required">Geben Sie bitte ein Passwort ein.</span>
+              <span *ngIf="repeatPassword.errors.minlength">Geben Sie bitte ein Passwort ein, das mindestens 6 Zeichen lang ist.</span>
+            </div>
+          </div>
+          <div *ngIf="passwordInputs.errors 
+                      && (passwordInputs.dirty || passwordInputs.touched) 
+                      && repeatPassword.valid 
+                      && password.valid" class="form-control-feedback">
+            <span *ngIf="passwordInputs.errors?.mismatch">Die Passwöter stimmen nicht überein.</span>
+          </div>
+        </div>
+        <div id="startEndDateInput" formGroupName="dateInputs">
+          <div [ngClass]="{'has-danger': startDate.invalid && (startDate.dirty || startDate.touched), 'has-success': startDate.valid && (startDate.dirty || startDate.touched) }" class="container">
+            <label for="startDate">Im Grünwerk von:</label>
+            <input formControlName="startDate" type="date" id="startDate" name="start" class="dateInput"/>
+          </div>
+          <div [ngClass]="{'has-danger': endDate.invalid && (endDate.dirty || endDate.touched), 'has-success': endDate.valid && (endDate.dirty || endDate.touched) }" class="container">
+            <label for="endDate">Im Grünwerk bis:</label>
+            <input formControlName="endDate" type="date" id="endDate" name="end" class="dateInput"/>
+          </div>
+          <div class="datesNotValidError">
+            <div *ngIf="(startDate.errors?.required || endDate.errors?.required) && (endDate.dirty || endDate.touched) && (startDate.dirty || startDate.touched)" class="form-control-feedback"><span>Geben Sie bitte zwei Gültige Daten ein.</span></div>
+          </div>
+          <div class="endBeforeStartError">
+            <div *ngIf="dateInputs.errors 
+                        && (dateInputs.dirty || dateInputs.touched) 
+                        && startDate.valid 
+                        && endDate.valid" 
+                        class="form-control-feedback">
+              <span *ngIf="dateInputs.errors?.endBeforeStart">Geben Sie bitte ein End-Datum ein, das nach dem Anfangsatum ist.</span>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="registerForm.invalid" class="form-control-feedback"> <span>Sie müssen das Formular korrekt ausfüllen, bevor sie es abschicken können.</span></div>
+        <div *ngIf="registerForm.valid &amp;&amp; registerError != '' " class="form-control-feedback"><span>Die Registrierung ist fehlgeschlagen.</span><br/><span>Error: {{ registerError }}</span></div>
+        <div style="display: none" class="loadingAnim svgAnim"><img src="../../assets/svg/loader.svg"/></div>
+        <div style="display: none" class="inputsChecked svgAnim"><img src="../../assets/svg/check.svg"/></div>
+        <button id="register" [ngClass]="{'disabled': registerForm.invalid}" type="submit" class="button">Registrieren</button>
+      </form>
+      <div id="backButton"><a id="registerBackButton" routerLink="">Zurück zum Login</a></div>
+    </div>
   </div>
-</div>
+  

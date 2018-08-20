@@ -9,3 +9,4 @@ export * from './crypto.service';
 export * from './excel.service';
 export * from './image-handler.service';
 export * from './send.service';
+export * from './auto-complete.service';

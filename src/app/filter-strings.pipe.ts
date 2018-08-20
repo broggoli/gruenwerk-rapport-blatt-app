@@ -11,7 +11,9 @@ export class FilterStringsPipe implements PipeTransform {
     let filtered = array.filter( value => {
       if(!value) { return }
       // Dont add the string if it's the same as the search term
-      if(value.toLowerCase() === search.toLowerCase()) 
+      value = value.toString().toLowerCase()
+      search = search.toString().toLowerCase()
+      if( value === search) 
       { return }
       return value
               .toLowerCase()

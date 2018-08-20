@@ -70,25 +70,37 @@ $responsiveBreakingPointHeader: 30em
 
                 *
                     margin: 2px 5px
+                .input-with-dropdown
+                  display: flex
+                  flex-direction: column
                 .invisible
                   display: none
                 .autoCompleteDropdown
                   position: absolute
                   padding: 0
                   z-index: 1
-                  width: 10.25em
-                  max-height: 300px
+                  max-height: 250px
                   background-color: $white
                   border: solid 1px
                   overflow-y: auto
                   transition: 200ms ease
                   transform: translateY(2.2em)
 
-                  .workPlaceOpt
+                  .autoCompleteOpt
                     margin: 0.1em
                     cursor: pointer
-                  .workPlaceOpt:hover
+                  .autoCompleteOpt:hover
                     background-color: lighten($darkblue, 20%)
+                
+                .autoCompleteDropdown.workPlaceDropdown
+                  width: 10.25em
+                .autoCompleteDropdown.routeStartDropdown
+                  width: 10.25em
+                .autoCompleteDropdown.destinationDropdown
+                  width: 10.25em
+                .autoCompleteDropdown.priceDropdown
+                  width: 6em
+
                 .imagePreview
                       height: 1.5em
                       right: 0.5em
@@ -114,9 +126,6 @@ $responsiveBreakingPointHeader: 30em
                   flex-direction: column
                   padding: 0
                   margin-left: 0
-                  // .dropDownContainer
-                  //   margin: 0
-                  //   padding: 0
                 .fahrspesenDiv
                   display: flex
                 .route
@@ -268,10 +277,15 @@ $responsiveBreakingPointHeader: 30em
             transform: scale(1.1)
 
           .sendMeTooDiv
+            align-self: center
+            margin-bottom: 1em
             @media (min-width:550px)
-              grid-area: 2 / 1 / 2 / span 2
+              grid-area: 1 / 1 / 1 / span 2
+              align-self: left
+            
             .sendMeTooCheckBox
               margin-left: 1em
+              transform: translateY(0.5em)
               .knob:before
                 height: 1.4em
                 width: 1.4em

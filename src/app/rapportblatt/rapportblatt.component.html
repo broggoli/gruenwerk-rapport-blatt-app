@@ -5,7 +5,12 @@
       <div id="rapportBlattInfo">
         <div id="dateInput">
           <label for="rapportBlattMonth">Monat:</label>
-          <input (change)="monthChanged($event.target.value)" value="{{monthString}}" type="month" id="rapportBlattMonth" name="Monat" class="dateInput"/>
+          <input (change)="monthChanged($event.target.value)" 
+                  value="{{monthString}}"
+                  type="month" 
+                  id="rapportBlattMonth" 
+                  name="Monat" 
+                  class="dateInput"/>
         </div>
         <div id="unchangableInfo">
           <p>Heute:<span id="today"> {{today}}</span></p>
@@ -25,10 +30,10 @@
             <option value="Ferien">Ferien</option>
             <option value="Urlaub">Urlaub</option>
           </select>
-          <div *ngIf="row.dayType === 'Arbeitstag'" class="workDayInputs">
+          <div *ngIf="row.dayType === 'Arbeitstag'" class="workDayInputs"
+               class="input-with-dropdown">
 
-            <input (focus)="updateWorkPlaceOptions(row);
-                            toggleDropDown($event)"
+            <input (focus)="toggleDropDown($event)"
                     (blur)="disableDropDown($event)"
                     [(ngModel)]="row.workPlace"
                     type="text"
@@ -36,29 +41,84 @@
                     name="Arbeitsort"
                     class="textInput workPlace"/>
 
-            <div class="workPlaceDropDown autoCompleteDropdown invisible"
-                  *ngIf="(workPlaceOptions | filterStrings:row.workPlace).length > 0">
+            <div class="workPlaceDropdown autoCompleteDropdown invisible"
+                  *ngIf="(workPlaceOptions(row) | filterStrings:row.workPlace).length > 0">
               <div (click)="row.workPlace = opt"
-                    *ngFor="let opt of workPlaceOptions | filterStrings:row.workPlace"
-                    class="workPlaceOpt">
+                    *ngFor="let opt of workPlaceOptions(row) | filterStrings:row.workPlace"
+                    class="autoCompleteOpt">
 
                     {{ opt }}
               </div>
             </div>
           </div>
           <div *ngIf="row.dayType === 'Arbeitstag'" class="spesenInputs">
-            <label class="switch"><span [ngClass]="{'checked':row.spesenChecked}" class="knob round checked"></span>
+            <label class="switch">
+              <span [ngClass]="{'checked': row.spesenChecked}" class="knob round checked"></span>
               <input [(ngModel)]="row.spesenChecked" type="checkbox" class="spesenCheckbox"/>
             </label>
             <div *ngIf="!row.spesenChecked && row.dayType == 'Arbeitstag'" class="spesenText">Sind Fahrspesen angefallen?</div>
           </div>
-          <!--div.fahrspesenDiv-->
+
           <div *ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'" class="route">
-            <input [(ngModel)]="row.route.start" type="text" placeholder="Abfahrtsort" name="Abfahrtsort" class="textInput routeInput"/><span>-</span>
-            <input [(ngModel)]="row.route.destination" type="text" placeholder="Ziel" name="destination" class="textInput routeInput"/>
+            <div class="input-with-dropdown">
+              <input [(ngModel)]="row.route.start" 
+                      (focus)="toggleDropDown($event)"
+                      (blur)="disableDropDown($event)"
+                      type="text" 
+                      placeholder="Abfahrtsort" 
+                      name="routeStart" 
+                      class="textInput routeInput"/>
+              <div class="routeStartDropdown autoCompleteDropdown invisible"
+                    *ngIf="(routeStartOptions(row) | filterStrings:row.route.start).length > 0">
+                <div (click)="row.route.start = opt"
+                      *ngFor="let opt of routeStartOptions(row) | filterStrings:row.route.start"
+                      class="autoCompleteOpt">
+
+                  {{ opt }}
+                </div>
+              </div>
+            </div>
+
+            <span>-</span>
+
+            <div class="input-with-dropdown">
+              <input [(ngModel)]="row.route.destination" 
+                      (focus)="toggleDropDown($event)"
+                      (blur)="disableDropDown($event)"
+                      type="text" 
+                      placeholder="Ziel" 
+                      name="destination" 
+                      class="textInput routeInput"/>
+              <div class="destinationDropdown autoCompleteDropdown invisible"
+                    *ngIf="(destinationOptions(row) | filterStrings:row.route.destination).length > 0">
+                <div (click)="row.route.destination = opt"
+                      *ngFor="let opt of destinationOptions(row) | filterStrings:row.route.destination"
+                      class="autoCompleteOpt">
+    
+                  {{ opt }}
+                </div>
+              </div>
+            </div>
           </div>
-          <div *ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'" style="margin:0; padding: 0;">
-            <input [(ngModel)]="row.price" type="number" min="0.00" max="100.00" step="0.05" placeholder="Preis" name="Preis" class="textInput price"/>
+          <div *ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'" 
+                class="input-with-dropdown">
+            <input [(ngModel)]="row.price"
+                    (focus)="toggleDropDown($event)"
+                    (blur)="disableDropDown($event)"
+                    type="number" 
+                    min="0.00"
+                    max="5000.00" step="0.05" 
+                    placeholder="Preis" 
+                    name="price" 
+                    class="textInput price"/>
+            <div class="priceDropdown autoCompleteDropdown invisible"
+                  *ngIf="(priceOptions(row) | filterStrings:row.price).length > 0">
+              <div *ngFor="let opt of priceOptions(row) | filterStrings:row.price"
+                    (click)="row.price = opt"
+                    class="autoCompleteOpt">
+                {{ opt }}
+              </div>
+            </div>
           </div>
           <div *ngIf="row.spesenChecked && row.dayType == 'Arbeitstag'" class="uploadTicketProof">
             <div><span>Billet Belege hochladen:</span></div>
@@ -151,6 +211,13 @@
     <div style="display: none" class="inputsChecked svgAnim"><img src="../../assets/svg/check.svg"/></div>
     <div style="display: none" class="inputsChecked errorIcon"><img src="../../assets/svg/error.svg"/></div>
     <div id="actionButtons" *ngIf="rows.length > 0">
+      <div  class="sendMeTooDiv" >
+          Kopie an mich senden:
+          <label class="switch sendMeTooCheckBox"> 
+            <span [ngClass]="{'checked': sendMeToo}" class="knob round checked"></span>
+            <input [(ngModel)]="sendMeToo" type="checkbox" class="sendMeToo"/>
+          </label>
+      </div>
       <button id="saveutton" (click)="save()" class="button rb-button">
         <img src="../../assets/svg/save.svg" class="icon"/>
         <span>Speichern</span>
@@ -160,13 +227,7 @@
         <span>Absenden</span>
       </button>
   
-      <div  class="sendMeTooDiv" >
-        Kopie an mich senden:
-        <label class="switch sendMeTooCheckBox"> 
-          <span [ngClass]="{'checked': sendMeToo}" class="knob round checked"></span>
-          <input [(ngModel)]="sendMeToo" type="checkbox" class="sendMeToo"/>
-        </label>
-      </div>
+      
     </div>
   </div>
 </div>

@@ -14,26 +14,38 @@ import { Router } from "@angular/router"
 export class RegistryComponent implements OnInit {
 
   registerForm: FormGroup
+  names: FormGroup
   firstName: FormControl
   lastName: FormControl
   abo: FormControl
   email: FormControl
   password: FormControl
-  passwordInput: FormGroup
+  passwordInputs: FormGroup
   repeatPassword: FormControl
   startDate: FormControl
   endDate: FormControl
-  dateInput: FormGroup
+  dateInputs: FormGroup
   registerError: string = ""
+  stdAboOpts: string[]
+  aboValue: string = ""
 
-  constructor(private registry: RegistryService,
-              private router: Router) { }
+  constructor( private registry: RegistryService,
+               private router: Router) { }
 
+  aboOptions() {
+
+  }
 
   ngOnInit() {
+    this.stdAboOpts = [
+      "kein ÖV-Abo",
+      "GA",
+      "ZVV-Netzpass"
+    ]
     this.createFormControls()
     this.createForm()
   }
+
   createFormControls(){
     this.firstName = new FormControl("",
                   [ Validators.required,
@@ -67,25 +79,26 @@ export class RegistryComponent implements OnInit {
                 ])
   }
   createForm(){
-    this.passwordInput = new FormGroup({
+    this.passwordInputs = new FormGroup({
       password: this.password,
       repeatPassword: this.repeatPassword
     }, equalValidator)
 
-    this.dateInput = new FormGroup({
+    this.dateInputs = new FormGroup({
       startDate: this.startDate,
       endDate: this.endDate
     }, dateValidator)
 
+    this.names = new FormGroup({
+      firstName: this.firstName,
+      lastName: this.lastName
+    })
     this.registerForm = new FormGroup({
-      name: new FormGroup({
-        firstName: this.firstName,
-        lastName: this.lastName
-      }),
+      names: this.names,
       abo: this.abo,
       email: this.email,
-      date: this.dateInput,
-      passwordInputs: this.passwordInput
+      dateInputs: this.dateInputs,
+      passwordInputs: this.passwordInputs
     })
   }
 
@@ -104,7 +117,6 @@ export class RegistryComponent implements OnInit {
                 this.showLoader(false)
                 console.log(data);
                 if(data.success === true){
-                  // TODO: Output Message
                   this.registerForm.reset()
                   this.registerError = ""
                   alert("Erfolgreich Registriert!");
@@ -119,7 +131,6 @@ export class RegistryComponent implements OnInit {
             })
 
     }else {
-      // TODO: Output Message
       validateAllFormFields(this.registerForm)
       // this.registerForm.enable()
       console.log("Validation failed!");
@@ -140,7 +151,25 @@ export class RegistryComponent implements OnInit {
       }
     }
   }
-
+  toggleDropDown(event: Event) {
+    const target = <HTMLInputElement>event.target;
+    console.log(target.nextElementSibling)
+    if (target.nextElementSibling !== null) {
+      target.nextElementSibling.classList.toggle("invisible");
+    }
+  }
+  set setAboValue(value) {
+    this.aboValue = value
+  }
+  disableDropDown(event: Event) {
+    const target = <HTMLInputElement>event.target;
+    //target.nextElementSibling.classList.add("windUp")
+    setTimeout(() => {
+      if (target.nextElementSibling !== null) {
+        target.nextElementSibling.classList.add("invisible");
+      }
+    }, 200);
+  }
   showLoader( show: boolean ) {
     showElement( show, ".loadingAnim");
   }

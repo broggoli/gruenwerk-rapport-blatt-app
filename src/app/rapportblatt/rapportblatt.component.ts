@@ -6,12 +6,18 @@ import {
   TableService,
   ExcelService,
   ImageHandlerService,
-  SendService
+  SendService,
+  AutoCompleteService
 } from '../_services';
-import { ZiviData } from '../ziviData'
+import { ZiviData } from '../models/zivi.model'
 
 import {RapportblattTable, Row} from "../models/rapportblatt.model"
 
+
+interface SimpleRequest {
+  message: string,
+  success: boolean
+}
 interface SendRbResponse {
   data: any;
   message: string;
@@ -44,14 +50,14 @@ export class RapportblattComponent implements OnInit {
   currentSlideshowImage: string
   slideShowIsOpen: boolean
 
-  workPlaceOptions: string[] = [];
-
   constructor(private user: UserService,
     private table: TableService,
     private excel: ExcelService,
     private imageHandler: ImageHandlerService,
-    private s: SendService) { 
-      this.rows = []}
+    private s: SendService,
+    private autoComplete: AutoCompleteService) { 
+      this.rows = []
+    }
 
   ngOnInit() {
     this.loading = true
@@ -69,69 +75,37 @@ export class RapportblattComponent implements OnInit {
       "urlaubstage": "Urlaubstage",
       "arbeitsTage": "Arbeitstage"
     }
-    for(const row in this.rows){
-      this.updateWorkPlaceOptions(row)
-    }
-  }
-
-  // Ths function see to it that the first element in the list will be the option that is above it
-  sortIndividually( optionsArray: string[],
-                    thisRow: any, 
-                    previousFieldName: string){
-    const previousRowIndex = this.rows.indexOf(thisRow)-1
-
-    if( previousRowIndex > -1){
-      const previousRow = this.rows[ previousRowIndex ]
-      const previousInput = previousRow[previousFieldName]
-
-      if( previousInput && previousInput !== ""){
-
-        const indexOfArrayItem = optionsArray.indexOf(previousInput);
-        
-        if( indexOfArrayItem >= 0 ){
-          let swap = optionsArray[indexOfArrayItem]
-          optionsArray[indexOfArrayItem] = optionsArray[0]
-          optionsArray[0] = swap
-        }
-      }else{
-        return this.sortIndividually(optionsArray, previousRow, previousFieldName)
+    this.rows.indexOf(this.rows.filter( row => {
+      const dateParts = row.date.split("."),
+            y = parseInt("20"+dateParts[2]),
+            m = parseInt(dateParts[1]) - 1,
+            d = parseInt(dateParts[0]),
+            date = new Date(y, m ,d)
+      if( sameDay(date, new Date()) ) {
+        return true
+      } else {
+        return false
       }
-    }
-    return optionsArray
-  }
-  updateWorkPlaceOptions(thisRow) {
-    const standartOptions = [ 
-                              "Winterthur", 
-                              "Zürich", 
-                              "Seebach", 
-                              "Hettlingen"
-                            ]
-    let options =  removeDuplicates(
-                      this.sortIndividually(
-                            this.rows.map(row =>
-                              row.workPlace !== ""
-                                ? row.workPlace
-                                : undefined)
-                                .concat(standartOptions)
-                              .filter(workPlace =>
-                                workPlace
-                                  ? true
-                                  : false),
-                          thisRow,
-                          "workPlace")
-                        )
-    this.workPlaceOptions = options
+    })[0])
 
-    function removeDuplicates(arr) {
-      let unique_array = []
-      for (let i = 0; i < arr.length; i++) {
-        if (unique_array.indexOf(arr[i]) == -1) {
-          unique_array.push(arr[i])
-        }
-      }
-      return unique_array
-    }
+    setTimeout( () => {
+      this.scrollToCurrentDay()
+    }, 1000)
   }
+
+  workPlaceOptions( thisRowIndex: number ){
+    return this.autoComplete.updateOptions(this.rows, thisRowIndex, "workPlace")
+  }
+  routeStartOptions( thisRowIndex: number ){
+    return this.autoComplete.updateOptions(this.rows, thisRowIndex, "start", [], "route")
+  }
+  destinationOptions( thisRowIndex: number ){
+    return this.autoComplete.updateOptions(this.rows, thisRowIndex, "destination", [], "route")
+  }
+  priceOptions( thisRowIndex: number ){
+    return this.autoComplete.updateOptions(this.rows, thisRowIndex, "price", ["5.5","6.5"])
+  }
+  
   monthChanged(monthString): void {
 
     this.loading = true
@@ -366,7 +340,7 @@ export class RapportblattComponent implements OnInit {
       for(let rowVal of rapportblattTableVal) {
         const rowElement = document.getElementsByClassName("rowIndex" + rowVal.sourceRow)[0];
         if( !rowVal.valid ){
-          if(!firstErrorElement){
+          if( !firstErrorElement ){
             // To scroll to the first element
             firstErrorElement = rowElement
           }
@@ -384,7 +358,7 @@ export class RapportblattComponent implements OnInit {
     }
   }
 
-  save(show=true): Observable<any> {
+  save(show=true): Observable<SimpleRequest> {
     show ? this.showLoader(true) : null
     /** Saves the rows Object on the server and in localStorage**/
     return this.user.saveRapportblatt(this.rows, this.monthString).pipe(tap(data => {
@@ -587,9 +561,36 @@ export class RapportblattComponent implements OnInit {
 
     this.slideShowIsOpen = true
   }
+
+  scrollToCurrentDay() {
+    let currentDayIndex = -1
+      for(let row of this.rows) {
+        const dateParts = row.date.split("."),
+              y = parseInt("20"+dateParts[2]),
+              m = parseInt(dateParts[1]) - 1,
+              d = parseInt(dateParts[0]),
+              date = new Date(y, m ,d)
+        currentDayIndex = this.rows.indexOf(row)
+        if( sameDay(date, new Date()) ) {
+          break;
+        }
+      }
+      if( currentDayIndex !== -1 ) {
+        let currentDateElement = document.getElementsByClassName("rowIndex"+currentDayIndex)[0];
+        currentDateElement.scrollIntoView({ 
+          behavior: 'smooth' 
+        });
+      }
+  }
 }
 function showElement( show: boolean, elementClass: string) {
     const element : HTMLElement = document.querySelector(elementClass);
     show ? element.style.display = 'block' :
           element.style.display = 'none';
+}
+
+function sameDay(d1, d2) {
+  return d1.getFullYear() === d2.getFullYear() &&
+    d1.getMonth() === d2.getMonth() &&
+    d1.getDate() === d2.getDate();
 }
