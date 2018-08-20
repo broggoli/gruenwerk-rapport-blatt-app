@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http"
 import { CryptoService } from './crypto.service'
-import { ZiviData } from '../models/zivi.model'
+import { ZiviData, SavedRb } from '../models/zivi.model'
 
 import {RapportblattTable, Row} from "../models/rapportblatt.model"
 
 interface RapportblattRequest{
     message: string,
     success: boolean,
-    data: RapportblattTable
+    data: string
 }
 interface SimpleRequest{
       message: string,
@@ -26,8 +26,7 @@ export class UserService {
   constructor(private http: HttpClient,
               private crypto: CryptoService) { }
 
-  
-  getZiviData(){
+  getZiviData(): ZiviData {
       const localStorageFile = localStorage.getItem("userData");
       if (localStorageFile === null) {
           console.log("No user data found in localStorage");
@@ -37,10 +36,10 @@ export class UserService {
       }
   }
 
-  getSavedRapportblatt(month: string){
+  getSavedRapportblatt(pointer: string){
     return this.http.post<RapportblattRequest>("/api/php/saveRapportblatt.php",
                                             {
-                                              month       : month,
+                                              pointer       : pointer,
                                               task        : "getRb"
                                             })
   }
@@ -57,24 +56,59 @@ export class UserService {
                                               task  : "changeServiceTime"
                                             })
   }
-  saveRapportblatt(rapportblatt, month: string){
+  saveRapportblatt(rapportblatt: Row[], month: string){
 
-    const savedRapportblatt = {
-                                rbData      : rapportblatt,
-                                month       : month,
+    let newSavedRbs: SavedRb = {
+      month,
+      pointer: "",
+      encrypted: true
+    }
+    let newEncryptedRb: string
+
+    const ziviData = this.getZiviData(),
+          savedRbs = ziviData.savedRbs
+    if(savedRbs) {
+      // Find the rapportblatt pointer if one exists
+      for(const rb of savedRbs) {
+        if(rb.month === month) {
+          newSavedRbs = rb
+          break;
+        }
+      }
+      if( newSavedRbs.pointer === "" ) {
+        // The rb is not saved yet
+        newSavedRbs.pointer = this.crypto.generatePointer(8)
+        console.log("create New pointer")
+      }
+
+    }else{
+      console.log("Need to save user with the new savedRbs Field!!!!")
+    }
+
+    // Resave the rb with the same pointer
+    // Not very secure hashin, but at least it is un readable and uses some of time to reverse engeneer the encryption
+    // Still could be done bettter But I'm not sure wheter it is save to save the plain text password in the local storage
+    newEncryptedRb = this.crypto.encryptData( JSON.stringify(rapportblatt), month+newSavedRbs.pointer )
+
+    const postRequest = {
+                                rbData      : newEncryptedRb,
                                 task        : "setRb"
                               }
-    console.log( JSON.stringify(savedRapportblatt))
     localStorage.setItem("savedRapportblatt",
                 JSON.stringify({
                                 rbData      : rapportblatt,
                                 month       : month}
                               ))
-    console.log(savedRapportblatt)
-    return this.http.post<SimpleRequest>("/api/php/saveRapportblatt.php",
-        savedRapportblatt)
+    
+    console.log( JSON.stringify(postRequest))
+    console.log(this.getZiviData())
+    
+    return this.http.post<SimpleRequest>("/api/php/saveRapportblatt.php", postRequest)
   }
 
+  decryptRb (encryptedRb:string, savedRb: SavedRb ): Row[] {
+    return JSON.parse(this.crypto.decryptData(encryptedRb, savedRb.month+savedRb.pointer))
+  }
   deleteAccount(password) {
     const ziviEmail = this.getZiviData().email;
     const dataHeader = this.crypto.getZiviDataHeader(ziviEmail, password);

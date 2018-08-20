@@ -17,3 +17,9 @@ export class Row {
     medicalCertificate: string[]      //Images saved as dataURLs
     workPlace: string
 }
+
+export class ValidationObj {
+    valid: boolean;
+    message: string;
+    sourceRow: number;
+  }

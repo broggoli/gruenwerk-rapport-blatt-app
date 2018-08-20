@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService,
         AuthService } from '../_services';
-import { ZiviData } from '../ziviData'
+import { ZiviData } from '../models/zivi.model'
 import {  Validators,
           FormGroup,
           FormControl } from '@angular/forms'
@@ -49,13 +49,17 @@ export class SettingsComponent implements OnInit {
     this.ziviData = this.user.getZiviData();
     this.daysServed = this.calcDaysServed();
     this.totalDaysServing = this.calcTotalDaysServing();
-    this.daysToServe = this.totalDaysServing - this.daysServed;
-    this.percentServed = this.getPercentage(this.daysServed, this.totalDaysServing)
-    this.percentToServe = this.getPercentage(this.daysToServe, this.totalDaysServing)
+    this.daysToServe = Math.max(this.totalDaysServing - this.daysServed, 0);
+    this.percentServed = `${this.minMax(this.getPercentage(this.daysServed, this.totalDaysServing))}%`
+    this.percentToServe = `${this.minMax(this.getPercentage(this.daysToServe, this.totalDaysServing))}%`
   }
 
   getPercentage(a, b):string { return b > 0 ?  Math.floor(a / b * 100).toString() + '%' : '0%'; }
-
+  
+  minMax(numberString: string, min=0, max=100): string {
+    const value = parseInt(numberString)
+    return Math.max(Math.min(value, max), min).toString()
+  }
   changeServiceDuration() {
 
     if( this.changeServiceTime.valid ) {

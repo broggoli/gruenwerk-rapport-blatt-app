@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { of, Observable } from "rxjs"
-import  { flatMap, map, tap } from "rxjs/operators"
+import { Observable } from "rxjs"
+import  { tap } from "rxjs/operators"
 import {
   UserService,
   TableService,
@@ -11,7 +11,7 @@ import {
 } from '../_services';
 import { ZiviData } from '../models/zivi.model'
 
-import {RapportblattTable, Row} from "../models/rapportblatt.model"
+import { Row, ValidationObj } from "../models/rapportblatt.model"
 
 
 interface SimpleRequest {
@@ -23,11 +23,6 @@ interface SendRbResponse {
   message: string;
   success: boolean;
 }
-interface ValidationObj {
-  valid: boolean;
-  message: string;
-  sourceRow: number;
-}
 
 @Component({
   selector: 'app-rapportblatt',
@@ -35,7 +30,7 @@ interface ValidationObj {
   styleUrls: ['./rapportblatt.component.sass']
 })
 export class RapportblattComponent implements OnInit {
-  rows: Row[]
+  rows: Row[] = []
   sendError: string
   ziviData: ZiviData
   monthString: string
@@ -50,14 +45,13 @@ export class RapportblattComponent implements OnInit {
   currentSlideshowImage: string
   slideShowIsOpen: boolean
 
-  constructor(private user: UserService,
+  constructor(
+    private user: UserService,
     private table: TableService,
     private excel: ExcelService,
     private imageHandler: ImageHandlerService,
     private s: SendService,
-    private autoComplete: AutoCompleteService) { 
-      this.rows = []
-    }
+    private autoComplete: AutoCompleteService) {}
 
   ngOnInit() {
     this.loading = true
@@ -75,21 +69,9 @@ export class RapportblattComponent implements OnInit {
       "urlaubstage": "Urlaubstage",
       "arbeitsTage": "Arbeitstage"
     }
-    this.rows.indexOf(this.rows.filter( row => {
-      const dateParts = row.date.split("."),
-            y = parseInt("20"+dateParts[2]),
-            m = parseInt(dateParts[1]) - 1,
-            d = parseInt(dateParts[0]),
-            date = new Date(y, m ,d)
-      if( sameDay(date, new Date()) ) {
-        return true
-      } else {
-        return false
-      }
-    })[0])
 
     setTimeout( () => {
-      this.scrollToCurrentDay()
+      scrollToCurrentDay(this.rows)
     }, 1000)
   }
 
@@ -110,7 +92,7 @@ export class RapportblattComponent implements OnInit {
 
     this.loading = true
     this.monthString = monthString;
-    this.getTable(this.monthString).subscribe(res => {
+    this.table.getTable( this.monthString, this.user.getZiviData() ).subscribe(res => {
       this.rows = res
       this.rows.map( row => {
         if( !row.medicalCertificate ) {
@@ -121,149 +103,7 @@ export class RapportblattComponent implements OnInit {
     });
     this.loading = false
   }
-  getTable(monthS: string): Observable<Row[]> {
-    // default rows config
-    let loadedRows: Row[] = []
-    if( monthS ) {
-      const ziviDataSnap = this.user.getZiviData()
-      const locallyStoredRB = localStorage.getItem('savedRapportblatt');
 
-      const defaultRows = this.table.getTableData(ziviDataSnap, monthS);
-      loadedRows = this.table.filterTable(defaultRows, ziviDataSnap.date)
-      
-      // If there is no RB saved Locally
-      if ( locallyStoredRB === null ) {
-        return this.getRblOnline(defaultRows, monthS, ziviDataSnap).pipe(map( loadedRows => {
-
-          if(loadedRows.length !== defaultRows.length) {
-            // The saved RB is too small
-            console.log("the saved RB is too small")
-            loadedRows = loadedRows.concat(defaultRows.slice(loadedRows.length))
-          }
-          this.loading = false
-          localStorage.setItem('savedRapportblatt', 
-            JSON.stringify({
-            month: monthS,
-            rbData: loadedRows
-          }));
-          return loadedRows
-        }))
-      } else {
-        const savedRb = JSON.parse(locallyStoredRB);
-        
-        if ( savedRb.month  === monthS ) {
-          console.log(savedRb)
-          loadedRows = this.table.filterTable(savedRb.rbData, ziviDataSnap.date);
-          
-          if(loadedRows.length !== defaultRows.length) {
-            // The saved RB is too small
-            console.log("the saved RB is too small")
-            loadedRows = loadedRows.concat(defaultRows.slice(loadedRows.length))
-          }
-          this.loading = false
-          
-          console.log('RB loaded locally!');
-          return of(loadedRows)
-        } else {
-          return of(loadedRows)
-        }
-      }
-    }else{
-      console.log("There was no Month input!")
-      return of(loadedRows)
-    }
-  }
-  getRblOnline(defaultRows: Row[], monthS: string, ziviDataSnap: ZiviData): Observable<Row[]> {
-    return this.user.getSavedRapportblatt(monthS).pipe(flatMap(savedRapportblatt => {
-      
-      let loadedRows: Row[] = []
-      if (savedRapportblatt.success) {
-          if ( savedRapportblatt.data.month === monthS ) {
-            console.log(savedRapportblatt)
-            loadedRows = this.table.filterTable(savedRapportblatt.data.rbData, ziviDataSnap.date);
-          }
-      }
-
-      return of(loadedRows)
-    }));
-  }
-
-  validateTable(rows: Row[]): ValidationObj[]{
-    // Validates the table data and fixes small errors in the data like e.g
-    // When there is still a workPlace defined even though the user had a free day
-    let validArray: ValidationObj[] = []
-
-    let i = 0;
-    for(let row of rows) {
-      let validationObj: ValidationObj = {
-        valid: true,
-        message: "",
-        sourceRow: i
-      }
-      switch(row.dayType){
-        case "Arbeitstag":
-          if( !row.workPlace || row.workPlace === "" ){
-            validationObj.valid = false
-            validationObj.message = "Sie müssen einen Arbeitsort eingeben."
-            validationObj.sourceRow = i
-          }else if( row.spesenChecked === true ) {
-            // If the user has checked the spesenInputs there must be inputs
-            if( (!row.route.start || row.route.start === "") 
-              || (!row.route.destination || row.route.destination === "") ) {
-                validationObj.valid = false
-                validationObj.message = "Sie müssen einen Abfahrts- und einen Zielort eingeben."
-                validationObj.sourceRow = i
-            }else if( !row.price || row.price === "" || row.price === "0"){
-              validationObj.valid = false
-              validationObj.message = "Sie müssen einen Preis für Ihr Billet eingeben."
-              validationObj.sourceRow = i
-            }else if( row.ticketProof.length == 0 ) {
-              if(!this.ticketProofsRemarced)
-              {
-                validationObj.valid = false
-                validationObj.message = `Laden Sie bitte entweder einen Billet-Beleg hier hoch, `+
-                                          `oder schicken Sie ihn per Mail an verein@verein-gruenwerk.ch.`+
-                                          ` Billette werden nur mit Beleg zurückerstattet!`
-                validationObj.sourceRow = i
-                this.ticketProofsRemarced = true
-              }
-            }
-          }else{
-            
-            this.clearRow(i, ["dayType", "dayName", "date", "workPlace"])
-          }
-          break
-        case "Frei":
-        this.clearRow(i, ["dayType", "dayName", "date"])
-          break
-        case "Krank":
-        this.clearRow(i, ["dayType", "dayName", "date", "medicalCertificate"])
-          break
-        case "Ferien":
-        this.clearRow(i, ["dayType", "dayName", "date"])
-          break
-        case "Urlaub":
-        this.clearRow(i, ["dayType", "dayName", "date"])
-          break
-      }
-      validArray.push(validationObj);
-      i++
-    }
-    return validArray;
-  }
-  clearRow(rowIndex, leaveTheSame: string[]) {
-    for(const item in this.rows[rowIndex]) {
-      if( leaveTheSame.indexOf(item) === -1 ) {
-        if(typeof this.rows[rowIndex][item] === "string"){
-          this.rows[rowIndex][item] = "";
-        }else if(typeof this.rows[rowIndex][item] === "boolean"){
-          this.rows[rowIndex][item] = false;
-        }else if(Array.isArray(item)) {
-          this.rows[rowIndex][item] = [];
-        }
-      }
-    }
-  }
   send() {
     const rapportblattData =  {
                                 ziviName: this.ziviName,
@@ -274,7 +114,7 @@ export class RapportblattComponent implements OnInit {
                                 month: this.monthString
                               };
     // Validate ToDo
-    const rapportblattTableVal: ValidationObj[] = this.validateTable(this.rows);
+    const rapportblattTableVal: ValidationObj[] = this.table.validateTable(this.rows);
     const rbIsValid = rapportblattTableVal.reduce( (previous: ValidationObj, valObj: ValidationObj) => {
       return {
         valid: valObj.valid && previous.valid,
@@ -283,8 +123,14 @@ export class RapportblattComponent implements OnInit {
       }
     }, {valid: true, message:"", sourceRow: null})
 
+
+    //If all is valid send the rapportblatt
     if ( rbIsValid.valid === true ) {
-      
+
+      console.log("Before cleaning: " ,this.rows)
+      this.rows = this.table.cleanTable(this.rows)
+      console.log("After cleaning: " ,this.rows)
+
       const rowElements = document.getElementsByClassName("rapportBlattRow")
       for(let i=0; i < rowElements.length ;i++){
         rowElements[i].classList.remove("error")
@@ -335,7 +181,7 @@ export class RapportblattComponent implements OnInit {
                 console.log(JSON.stringify( data ));
               }
             });
-    }else{
+    } else {
       let firstErrorElement = null
       for(let rowVal of rapportblattTableVal) {
         const rowElement = document.getElementsByClassName("rowIndex" + rowVal.sourceRow)[0];
@@ -562,26 +408,7 @@ export class RapportblattComponent implements OnInit {
     this.slideShowIsOpen = true
   }
 
-  scrollToCurrentDay() {
-    let currentDayIndex = -1
-      for(let row of this.rows) {
-        const dateParts = row.date.split("."),
-              y = parseInt("20"+dateParts[2]),
-              m = parseInt(dateParts[1]) - 1,
-              d = parseInt(dateParts[0]),
-              date = new Date(y, m ,d)
-        currentDayIndex = this.rows.indexOf(row)
-        if( sameDay(date, new Date()) ) {
-          break;
-        }
-      }
-      if( currentDayIndex !== -1 ) {
-        let currentDateElement = document.getElementsByClassName("rowIndex"+currentDayIndex)[0];
-        currentDateElement.scrollIntoView({ 
-          behavior: 'smooth' 
-        });
-      }
-  }
+  
 }
 function showElement( show: boolean, elementClass: string) {
     const element : HTMLElement = document.querySelector(elementClass);
@@ -593,4 +420,25 @@ function sameDay(d1, d2) {
   return d1.getFullYear() === d2.getFullYear() &&
     d1.getMonth() === d2.getMonth() &&
     d1.getDate() === d2.getDate();
+}
+
+function scrollToCurrentDay(rows: Row[]) {
+  let currentDayIndex = -1
+    for(let row of rows) {
+      const dateParts = row.date.split("."),
+            y = parseInt("20"+dateParts[2]),
+            m = parseInt(dateParts[1]) - 1,
+            d = parseInt(dateParts[0]),
+            date = new Date(y, m ,d)
+      currentDayIndex = rows.indexOf(row)
+      if( sameDay(date, new Date()) ) {
+        break;
+      }
+    }
+    if( currentDayIndex !== -1 ) {
+      let currentDateElement = document.getElementsByClassName("rowIndex"+currentDayIndex)[0];
+      currentDateElement.scrollIntoView({ 
+        behavior: 'smooth' 
+      });
+    }
 }

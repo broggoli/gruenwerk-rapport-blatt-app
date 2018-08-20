@@ -1,12 +1,84 @@
 import { Injectable } from '@angular/core';
+import { of, Observable } from "rxjs"
+import  { flatMap, map } from "rxjs/operators"
+
+import { ValidationObj, Row} from "../models/rapportblatt.model"
+import { ZiviData } from '../models/zivi.model';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TableService {
 
-  constructor() { }
+  ticketProofsRemarced: boolean
 
+  constructor(private user: UserService) { }
+
+  getTable(monthS: string, ziviData: ZiviData): Observable<Row[]> {
+    // default rows config
+    let loadedRows: Row[] = []
+    if( monthS ) {
+
+      const locallyStoredRB = localStorage.getItem('savedRapportblatt');
+
+      const defaultRows = this.getDefaultTable(ziviData, monthS);
+      loadedRows = this.filterTable(defaultRows, ziviData.date)
+      
+      // If there is no RB saved Locally
+      if ( locallyStoredRB === null ) {
+        return this.getRblOnline(defaultRows, monthS, ziviData).pipe(map( loadedRows => {
+
+          if(loadedRows.length !== defaultRows.length) {
+            // The saved RB is too small
+            console.log("the saved RB is too small")
+            loadedRows = loadedRows.concat(defaultRows.slice(loadedRows.length))
+          }
+          localStorage.setItem('savedRapportblatt', 
+            JSON.stringify({
+            month: monthS,
+            rbData: loadedRows
+          }));
+          return loadedRows
+        }))
+      } else {
+        const savedRb = JSON.parse(locallyStoredRB);
+        
+        if ( savedRb.month  === monthS ) {
+          console.log(savedRb)
+          loadedRows = this.filterTable(savedRb.rbData, ziviData.date);
+          
+          if(loadedRows.length !== defaultRows.length) {
+            // The saved RB is too small
+            console.log("the saved RB is too small")
+            loadedRows = loadedRows.concat(defaultRows.slice(loadedRows.length))
+          }
+          console.log('RB loaded locally!');
+          return of(loadedRows)
+        } else {
+          return of(loadedRows)
+        }
+      }
+    }else{
+      console.log("There was no Month input!")
+      return of(loadedRows)
+    }
+  }
+  getRblOnline(defaultRows: Row[], monthS: string, ziviData: ZiviData): Observable<Row[]> {
+    return this.user.getSavedRapportblatt(monthS).pipe(flatMap(savedRapportblatt => {
+      
+      let loadedRows: Row[] = []
+      if (savedRapportblatt.success) {
+          //if ( savedRapportblatt.data.month === monthS ) {
+            const decryptedRb: Row[] = this.user.decryptRb(savedRapportblatt.data)
+            console.log(savedRapportblatt)
+            loadedRows = this.filterTable(decryptedRb, ziviData.date);
+          //}
+      }
+
+      return of(loadedRows)
+    }));
+  }
   filterTable(tableData, dates){
   const startDate = new Date(Date.parse(dates.startDate))
   const endDate = new Date(Date.parse(dates.endDate))
@@ -27,7 +99,100 @@ export class TableService {
     });
     return filteredTable
   }
-  getTableData(ziviData, monthString) {
+
+  validateTable(rows: Row[]): ValidationObj[] {
+    // Validates the table data and fixes small errors in the data like e.g
+    // When there is still a workPlace defined even though the user had a free day
+    let validArray: ValidationObj[] = []
+
+    let i = 0;
+    for(let row of rows) {
+      let validationObj: ValidationObj = {
+        valid: true,
+        message: "",
+        sourceRow: i
+      }
+      switch(row.dayType){
+        case "Arbeitstag":
+          if( !row.workPlace || row.workPlace === "" ){
+            validationObj.valid = false
+            validationObj.message = "Sie müssen einen Arbeitsort eingeben."
+            validationObj.sourceRow = i
+          }else if( row.spesenChecked === true ) {
+            // If the user has checked the spesenInputs there must be inputs
+            if( (!row.route.start || row.route.start === "") 
+              || (!row.route.destination || row.route.destination === "") ) {
+                validationObj.valid = false
+                validationObj.message = "Sie müssen einen Abfahrts- und einen Zielort eingeben."
+                validationObj.sourceRow = i
+            }else if( !row.price || row.price === "" || row.price === "0"){
+              validationObj.valid = false
+              validationObj.message = "Sie müssen einen Preis für Ihr Billet eingeben."
+              validationObj.sourceRow = i
+            }else if( row.ticketProof.length == 0 ) {
+              if(!this.ticketProofsRemarced)
+              {
+                validationObj.valid = false
+                validationObj.message = `Laden Sie bitte entweder einen Billet-Beleg hier hoch, `+
+                                          `oder schicken Sie ihn per Mail an verein@verein-gruenwerk.ch.`+
+                                          ` Billette werden nur mit Beleg zurückerstattet!`
+                validationObj.sourceRow = i
+                this.ticketProofsRemarced = true
+              }
+            }
+          }
+          break
+        case "Krank":
+          console.log("Check whether Medical certificate is needed!")
+          break
+      }
+      validArray.push(validationObj);
+      i++
+    }
+    return validArray;
+  }
+  
+  cleanTable(rows: Row[]) {
+
+    let cleanedTable:Row[] = []
+    for(const row of rows) {
+      switch( row.dayType ) {
+        case "Arbeitstag":
+          cleanedTable.push(this.clearRow(row, ["dayType", "dayName", "date", "workPlace"]))
+          break
+        case "Frei":
+          cleanedTable.push(this.clearRow(row, ["dayType", "dayName", "date"]))
+          break
+        case "Krank":
+          cleanedTable.push(this.clearRow(row, ["dayType", "dayName", "date", "medicalCertificate"]))
+          break
+        case "Ferien":
+          cleanedTable.push(this.clearRow(row, ["dayType", "dayName", "date"]))
+          break
+        case "Urlaub":
+          cleanedTable.push(this.clearRow(row, ["dayType", "dayName", "date"]))
+          break
+      }
+    }
+
+    return cleanedTable
+  }
+  clearRow(row: Row, leaveTheSame: string[]): Row {
+    let newRow = row
+    for(const item in row) {
+      if( leaveTheSame.indexOf(item) === -1 ) {
+        if(typeof newRow[item] === "string"){
+          newRow[item] = "";
+        }else if(typeof row[item] === "boolean"){
+          newRow[item] = false;
+        }else if(Array.isArray(item)) {
+          newRow[item] = [];
+        }
+      }
+    }
+    return newRow
+  }
+  getDefaultTable(ziviData, monthString) {
 
     const year: number = parseInt(monthString.split("-")[0]);
     const month: number = parseInt(monthString.split("-")[1])-1; // January is 0

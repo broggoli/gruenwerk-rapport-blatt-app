@@ -9,12 +9,11 @@ export class ZiviData{
       startDate: string; //Date String
       endDate: string;    //Date String
     };
-    savedRbs: SavedRBs[];
+    savedRbs: SavedRb[];
   }
   
-export class SavedRBs {
+export class SavedRb {
     month: string;
     pointer: string;
     encrypted: boolean;
-    rb: string;
 }
