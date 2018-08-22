@@ -270,6 +270,7 @@ export class RapportblattComponent implements OnInit {
       for ( const file of filesOnTarget) {
         this.saveImageInRows(file, rowIndex, "ticketProof")
       }
+      target.parentNode.replaceChild(target.cloneNode(), target);
   }
   
   onMCSelected(event, rowIndex) {
@@ -278,6 +279,7 @@ export class RapportblattComponent implements OnInit {
     for ( const file of filesOnTarget) {
       this.saveImageInRows(file, rowIndex, "medicalCertificate")
     }
+    target.parentNode.replaceChild(target.cloneNode(), target);
 }
 
   daySummary(sort = false) {
@@ -305,15 +307,15 @@ export class RapportblattComponent implements OnInit {
     const normalPay = 25;
     const urlaubPay = 0;
 
-    const spesenPreis: number = this.rows.reduce((previous, o) => {
+    const spesenPreis: number = Math.round(this.rows.reduce((previous, o) => {
       if (o['price'] &&
           o['price'] !== '' && 
           o['spesenChecked'] === true && 
           o['dayType'] === "Arbeitstag") {
-            return previous + <number>parseInt(o['price']); 
+            return previous + <number>parseFloat(o['price']); 
           }
       return previous;
-    }, 0);
+    }, 0) * 100)/100;
 
     const pay = this.rows.reduce((previous, o) => {
       if (o['dayType'] !== 'Urlaub') { return previous + normalPay; }

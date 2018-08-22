@@ -1,0 +1,55 @@
+2018-08-22 12:14:39: Deleted rapports of user with Pointer -> 92b85821d77dc9d5855c85b0e66189d6a84c1875712c0c8d78143c93ed1dea89
+2018-08-22 12:14:39: Deleted rapports of user with Pointer -> ab163b0115b5dc4b3b9b6156729b3053bdcbbfbbcd128f58180cd18622170d70
+2018-08-22 12:14:39: Deleted rapports of user with Pointer -> 522078b7f1092579b01c86682882fcf69714b8d597fa2ab07c35261867e91a4a
+2018-08-22 12:14:39: Deleted rapports of user with Pointer -> 1c72d79450f9de33f376615d1cb34bfa74257ab8a55d1438a5a5004fff977fc4
+2018-08-22 12:14:39: Deleted rapports of user with Pointer -> d145d07ed4a2d2a8464ca722cf3de9c4362ac5760012e6493690f23817c4b596
+2018-08-22 12:14:39: Deleted rapports of user with Pointer -> d8361fcf769bb44c51f3daec84b04a1d8c0243f37299cb276fe8609fe9189510
+2018-08-22 12:14:39: Deleted rapports of user with Pointer -> fdad5429f1c186692a79633947c0078c2bac734006b1042a804e7adcbd5733bc
+2018-08-22 12:14:39: Deleted rapports of user with Pointer -> dd843a60fcb10455db5b269e40496db25af6f36b182d8ef62e86e32b0557ada5
+2018-08-22 12:14:39: Deleted rapports of user with Pointer -> e935ad967718e1fc2a88bdb840a734f2bc8c52fe4b799325c42851eca934d0c4
+2018-08-22 12:14:39: Deleted rapports of user with Pointer -> 374624badf28a18c156f85bd724b95867ba4428e7343992aff022651bcb9aa08
+2018-08-22 12:14:39: Deleted rapports of user with Pointer -> 3fbdb01abc890f071a3d4fa2b3df1254101fd111a7e8c99569b8afe63134ee16
+2018-08-22 12:14:40: Deleted rapports of user with Pointer -> 04479f349325891931ffbc8a6f170547ee9bd8b8987de5b0d1f3681215d7e4ee
+2018-08-22 12:14:40: Deleted rapports of user with Pointer -> ba008bb69182098edb88bd4554c03cdf60eba2de840632990f5532c533ea7539
+2018-08-22 12:14:40: Deleted rapports of user with Pointer -> 7b369af1fe411406f5161521199a5378dad2b9f6639a7a43df2113690867e7ad
+2018-08-22 12:14:40: Deleted rapports of user with Pointer -> f14eea9d5e8a844f61f10e7c96a8325819c43478234daa0125b1d296661c2bad
+2018-08-22 12:14:40: Deleted rapports of user with Pointer -> 2a8afe9622e160466b6d164f578aebb1e7900585f29c384eb2795cb9dd32a2e2
+2018-08-22 12:14:40: Deleted rapports of user with Pointer -> 54bca3462fe6209316dc6c1136e1282a80f865a765bd03e60ebec79167d57061
+2018-08-22 12:14:40: Deleted rapports of user with Pointer -> 00d2885d75b4243aed392f5165981257fe5842fbd04ca271d726b651be9624f4
+2018-08-22 12:14:40: Deleted rapports of user with Pointer -> 108479722048e93b7e41e3e2e72115a5ae2ace3b641aebca0fbb4c9e90de0e34
+2018-08-22 12:14:40: Deleted rapports of user with Pointer -> a9a31f82ee779a8e4105507e760b76d0e0d6b542a6d573d313fc8e6b4b22eefb
+2018-08-22 12:14:40: Deleted rapports of user with Pointer -> a78de99f5a640283db1da9604c4a9713f6229023d805642d25213e936833cff1
+2018-08-22 12:14:40: Deleted rapports of user with Pointer -> e311bfe6c2ac9a93f69d591fbb6fd586a1e20be4e89d7b64810d68049138fcaa
+2018-08-22 12:14:40: Deleted rapports of user with Pointer -> 5f154406c25fa2179a2254f66756404bcd5cf03070b4fb6ef8f76ebe4aa35c4e
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 92b85821d77dc9d5855c85b0e66189d6a84c1875712c0c8d78143c93ed1dea89| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 8a420a8ed0dea90bf3662cf4b4be24bd9be3965f793614339b9275d3efba368a| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> ab163b0115b5dc4b3b9b6156729b3053bdcbbfbbcd128f58180cd18622170d70| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> ff9f09f6e9f48f56e5dc6f7831e9eaaea7f2281d81a48dd01e6ac3a3817dd566| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 522078b7f1092579b01c86682882fcf69714b8d597fa2ab07c35261867e91a4a| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 1c72d79450f9de33f376615d1cb34bfa74257ab8a55d1438a5a5004fff977fc4| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 639f51622cd93999dca6c57398f349fa7c8702b439367406b08c7451a635bd22| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 54d07dadee7f1e96f23c7f39f818f08660fc53b2b7388aaf922a799459cfab88| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> d145d07ed4a2d2a8464ca722cf3de9c4362ac5760012e6493690f23817c4b596| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> d8361fcf769bb44c51f3daec84b04a1d8c0243f37299cb276fe8609fe9189510| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> fdad5429f1c186692a79633947c0078c2bac734006b1042a804e7adcbd5733bc| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> dd843a60fcb10455db5b269e40496db25af6f36b182d8ef62e86e32b0557ada5| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> e935ad967718e1fc2a88bdb840a734f2bc8c52fe4b799325c42851eca934d0c4| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 374624badf28a18c156f85bd724b95867ba4428e7343992aff022651bcb9aa08| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 3fbdb01abc890f071a3d4fa2b3df1254101fd111a7e8c99569b8afe63134ee16| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 04479f349325891931ffbc8a6f170547ee9bd8b8987de5b0d1f3681215d7e4ee| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> ba008bb69182098edb88bd4554c03cdf60eba2de840632990f5532c533ea7539| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 7b369af1fe411406f5161521199a5378dad2b9f6639a7a43df2113690867e7ad| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> f14eea9d5e8a844f61f10e7c96a8325819c43478234daa0125b1d296661c2bad| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 2a8afe9622e160466b6d164f578aebb1e7900585f29c384eb2795cb9dd32a2e2| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 54bca3462fe6209316dc6c1136e1282a80f865a765bd03e60ebec79167d57061| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 00d2885d75b4243aed392f5165981257fe5842fbd04ca271d726b651be9624f4| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 29937c7a014d4978d7ae487016aae1d56321f59ea597b3f2f54632a991b9aa75| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 108479722048e93b7e41e3e2e72115a5ae2ace3b641aebca0fbb4c9e90de0e34| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> a9a31f82ee779a8e4105507e760b76d0e0d6b542a6d573d313fc8e6b4b22eefb| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> a78de99f5a640283db1da9604c4a9713f6229023d805642d25213e936833cff1| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> e311bfe6c2ac9a93f69d591fbb6fd586a1e20be4e89d7b64810d68049138fcaa| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> b374c46690d27068186cd96b4a00f8ef04ee6a9035465799f1a48f3d3b5c9735| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 63c6228caaa5646376d65a50d23183209a954645e45647cbb67e514870e1b186| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Deleted data & Rapports of user with Pointer -> 5f154406c25fa2179a2254f66756404bcd5cf03070b4fb6ef8f76ebe4aa35c4e| Expired 17485.510173611 days ago.
+2018-08-22 12:14:40: Database Cleaned! -> File size of zivi_db.json: 2.0E-6mb | File size of saved_rapportblatt.json: 0.005076mb
+2018-08-22 12:22:24: Database Cleaned! -> File size of zivi_db.json: 2.0E-6mb | File size of saved_rapportblatt.json: 0.026679mb

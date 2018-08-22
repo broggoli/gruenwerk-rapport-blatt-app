@@ -70,7 +70,6 @@ function sortIndividually(optionsArray: string[],
   rows: Row[]) {
 
   const previousRowIndex = thisRowIndex - 1
-
   if (previousRowIndex > -1) {
     const previousRow = rows[previousRowIndex]
     const previousInput = previousRow[fieldName]

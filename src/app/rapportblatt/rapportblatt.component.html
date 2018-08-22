@@ -42,9 +42,9 @@
                     class="textInput workPlace"/>
 
             <div class="workPlaceDropdown autoCompleteDropdown invisible"
-                  *ngIf="(workPlaceOptions(row) | filterStrings:row.workPlace).length > 0">
+                  *ngIf="(workPlaceOptions(idx) | filterStrings:row.workPlace).length > 0">
               <div (click)="row.workPlace = opt"
-                    *ngFor="let opt of workPlaceOptions(row) | filterStrings:row.workPlace"
+                    *ngFor="let opt of workPlaceOptions(idx) | filterStrings:row.workPlace"
                     class="autoCompleteOpt">
 
                     {{ opt }}
@@ -69,9 +69,9 @@
                       name="routeStart" 
                       class="textInput routeInput"/>
               <div class="routeStartDropdown autoCompleteDropdown invisible"
-                    *ngIf="(routeStartOptions(row) | filterStrings:row.route.start).length > 0">
+                    *ngIf="(routeStartOptions(idx) | filterStrings:row.route.start).length > 0">
                 <div (click)="row.route.start = opt"
-                      *ngFor="let opt of routeStartOptions(row) | filterStrings:row.route.start"
+                      *ngFor="let opt of routeStartOptions(idx) | filterStrings:row.route.start"
                       class="autoCompleteOpt">
 
                   {{ opt }}
@@ -90,9 +90,9 @@
                       name="destination" 
                       class="textInput routeInput"/>
               <div class="destinationDropdown autoCompleteDropdown invisible"
-                    *ngIf="(destinationOptions(row) | filterStrings:row.route.destination).length > 0">
+                    *ngIf="(destinationOptions(idx) | filterStrings:row.route.destination).length > 0">
                 <div (click)="row.route.destination = opt"
-                      *ngFor="let opt of destinationOptions(row) | filterStrings:row.route.destination"
+                      *ngFor="let opt of destinationOptions(idx) | filterStrings:row.route.destination"
                       class="autoCompleteOpt">
     
                   {{ opt }}
@@ -112,8 +112,8 @@
                     name="price" 
                     class="textInput price"/>
             <div class="priceDropdown autoCompleteDropdown invisible"
-                  *ngIf="(priceOptions(row) | filterStrings:row.price).length > 0">
-              <div *ngFor="let opt of priceOptions(row) | filterStrings:row.price"
+                  *ngIf="(priceOptions(idx) | filterStrings:row.price).length > 0">
+              <div *ngFor="let opt of priceOptions(idx) | filterStrings:row.price"
                     (click)="row.price = opt"
                     class="autoCompleteOpt">
                 {{ opt }}

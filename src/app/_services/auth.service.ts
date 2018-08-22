@@ -20,10 +20,10 @@ export class AuthService {
               private http : HttpClient) { }
 
   // Saves the user data in local storage
-  saveData(data: string, password: string){
-      const decryptedData: ZiviData = JSON.parse(this.crypto.decryptData(data, password))
-      localStorage.setItem("userData", JSON.stringify(decryptedData))
-      console.log(localStorage.getItem("userData"))
+  saveData(data: string, password: string) {
+    const decryptedData: ZiviData = JSON.parse(this.crypto.decryptData(data, password))
+    localStorage.setItem("userData", JSON.stringify(decryptedData))
+    console.log(localStorage.getItem("userData"))
   }
 
   // Returns a boolean as an observable telling the login status of the user

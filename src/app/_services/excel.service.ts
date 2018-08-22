@@ -64,7 +64,13 @@ export class ExcelService {
     console.log(trimTitle(sheetTitle))
     wb.SheetNames.push(trimTitle(sheetTitle))
 
-
+    const currencyCells = ["D43","E43", "F43", "G43", "H43", "H45", "J47", "J51" ]
+    currencyCells.map( address => {
+      let cell = ws[address]
+      cell.t = "n"
+      cell.z = "##0.00"
+      ws[address] = cell
+    })
     ws = addTableData(ws, cols, tableStartRow);
     ws = addHeader(ws);
 
@@ -120,10 +126,12 @@ export class ExcelService {
         }
         if(row["spesenChecked"] === true){
           ws = add_cell_to_sheet(ws, "I"+sheetRow, row["route"]["start"]+" - "+row["route"]["destination"])
-          ws = add_cell_to_sheet(ws, "J"+sheetRow, row["price"], true, false)
+          ws = add_cell_to_sheet(ws, "J"+sheetRow, row["price"], true)
+        }else {
+          ws = add_cell_to_sheet(ws, "J"+sheetRow, 0, true)
         }
       }
-      ws = add_cell_to_sheet(ws, "J49", rapportblattData.summary.shoes)
+      ws = add_cell_to_sheet(ws, "J49", rapportblattData.summary.shoes, true)
       return ws;
     }
 
@@ -132,7 +140,12 @@ export class ExcelService {
       let cell: any = {t: "s", v: value, z: false};
 
       if( typeof value == "number" ) cell.t = 'n';
-      currency ? cell.z = "##0.00": cell.z="0";
+      if( currency ) {
+        cell.z = "##0.00"
+        cell.t = 'n'
+      } else {
+        cell.z="0";
+      }
       if( date ) {
         cell.t = 'd'
         cell.z = 'dd/mm'

@@ -64,7 +64,6 @@ export class LoginComponent implements OnInit {
           if (data.success) {
               console.log(data)
               this.loginError = '';
-              // let ziviDBObj: ZiviDBObj = data.data
 
               // if the backend says everything is ok -> redirect to user's page
               this.showInputsChecked(true);

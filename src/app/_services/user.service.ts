@@ -39,7 +39,12 @@ export class UserService {
       alert("No user data found in localStorage")
       this.router.navigate(['logout']);
     } else {
-      return <ZiviData>JSON.parse(localStorageFile);
+      let ziviData = JSON.parse(localStorageFile)
+      console.log(typeof ziviData )
+      if(typeof ziviData === "string") {
+        ziviData = JSON.parse(ziviData)
+      }
+      return ziviData;
     }
   }
 
