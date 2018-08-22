@@ -5,12 +5,6 @@ import {  Validators,
 import { AuthService } from '../_services';
 import { Router } from '@angular/router';
 
-interface ZiviDBObj {
-  ziviDataHeader: string;
-  encryptedZiviData: string;
-  expirationDate: number;
-}
-
 @Component({
   selector: 'login',
   templateUrl: './login.component.html',

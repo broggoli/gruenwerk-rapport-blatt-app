@@ -256,9 +256,10 @@ $responsiveBreakingPointHeader: 30em
           @media (min-width:550px)
             display: grid
             width: 10em
-            grid-template: auto auto / auto auto
+            grid-template: auto auto / auto auto auto
           grid-gap: 1em
-
+          
+            color: red
           padding: 0.6em
           .rb-button
             width: 100%
@@ -275,12 +276,17 @@ $responsiveBreakingPointHeader: 30em
               transition: 200ms
           .rb-button:hover .icon
             transform: scale(1.1)
+          #syncButton .icon.loading
+            transform: rotate(360deg)
+            animation: spin 2s linear infinite
+          #syncButton .icon
+            margin: 0 0.5em
 
           .sendMeTooDiv
             align-self: center
             margin-bottom: 1em
             @media (min-width:550px)
-              grid-area: 1 / 1 / 1 / span 2
+              grid-area: 1 / 1 / 1 / span 3
               align-self: left
             
             .sendMeTooCheckBox
@@ -291,6 +297,15 @@ $responsiveBreakingPointHeader: 30em
                 width: 1.4em
               .knob.checked:before
                   transform: translateX(1.4em)
+        
+.rbSize
+  margin-top: 1em
+  text-align: center
+  align-self: center
+  @media (min-width:550px)
+    margin-left: 1em
+    text-align: left
+    align-self: left
 //
   #slideShow::after
   content: ""
@@ -317,3 +332,12 @@ $responsiveBreakingPointHeader: 30em
     margin-left: auto
     margin-right: auto
 
+@keyframes spin
+  from
+    -webkit-transform: rotate(360deg)
+    transform: rotate(360deg)
+
+  to 
+    -webkit-transform: rotate(0deg)
+    transform: rotate(0deg)
+  

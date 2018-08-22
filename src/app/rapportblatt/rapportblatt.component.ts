@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from "rxjs"
-import  { tap } from "rxjs/operators"
+import { Observable, throwError } from "rxjs"
+import  { tap, catchError } from "rxjs/operators"
 import {
   UserService,
   TableService,
@@ -44,6 +44,7 @@ export class RapportblattComponent implements OnInit {
   sendMeToo: boolean
   currentSlideshowImage: string
   slideShowIsOpen: boolean
+  //rbFileSize: number
 
   constructor(
     private user: UserService,
@@ -88,11 +89,31 @@ export class RapportblattComponent implements OnInit {
     return this.autoComplete.updateOptions(this.rows, thisRowIndex, "price", ["5.5","6.5"])
   }
   
+  downloadRb(event) {
+    let imageElement = event.target.getElementsByTagName("img")[0]
+    if( !imageElement ) {
+      imageElement = event.target
+    }
+    imageElement.classList.toggle("loading");
+    const forceDownload = true
+    this.table.getTable( this.monthString, this.user.getZiviData(), forceDownload).subscribe(res => {
+      this.rows = res
+      //For backwardscompatibility
+      this.rows.map( row => {
+        if( !row.medicalCertificate ) {
+          row.medicalCertificate = []
+        }
+      })
+      console.log(this.rows)
+      this.loading = false
+      imageElement.classList.toggle("loading");
+    });
+  }
   monthChanged(monthString): void {
 
     this.loading = true
     this.monthString = monthString;
-    this.table.getTable( this.monthString, this.user.getZiviData() ).subscribe(res => {
+    this.table.getTable( this.monthString, this.user.getZiviData()).subscribe(res => {
       this.rows = res
       this.rows.map( row => {
         if( !row.medicalCertificate ) {
@@ -168,7 +189,15 @@ export class RapportblattComponent implements OnInit {
                                         ccMe,
                                         abo:        this.ziviData.abo,
                                         month:      rapportblattData.month})
-            .subscribe((data: SendRbResponse) => {
+              .pipe(
+                catchError( err => {
+                      if (err.status == 200) {
+                        alert("Rapportblatt konnte nicht gesendet werde. Kontaktieren Sie bitte ihren Administrator um das Problem zu beheben.")
+                        this.showErrorIcon(true)
+                      }
+                    return throwError(err);
+                })
+            ).subscribe( (data: SendRbResponse) => {
 
               this.showLoader(false);
               if ( data.success ) {
@@ -216,6 +245,13 @@ export class RapportblattComponent implements OnInit {
         show ? this.showErrorIcon(true) : null
       }
     }));
+  }
+  onSaveFileBttnClick() {
+    this.save().subscribe( res => {
+      if( res.success === true) {
+      }
+      console.log(res.message)
+    })
   }
   saveImageInRows(file, rowIndex, imageType) {
     console.log(this.rows[rowIndex])
@@ -339,6 +375,7 @@ export class RapportblattComponent implements OnInit {
     if (show === true) {
       this.showLoader(false)
       this.showInputsChecked(false)
+      setTimeout(() => showElement(false, '.errorIcon'), 5000)
     }
   }
 
@@ -408,7 +445,24 @@ export class RapportblattComponent implements OnInit {
     this.slideShowIsOpen = true
   }
 
+  getMb(rows: Row[]) {
+    const byteL = byteLength(JSON.stringify(rows))
+    const mbs = byteL / 1000 / 1000
+    const rounded = Math.round(mbs * 1000) / 1000
+    return rounded
+  }
   
+}
+function byteLength(str: string) {
+  // returns the byte length of an utf8 string
+  var s = str.length;
+  for (var i=str.length-1; i>=0; i--) {
+    var code = str.charCodeAt(i);
+    if (code > 0x7f && code <= 0x7ff) s++;
+    else if (code > 0x7ff && code <= 0xffff) s+=2;
+    if (code >= 0xDC00 && code <= 0xDFFF) i--; //trail surrogate
+  }
+  return s;
 }
 function showElement( show: boolean, elementClass: string) {
     const element : HTMLElement = document.querySelector(elementClass);

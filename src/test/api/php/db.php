@@ -148,14 +148,14 @@
 
   /* returns the Data saved in the jsn data base with the $ziviDataHeader as key*/
   function getSavedRapportblatt($ziviDataHeader, $month) {
-
+    
     $response = new StdClass();
     $response->success = false;
     //Getting the DB as an object
     $savedRapportblattObj = getSavedRapportblattDB();
 
     //Check whether the data header exists
-    if(property_exists($savedRapportblattObj, $ziviDataHeader)){
+    if(property_exists($savedRapportblattObj, $ziviDataHeader)) {
       $response->message = "Data header exists!";
 
       if( !isset($month) || trim($month) == '' || trim($month) == 'all') {
@@ -199,7 +199,10 @@
     if( property_exists($savedRapportblattObj, $ziviDataHeader) ){
 
       $rbForMonth = $savedRapportblattObj->{$ziviDataHeader};
-      $rbForMonth[$month] = $rbData;
+      $savedRb = [];
+      $savedRb["encrypted"] = true;
+      $savedRb["data"] = $rbData;
+      $rbForMonth[$month] = $savedRb;
       $savedRapportblattObj->{$ziviDataHeader} = $rbForMonth;
 
       $response->message = "Successfully saved the rapportblatt!";
@@ -208,7 +211,7 @@
       $rbForMonth[$month] = $rbData;
       $savedRapportblattObj->{$ziviDataHeader} = $rbForMonth;
 
-      $response->message = "Successfully saved the rapportblatt!asd";
+      $response->message = "Successfully saved the rapportblatt!";
     }
 
 

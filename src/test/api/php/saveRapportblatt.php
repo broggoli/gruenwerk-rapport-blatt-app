@@ -18,13 +18,15 @@
 
           $savedRapportblatt = getSavedRapportblatt($_SESSION["user"]["ziviDataHeader"], $request_body->month);
           $response = $savedRapportblatt;
-        }elseif($request_body->task == "setRb"){
+        }elseif($request_body->task == "setRb") {
 
           $ziviDataHeader =  $_SESSION['user']["ziviDataHeader"];
-          $saveRapportblatt = saveRapportblatt($ziviDataHeader, $request_body->rbData, $request_body->month);
+          $saveRapportblatt = saveRapportblatt($ziviDataHeader, 
+                                                $request_body->rbData, 
+                                                $request_body->month);
 
-          //Check whether the data header exists
           $response = $saveRapportblatt;
+
         }
       } else {
         $response->message = "Not logged in!";

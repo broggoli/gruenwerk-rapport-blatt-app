@@ -209,7 +209,7 @@
     </div>
     <div style="display: none" class="loadingAnim svgAnim"><img src="../../assets/svg/loader.svg"/></div>
     <div style="display: none" class="inputsChecked svgAnim"><img src="../../assets/svg/check.svg"/></div>
-    <div style="display: none" class="inputsChecked errorIcon"><img src="../../assets/svg/error.svg"/></div>
+    <div style="display: none" class="errorIcon svgAnim"><img src="../../assets/svg/error.svg"/></div>
     <div id="actionButtons" *ngIf="rows.length > 0">
       <div  class="sendMeTooDiv" >
           Kopie an mich senden:
@@ -218,20 +218,25 @@
             <input [(ngModel)]="sendMeToo" type="checkbox" class="sendMeToo"/>
           </label>
       </div>
-      <button id="saveutton" (click)="save()" class="button rb-button">
+      <button id="syncButton" title="Lädt die gespeicherte Online-Version herunter" (click)="downloadRb($event)" class="button rb-button">
+        <img src="../../assets/svg/sync.svg" class="icon"/>
+      </button>
+  
+      <button id="saveutton" title="Speichert das Rapportblatt" (click)="onSaveFileBttnClick()" class="button rb-button">
         <img src="../../assets/svg/save.svg" class="icon"/>
         <span>Speichern</span>
       </button>
-      <button id="sendButton" (click)="send()" class="button rb-button">
+      <button id="sendButton" title="Sende das Rapportblatt" (click)="send()" class="button rb-button">
         <img src="../../assets/svg/send.svg" class="icon"/>
         <span>Absenden</span>
       </button>
-  
       
     </div>
   </div>
+  <div class="rbSize">
+    <span>Rapportblattgrösse: ~{{ getMb(rows) }}MB</span>
+  </div>
 </div>
-
 <div id="slideShow"
     *ngIf="slideShowIsOpen">
   <img id="currentSlideshowImage"

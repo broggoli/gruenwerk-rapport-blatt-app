@@ -6,6 +6,11 @@ import { ValidationObj, Row} from "../models/rapportblatt.model"
 import { ZiviData } from '../models/zivi.model';
 import { UserService } from './user.service';
 
+interface EncryptedRB {
+  encrypted: boolean
+  data: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -15,18 +20,38 @@ export class TableService {
 
   constructor(private user: UserService) { }
 
-  getTable(monthS: string, ziviData: ZiviData): Observable<Row[]> {
+  getTable(monthS: string, ziviData: ZiviData, forceDownload=false): Observable<Row[]> {
     // default rows config
     let loadedRows: Row[] = []
     if( monthS ) {
 
-      const locallyStoredRB = localStorage.getItem('savedRapportblatt');
+      const locallyStoredRBs = JSON.parse(localStorage.getItem('savedRbs'));
 
       const defaultRows = this.getDefaultTable(ziviData, monthS);
-      loadedRows = this.filterTable(defaultRows, ziviData.date)
+      loadedRows = this.filterTable(defaultRows, ziviData.date);
       
-      // If there is no RB saved Locally
-      if ( locallyStoredRB === null ) {
+      const localRB = getlocalRb(locallyStoredRBs, monthS)
+     
+      if( localRB && forceDownload === false ) {
+
+        // for(const lsRb of locallyStoredRBs) {
+        //   console.log(lsRb)
+        // }
+        console.log("there is a locally stored Rb for the month: "+monthS)
+      
+        loadedRows = this.filterTable(localRB, ziviData.date);
+        
+        if(loadedRows.length !== defaultRows.length) {
+          // The saved RB is too small
+          console.log("the saved RB is too small")
+          loadedRows = loadedRows.concat(defaultRows.slice(loadedRows.length))
+        }
+        console.log('RB loaded locally!');
+        return of(loadedRows)
+      } else {
+
+        // There is no rb saved locally so look online to download a potentially saved rb
+        console.log("No rb saved locally")
         return this.getRblOnline(defaultRows, monthS, ziviData).pipe(map( loadedRows => {
 
           if(loadedRows.length !== defaultRows.length) {
@@ -34,30 +59,9 @@ export class TableService {
             console.log("the saved RB is too small")
             loadedRows = loadedRows.concat(defaultRows.slice(loadedRows.length))
           }
-          localStorage.setItem('savedRapportblatt', 
-            JSON.stringify({
-            month: monthS,
-            rbData: loadedRows
-          }));
+          this.user.saveRbLocally(loadedRows, monthS)
           return loadedRows
         }))
-      } else {
-        const savedRb = JSON.parse(locallyStoredRB);
-        
-        if ( savedRb.month  === monthS ) {
-          console.log(savedRb)
-          loadedRows = this.filterTable(savedRb.rbData, ziviData.date);
-          
-          if(loadedRows.length !== defaultRows.length) {
-            // The saved RB is too small
-            console.log("the saved RB is too small")
-            loadedRows = loadedRows.concat(defaultRows.slice(loadedRows.length))
-          }
-          console.log('RB loaded locally!');
-          return of(loadedRows)
-        } else {
-          return of(loadedRows)
-        }
       }
     }else{
       console.log("There was no Month input!")
@@ -67,13 +71,19 @@ export class TableService {
   getRblOnline(defaultRows: Row[], monthS: string, ziviData: ZiviData): Observable<Row[]> {
     return this.user.getSavedRapportblatt(monthS).pipe(flatMap(savedRapportblatt => {
       
+
       let loadedRows: Row[] = []
       if (savedRapportblatt.success) {
-          //if ( savedRapportblatt.data.month === monthS ) {
-            const decryptedRb: Row[] = this.user.decryptRb(savedRapportblatt.data)
-            console.log(savedRapportblatt)
-            loadedRows = this.filterTable(decryptedRb, ziviData.date);
-          //}
+        console.log(savedRapportblatt.data)
+        const rbData: any = JSON.parse(JSON.stringify(savedRapportblatt.data)).rbData
+        if( rbData.encrypted ) {
+          console.log("encrypted")
+          const decryptedRb: Row[] = JSON.parse(JSON.parse(this.user.decryptRb( rbData.data, ziviData.email + monthS)))
+          loadedRows = this.filterTable(decryptedRb, ziviData.date);
+        } else {
+          console.log("not encrypted")
+          loadedRows = this.filterTable(rbData, ziviData.date);
+        }
       }
 
       return of(loadedRows)
@@ -158,34 +168,49 @@ export class TableService {
     for(const row of rows) {
       switch( row.dayType ) {
         case "Arbeitstag":
-          cleanedTable.push(this.clearRow(row, ["dayType", "dayName", "date", "workPlace"]))
+          if( row.spesenChecked ) {
+            cleanedTable.push(this.clearRow(row, ["workPlace", "route", "price", "ticketProof", "spesenChecked"]))
+          } else {
+            cleanedTable.push(this.clearRow(row, ["workPlace"]))
+          }
           break
         case "Frei":
-          cleanedTable.push(this.clearRow(row, ["dayType", "dayName", "date"]))
+          cleanedTable.push(this.clearRow(row))
           break
         case "Krank":
-          cleanedTable.push(this.clearRow(row, ["dayType", "dayName", "date", "medicalCertificate"]))
+          cleanedTable.push(this.clearRow(row, ["medicalCertificate"]))
           break
         case "Ferien":
-          cleanedTable.push(this.clearRow(row, ["dayType", "dayName", "date"]))
+          cleanedTable.push(this.clearRow(row))
           break
         case "Urlaub":
-          cleanedTable.push(this.clearRow(row, ["dayType", "dayName", "date"]))
+          cleanedTable.push(this.clearRow(row))
           break
       }
     }
 
+    console.log(rows)
+    console.log(cleanedTable)
     return cleanedTable
   }
-  clearRow(row: Row, leaveTheSame: string[]): Row {
+  clearRow(row: Row, leaveTheSame: string[] = []): Row {
+    const stdLeaveSame = ["dayType", "dayName", "date"]
+    if(leaveTheSame.length > 0) {
+      leaveTheSame = leaveTheSame.concat(stdLeaveSame)
+    }else {
+      leaveTheSame = stdLeaveSame
+    }
     let newRow = row
     for(const item in row) {
       if( leaveTheSame.indexOf(item) === -1 ) {
+        if(item === "route") {
+          newRow[item] = {start: "", destination: ""}
+        }
         if(typeof newRow[item] === "string"){
           newRow[item] = "";
         }else if(typeof row[item] === "boolean"){
           newRow[item] = false;
-        }else if(Array.isArray(item)) {
+        }else if(Array.isArray(row[item])) {
           newRow[item] = [];
         }
       }
@@ -285,4 +310,14 @@ export class TableService {
     const dateInputValue = [year, padZeros(month, 2)].join("-")
     return dateInputValue;
   }
+}
+function getlocalRb(locallyStoredRBs, monthS) {
+  if( locallyStoredRBs ) {
+    for(const lsRb of locallyStoredRBs) {
+      if( lsRb.month === monthS ) {
+        return lsRb.rbData
+      }
+    }
+  }
+  return null
 }

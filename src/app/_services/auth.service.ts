@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { CryptoService } from './crypto.service'
-import { ZiviData } from '../ziviData'
+import { ZiviData } from '../models/zivi.model'
 import { Observable, of } from "rxjs"
 import { map, tap } from 'rxjs/operators';
 
@@ -54,6 +54,7 @@ export class AuthService {
                         task: "login"
                       })
     // post these details to API server return user info if correct
+    console.log(dataHeader, userName, password)
     return this.http.post<Response>('/api/php/auth.php', dataHeader).pipe(tap( res => {
       if( res.success === true ) {
         const userData: string = res.data['encryptedZiviData'];

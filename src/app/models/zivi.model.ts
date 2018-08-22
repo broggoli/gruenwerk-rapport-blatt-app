@@ -9,11 +9,4 @@ export class ZiviData{
       startDate: string; //Date String
       endDate: string;    //Date String
     };
-    savedRbs: SavedRb[];
   }
-  
-export class SavedRb {
-    month: string;
-    pointer: string;
-    encrypted: boolean;
-}

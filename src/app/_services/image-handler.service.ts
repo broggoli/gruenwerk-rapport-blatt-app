@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Row } from '../models/rapportblatt.model';
 
+interface ImagesForUpload {
+    medicalCertificates: File[];
+    ticketProofs: File[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -13,25 +18,28 @@ export class ImageHandlerService {
       //          "5.4.18": [File_Object]}
   }
 
-  getImages( rows: Row[] ){
+  getImages( rows: Row[] ): ImagesForUpload {
 		
-		let images = {}
+		let images: ImagesForUpload = {
+            medicalCertificates: [],
+            ticketProofs: []
+        }
 		for(const row of rows) {
 			for(const dataURL of row.ticketProof) {
 				
 				const imageFile = this.dataURLtoFile(dataURL,  Date.now())
 				if(row.date in images) {
-					images[row.date].push(imageFile)
+					images["ticketProofs"][row.date].push(imageFile)
 				} else {
-					images[row.date] = [imageFile]
+					images["ticketProofs"][row.date] = [imageFile]
 				}
 			}
 			for(const dataURL of row.medicalCertificate) {
 				const imageFile = this.dataURLtoFile(dataURL,  Date.now())
 				if(row.date in images) {
-					images[row.date].push(imageFile)
+					images["medicalCertificates"][row.date].push(imageFile)
 				} else {
-					images[row.date] = [imageFile]
+					images["medicalCertificates"][row.date] = [imageFile]
 				}
 			}
 		}

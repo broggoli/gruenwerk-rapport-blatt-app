@@ -16,7 +16,7 @@ export class LogoutComponent implements OnInit {
       if(data.success){
         this.router.navigate([""])
         localStorage.removeItem("userData")
-        localStorage.removeItem("savedRapportblatt")
+        localStorage.removeItem("savedRbs")
           console.log(data.success)
       }else{
         alert("some problem!")
