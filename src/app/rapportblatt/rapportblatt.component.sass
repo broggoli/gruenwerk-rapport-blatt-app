@@ -102,11 +102,27 @@ $responsiveBreakingPointHeader: 30em
                   width: 6em
 
                 .imagePreview
-                      height: 1.5em
-                      right: 0.5em
-                      transition: 200ms
-                .imagePreview:hover
-                    transform: scale(1.1)
+                  height: 1.5em
+                  right: 0.5em
+                  transition: 200ms
+
+                .previewImageC::after
+                  content: "x"
+                  text-align: center
+                  justify-content: center
+                  font-size: 1em
+                  height: 1.1em
+                  width: 1.1em
+                  background-color: $white
+                  border-radius: 50%
+                  display: inline-block
+                  border: solid
+                  position: relative
+                  left: -.7em
+                  top: -1em
+                .previewImageC:hover::after
+                  transform: scale(1.1)
+                  background-color: darken($white, 10%)
                 .dayName
                     width: 1em
                 .date

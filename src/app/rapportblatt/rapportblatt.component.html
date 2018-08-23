@@ -133,10 +133,12 @@
                       class="ticketProof"/>
             </div>
             <div class="ticketProofImagesContainer">
-                <img *ngFor="let dataUrl of row.ticketProof; let imageIndex = index"
-                      (click)="deleteImage(idx, imageIndex)"
-                      src="{{ dataUrl }}"
-                      class="imagePreview"/>
+                <div class='previewImageC' *ngFor="let dataUrl of row.ticketProof; let imageIndex = index"
+                (click)="deleteImage(idx, imageIndex)">
+                  <img
+                        src="{{ dataUrl }}"
+                        class="imagePreview"/>
+                </div>
             </div>
           </div>
           <div *ngIf="row.dayType == 'Krank'" class="uploadMCContainer">
@@ -154,10 +156,12 @@
             </div>
             
             <div class="MCImagesContainer">
-                <img *ngFor="let dataUrl of row.medicalCertificate; let imageIndex = index"
-                      (click)="deleteMCImage(idx, imageIndex)"
-                      src="{{ dataUrl }}"
-                      class="imagePreview"/>
+                <div class='previewImageC' *ngFor="let dataUrl of row.medicalCertificate; let imageIndex = index"
+                      (click)="deleteMCImage(idx, imageIndex)">
+                  <img 
+                        src="{{ dataUrl }}"
+                        class="imagePreview"/>
+                </div>
             </div>
           </div>
         </div>
@@ -172,7 +176,7 @@
       <p>lade...</p>
     </div>
     <div id="NoDays" *ngIf="rows.length === 0 && !loading">
-      <p>Du hast in diesem Monat nicht gearbeitet</p>
+      <p>Sie haben in diesem Monat nicht gearbeitet</p>
     </div>
     <div id="rapportBlattSummary" *ngIf="rows.length > 0 && !loading">
       <h3>Zusammenfassung</h3>
@@ -233,7 +237,7 @@
       
     </div>
   </div>
-  <div class="rbSize">
+  <div class="rbSize" *ngIf="rows.length > 0">
     <span>Rapportblattgrösse: ~{{ getMb(rows) }}MB</span>
   </div>
 </div>

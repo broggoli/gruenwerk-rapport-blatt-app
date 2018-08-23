@@ -90,6 +90,7 @@ export class RapportblattComponent implements OnInit {
   }
   
   downloadRb(event) {
+    this.loading = true
     let imageElement = event.target.getElementsByTagName("img")[0]
     if( !imageElement ) {
       imageElement = event.target
@@ -110,7 +111,6 @@ export class RapportblattComponent implements OnInit {
     });
   }
   monthChanged(monthString): void {
-
     this.loading = true
     this.monthString = monthString;
     this.table.getTable( this.monthString, this.user.getZiviData()).subscribe(res => {
@@ -270,7 +270,7 @@ export class RapportblattComponent implements OnInit {
       for ( const file of filesOnTarget) {
         this.saveImageInRows(file, rowIndex, "ticketProof")
       }
-      target.parentNode.replaceChild(target.cloneNode(), target);
+      target.value = "";
   }
   
   onMCSelected(event, rowIndex) {
@@ -279,7 +279,7 @@ export class RapportblattComponent implements OnInit {
     for ( const file of filesOnTarget) {
       this.saveImageInRows(file, rowIndex, "medicalCertificate")
     }
-    target.parentNode.replaceChild(target.cloneNode(), target);
+    target.value = "";
 }
 
   daySummary(sort = false) {

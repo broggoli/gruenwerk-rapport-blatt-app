@@ -15,8 +15,9 @@ export class LogoutComponent implements OnInit {
     this.user.logout().subscribe( data => {
       if(data.success){
         this.router.navigate([""])
-        localStorage.removeItem("userData")
-        localStorage.removeItem("savedRbs")
+        // localStorage.removeItem("userData")
+        // localStorage.removeItem("savedRbs")
+        localStorage.clear()
           console.log(data.success)
       }else{
         alert("some problem!")
