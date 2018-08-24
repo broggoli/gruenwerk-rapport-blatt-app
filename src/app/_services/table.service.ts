@@ -54,9 +54,10 @@ export class TableService {
         console.log("No rb saved locally")
         return this.getRblOnline(defaultRows, monthS, ziviData).pipe(map( loadedRows => {
 
+          console.log( loadedRows )
           if(loadedRows.length !== defaultRows.length) {
             // The saved RB is too small
-            console.log("the saved RB is too small")
+            console.log("the loaded RB is too small")
             loadedRows = loadedRows.concat(defaultRows.slice(loadedRows.length))
           }
           this.user.saveRbLocally(loadedRows, monthS)
@@ -78,8 +79,11 @@ export class TableService {
         const rbData: any = JSON.parse(JSON.stringify(savedRapportblatt.data)).rbData
         if( rbData.encrypted ) {
           console.log("encrypted")
-          const decryptedRb: Row[] = JSON.parse(JSON.parse(this.user.decryptRb( rbData.data, ziviData.email + monthS)))
-          loadedRows = this.filterTable(decryptedRb, ziviData.date);
+          let decryptedRb = JSON.parse(this.user.decryptRb( rbData.data, ziviData.email + monthS))
+          if( typeof decryptedRb === "string") {
+            decryptedRb = JSON.parse(decryptedRb)
+          }
+          loadedRows = this.filterTable(<Row[]>decryptedRb, ziviData.date);
         } else {
           console.log("not encrypted")
           loadedRows = this.filterTable(rbData, ziviData.date);

@@ -40,7 +40,7 @@ export class UserService {
       this.router.navigate(['logout']);
     } else {
       let ziviData = JSON.parse(localStorageFile)
-      console.log(typeof ziviData )
+      console.log(typeof ziviData, ziviData )
       if(typeof ziviData === "string") {
         ziviData = JSON.parse(ziviData)
       }
