@@ -175,10 +175,10 @@
     <div id="loading" *ngIf="loading">
       <p>lade...</p>
     </div>
-    <div id="NoDays" *ngIf="rows.length === 0 && !loading">
+    <div id="NoDays" *ngIf="rows.length === 0">
       <p>Sie haben in diesem Monat nicht gearbeitet</p>
     </div>
-    <div id="rapportBlattSummary" *ngIf="rows.length > 0 && !loading">
+    <div id="rapportBlattSummary" *ngIf="rows.length > 0">
       <h3>Zusammenfassung</h3>
       <div id="dayChart" class="barchart">
         <div class="chart">
